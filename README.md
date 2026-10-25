@@ -5,7 +5,7 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 ```
 index.html          page content
 privacy.html        privacy notice, linked under each form and in the footer
-styles.css          design tokens from DESIGN.md
+styles.css          tokens from the masUNO design system (Verde cancha) and all animations
 script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
 assets/screens/     app screenshots from Figma or Xcode
@@ -14,11 +14,11 @@ assets/people/      persona photos
 
 ## 1. Add the screenshots and photos
 
-Every screenshot and photo spot shows a dashed placeholder with its expected file path. Save a file at that path and it replaces the placeholder automatically; you don't need to edit any HTML.
+Every screenshot and photo spot shows a placeholder with its expected file path (persona photos show initials until then). Save a file at that path and it replaces the placeholder automatically; you don't need to edit any HTML.
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/screens/map.png` | Map (home) | Hero phone, "I want to play" step 1 |
+| `assets/screens/map.png` | Map (home) | "I want to play" step 1 |
 | `assets/screens/event-detail.png` | Event detail with RSVP | "I want to play" step 2 |
 | `assets/screens/your-plans.png` | Your plans | "I want to play" step 3 |
 | `assets/screens/create-event.png` | Create event | "I need players" step 1 |
@@ -29,7 +29,7 @@ Every screenshot and photo spot shows a dashed placeholder with its expected fil
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
 | `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
 
-Export screens at full iPhone resolution (1179×2556 from the iPhone 15/16 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own charcoal frame.
+Export screens at full iPhone resolution (1179×2556 from the iPhone 15/16 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
 - **Xcode:** run the app in the simulator, then press Cmd+S.
 - **Figma:** select the frame, then Export → PNG at 3x.
