@@ -1,6 +1,9 @@
 # masUNO landing page
 
-The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no build step: open `index.html` in a browser, or host the folder on GitHub Pages.
+The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no build step.
+
+- **Live site:** https://masuno-app.github.io/ (GitHub Pages, deployed from `main`)
+- **Waitlist:** connected. Signups go to the **Waitlist** tab of the masUNO waitlist Google Sheet through the Apps Script in `apps-script/Code.gs`.
 
 ```
 index.html          page content
@@ -34,22 +37,32 @@ Export screens at full iPhone resolution (1179×2556 from the iPhone 15/16 Pro s
 - **Xcode:** run the app in the simulator, then press Cmd+S.
 - **Figma:** select the frame, then Export → PNG at 3x.
 
-## 2. Connect the waitlist to Google Sheets (about 20 minutes)
+## 2. The waitlist (Google Sheets)
 
-1. Create a Google Sheet, for example "masUNO waitlist".
-2. In the Sheet, open **Extensions → Apps Script**. Delete the starter code and paste in `apps-script/Code.gs`. Save.
-3. In the function dropdown, choose `setup` and click **Run**. Approve the permissions. This creates a **Waitlist** tab with a header row.
-4. Click **Deploy → New deployment**. Choose the **Web app** type and set:
-   - Execute as: **Me**
-   - Who has access: **Anyone**
-5. Click **Deploy** and copy the web app URL (it ends in `/exec`).
-6. Open the URL in a browser. You should see `{"ok":true,"service":"masUNO waitlist"}`.
-7. In `script.js`, replace `PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE` with that URL.
-8. Submit the form on the page and check that a row appears in the Sheet.
+The Apps Script is deployed as a web app, and its `/exec` URL is set as `WAITLIST_ENDPOINT` at the top of `script.js`. Opening that URL in a browser should show `{"ok":true,"service":"masUNO waitlist"}`, which is a quick way to check it's still up.
 
-Until step 7 is done, the signup still works locally: it logs what it would have sent to the browser console and runs through both steps.
+**Changing `Code.gs`:** paste the new code into the Sheet's **Extensions → Apps Script**, save, then use **Deploy → Manage deployments → Edit (pencil) → Version: New version**. Don't create a new deployment: that gives you a different URL, and the live site would keep posting to the old one.
 
-**If you change `Code.gs` later,** use **Deploy → Manage deployments → Edit (pencil) → Version: New version**. Creating a new deployment instead gives you a different URL.
+**Working with the Sheet:**
+
+- To remove a signup (a test entry, or someone asking to be deleted), right-click the row number → **Delete row**. Don't just clear the cells: the "You're #N on the list" number counts filled rows, so blank rows push everyone's number up.
+- Keep totals, notes and charts on a separate tab. Anything typed below the signups also changes the numbers.
+- Don't rename the **Waitlist** tab, reorder its columns, or edit the hidden **Token** column. The script depends on all three.
+- To sort or filter, use **Data → Create a filter view** so the real row order stays the same.
+
+**Testing:** test signups in a regular browser, not VS Code's built-in browser. VS Code's browser blocks Google's reply, so the popup says saving failed even though the row was written. Delete your test rows before sharing the link.
+
+<details>
+<summary>Setting it up again from scratch</summary>
+
+1. Create a Google Sheet, then open **Extensions → Apps Script**. Delete the starter code, paste in `apps-script/Code.gs` and save.
+2. In the function dropdown, choose `setup` and click **Run**. Approve the permissions. This creates the **Waitlist** tab with a header row.
+3. Click **Deploy → New deployment**, choose **Web app**, and set Execute as **Me** and Who has access **Anyone**.
+4. Copy the URL ending in `/exec` into `WAITLIST_ENDPOINT` in `script.js`, then push.
+
+If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anything. It logs what it would have sent to the browser console instead, so you can test the page locally.
+
+</details>
 
 **How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a popup showing their place in line ("You're #42 on the list") with two optional questions: player or host, campus, and sports. Answering fills in the same row.
 
@@ -57,9 +70,9 @@ Until step 7 is done, the signup still works locally: it logs what it would have
 
 **Built-in protection:** duplicate emails are ignored, a hidden honeypot field filters out simple bots, and values starting with `=` aren't run as formulas in the Sheet.
 
-## 3. Publish on GitHub Pages
+## 3. Publishing changes
 
-Push to GitHub, then go to **Settings → Pages → Deploy from a branch → `main` / root**.
+The site is served by GitHub Pages from the root of `main`. Push to `main` and the live site updates within a minute or two. Hard-refresh (Cmd+Shift+R) if you still see the old version.
 
 ## 4. Share the link with a `?ref=` tag
 
@@ -67,10 +80,10 @@ Whenever you share the waitlist, add `?ref=` and a short label to the end of the
 
 | Where you share it | Link to use |
 |---|---|
-| QR code at a club fair | `…/?ref=clubfair` |
-| Instagram bio or story | `…/?ref=instagram` |
-| A dorm or club group chat | `…/?ref=dorm-chat` |
-| A flyer | `…/?ref=flyer` |
+| QR code at a club fair | `https://masuno-app.github.io/?ref=clubfair` |
+| Instagram bio or story | `https://masuno-app.github.io/?ref=instagram` |
+| A dorm or club group chat | `https://masuno-app.github.io/?ref=dorm-chat` |
+| A flyer | `https://masuno-app.github.io/?ref=flyer` |
 
 Use lowercase labels with no spaces, and reuse the same label for the same place so the counts add up. Links without a tag show up as the referring website, or as `direct`. `?utm_source=` works too, if a tool adds that instead.
 

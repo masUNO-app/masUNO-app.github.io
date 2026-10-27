@@ -1,6 +1,6 @@
 // PLACEHOLDER: paste your Apps Script web app URL here after deploying apps-script/Code.gs
 // (Deploy → New deployment → Web app → copy the URL that ends in /exec). See README.md.
-const WAITLIST_ENDPOINT = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbwT7WBTR8Uv3l1uxmtOD4pJfX8fzwdwKQIHxwNxTPEQRjvSBwLaWFypTqkqFGtnsUOp/exec";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
