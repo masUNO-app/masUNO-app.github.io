@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>masUNO — We're looking for you</title>
-  <meta name="description" content="masUNO shows you pickup games on campus that are one or two players short. Find one nearby, tap join, and show up as the player they were waiting for.">
-  <meta name="theme-color" content="#1C1916">
+  <meta name="description" content="masUNO shows you pickup games on campus that need one more player. Find one nearby, tap join, and show up.">
+  <meta name="theme-color" content="#141a2b">
 
   <!-- Social preview. TODO: add assets/og-image.png (1200×630) once the screens are final -->
   <meta property="og:title" content="masUNO">
-  <meta property="og:description" content="&ldquo;Can I join?&rdquo; becomes &ldquo;We're looking for you.&rdquo; Pickup games that are one player short, on your campus.">
+  <meta property="og:description" content="&ldquo;Can I join?&rdquo; becomes &ldquo;We're looking for you.&rdquo; Pickup games that need one more, on your campus.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/og-image.png">
 
@@ -28,10 +28,10 @@
     <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></symbol>
     <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
-    <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20M5 5c2.5 2.5 3.5 4.5 3.5 7S7.5 16.5 5 19M19 5c-2.5 2.5-3.5 4.5-3.5 7s1 4.5 3.5 7"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
-    <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
-    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+    <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9c4 4 4 10.2 0 14.2M19.1 4.9c-4 4-4 10.2 0 14.2M2 12h20M12 2v20"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
   </svg>
 
   <a class="skip" href="#main">Skip to content</a>
@@ -45,7 +45,7 @@
         <a href="#how">How it works</a>
         <a href="#faq">FAQ</a>
       </nav>
-      <a href="#join" class="btn btn-primary btn-sm nav-cta">Get early access</a>
+      <a href="#join" class="btn btn-primary btn-sm">Get early access</a>
     </div>
   </header>
 
@@ -55,11 +55,15 @@
     <section class="hero dark">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="live-dot"></span> Coming to campus soon</p>
-          <h1>&ldquo;Can I join?&rdquo; becomes <em>&ldquo;We're looking for you.&rdquo;</em></h1>
-          <p class="lede">Find pickup games nearby that are one or two players short. Tap join, and walk up as the player they were waiting for.</p>
+          <p class="eyebrow load rise"><span class="live-dot"></span> Coming to campus soon</p>
 
-          <div class="join-wrap">
+          <h1 class="display">
+            <span class="load rise d1"><span class="strike">&ldquo;Can I join?&rdquo;</span> becomes</span>
+            <span class="tint load rise d3">&ldquo;We're looking for you.&rdquo;</span>
+          </h1>
+          <p class="lede load rise d4">Find pickup games nearby that are one player short. Tap join, and walk up as the player they were waiting for.</p>
+
+          <div class="join-wrap load rise d5">
             <form class="join" novalidate>
               <label class="sr-only" for="hero-email">Student email</label>
               <div class="join-row">
@@ -71,118 +75,183 @@
             </form>
             <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
             <!-- Short privacy notice (aviso de privacidad simplificado) -->
-            <p class="notice">masUNO uses your email only to add you to the waitlist and tell you when we launch near you. <a href="privacy.html">Privacy notice</a></p>
+            <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
           </div>
-          <p class="hero-meta">Free for students · iOS first · Basketball, soccer and volleyball</p>
+          <p class="hero-meta load rise d6">Free for students · iOS first</p>
         </div>
 
+        <!-- Ribbon, people cards and sticker. Decorative: the same facts are in the copy. -->
         <div class="hero-visual" aria-hidden="true">
-          <!-- PLACEHOLDER: Figma/Xcode screen — Map (home). Drop file at assets/screens/map.png -->
-          <figure class="phone">
-            <div class="screen">
-              <div class="placeholder"><span class="ph-tag">Figma / Xcode</span><strong>Map (home)</strong><code>assets/screens/map.png</code></div>
-              <img src="assets/screens/map.png" alt="" onerror="this.remove()">
-            </div>
-          </figure>
+          <div class="hero-stage">
+            <svg class="ribbon" viewBox="0 0 600 580" fill="none">
+              <path class="r1" pathLength="1" d="M -60 530 C 40 560 140 480 170 400" stroke="var(--sports)"/>
+              <path class="r2" pathLength="1" d="M 170 400 C 200 320 330 380 330 300" stroke="var(--coffee)"/>
+              <path class="r3" pathLength="1" d="M 330 300 C 330 220 400 170 470 150" stroke="var(--games)"/>
+            </svg>
 
-          <!-- Floating UI, built in HTML so the hero feels alive before the screenshots exist -->
-          <div class="float float-card game-card">
-            <div class="gc-top">
-              <span class="sport"><svg class="i"><use href="#i-ball"/></svg></span>
-              <div class="gc-title"><strong>3v3 at the rec center</strong><span>Today · 6:00 PM · 4 min walk</span></div>
+            <div class="you load pop d9">
+              <span class="avatar avatar-you halo">
+                <span class="initial">E</span>
+                <img src="assets/people/emilio.jpg" alt="" onerror="this.remove()">
+                <span class="you-dot"></span>
+              </span>
+              <span class="you-label">That's you</span>
             </div>
-            <div class="gc-people">
-              <div class="stack"><span class="av a1">R</span><span class="av a2">M</span><span class="av a3">S</span><span class="av a4">D</span><span class="av a5">L</span><span class="av slot">+1</span></div>
-              <span class="spots">1 spot left</span>
+
+            <div class="float float-host bob">
+              <div class="card people-card load drop d4">
+                <div class="pc-top">
+                  <span class="avatar"><span class="initial">R</span><img src="assets/people/ricardo.jpg" alt="" onerror="this.remove()"></span>
+                  <div class="pc-name"><strong>Ricardo</strong><span>Rec center</span></div>
+                  <span class="chip">Host</span>
+                </div>
+                <p class="pc-msg">Need 1 more for 3v3</p>
+              </div>
             </div>
-          </div>
-          <div class="float float-toast toast">
-            <span class="toast-icon"><svg class="i"><use href="#i-bell"/></svg></span>
-            <div><strong>A spot just opened</strong><span>Sunday soccer · 4:00 PM</span></div>
+
+            <div class="sticker load pop d6">
+              <svg viewBox="0 0 132 132" class="sticker-ring">
+                <defs><path id="stickerRing" d="M 66 66 m -48 0 a 48 48 0 1 1 96 0 a 48 48 0 1 1 -96 0"/></defs>
+                <text><textPath href="#stickerRing">1 spot left · 1 spot left · 1 spot left ·</textPath></text>
+              </svg>
+              <svg class="i"><use href="#i-ball"/></svg>
+            </div>
+
+            <div class="float float-game bob bob-late">
+              <div class="card game-card load drop d5">
+                <div class="gc-top">
+                  <span class="sport"><svg class="i"><use href="#i-ball"/></svg></span>
+                  <div class="gc-title"><strong>3v3 at the rec center</strong><span>Today · 6:00 PM · 4 min walk</span></div>
+                </div>
+                <div class="gc-people">
+                  <div class="stack"><span class="av">R</span><span class="av">M</span><span class="av">S</span><span class="av">D</span><span class="av slot">+1</span></div>
+                  <span class="spots">1 spot left</span>
+                </div>
+                <p class="gc-faces"><svg class="i"><use href="#i-users"/></svg>See everyone's face before you go</p>
+                <span class="fake-btn">Join game</span>
+              </div>
+            </div>
+
+            <!-- The host side: a no-show refilled without the group chat -->
+            <div class="toast hero-toast load pop d10">
+              <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
+              <div><strong>Spot filled</strong><span>Sunday soccer · 4 min after repost</span></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <div class="marquee-set">
+          <span>1 spot left</span><i class="dot sports"></i><span>Starts at 6:00 PM</span><i class="dot coffee"></i><span>4 min walk</span><i class="dot games"></i><span>Basketball, soccer, volleyball</span><i class="dot sports"></i><span>Hosted by students</span><i class="dot coffee"></i><span>Faces before you go</span><i class="dot games"></i>
+        </div>
+        <div class="marquee-set">
+          <span>1 spot left</span><i class="dot sports"></i><span>Starts at 6:00 PM</span><i class="dot coffee"></i><span>4 min walk</span><i class="dot games"></i><span>Basketball, soccer, volleyball</span><i class="dot sports"></i><span>Hosted by students</span><i class="dot coffee"></i><span>Faces before you go</span><i class="dot games"></i>
+        </div>
+      </div>
+    </div>
 
     <!-- ============ STORY ============ -->
     <section class="section" id="story">
       <div class="wrap">
         <div class="section-head center reveal">
           <p class="kicker">Same campus. Same afternoon.</p>
-          <h2>They needed each other. Neither knew it.</h2>
+          <h2 class="display">They needed each other. Neither knew it.</h2>
         </div>
 
         <div class="story">
-          <article class="story-card reveal">
+          <article class="story-card lift reveal">
             <header class="person">
-              <div class="avatar">
+              <span class="avatar avatar-lg ring-you">
                 <!-- PLACEHOLDER: persona photo. Drop file at assets/people/emilio.jpg -->
-                <div class="placeholder round"><span>E</span></div>
+                <span class="initial">E</span>
                 <img src="assets/people/emilio.jpg" alt="Emilio" onerror="this.remove()">
-              </div>
-              <div class="person-name"><h3>Emilio</h3><p>Freshman · best player in his dorm</p></div>
+              </span>
+              <div class="person-name"><h3>Emilio</h3><p>Freshman, loves to play</p></div>
               <span class="chip">Wants to play</span>
             </header>
             <ol class="timeline">
-              <li><time>4:50 PM</time><p>Walks past a pickup game on the way back from class. Slows down and watches a few plays.</p></li>
-              <li class="thought"><p>&ldquo;Maybe I could join&hellip;&rdquo;</p></li>
-              <li><time>4:52 PM</time><p>Everyone seems to know each other. Are the teams full? Would he be interrupting? He keeps walking.</p></li>
+              <li><time>4:50 PM</time><p>Walks past a pickup game and slows down to watch.</p></li>
+              <li class="thought"><span></span><p>&ldquo;Maybe I could join&hellip;&rdquo;</p></li>
+              <li><time>4:52 PM</time><p>Not sure if they need anyone. Keeps walking.</p></li>
             </ol>
-            <p class="outcome">No game for Emilio.</p>
+            <p class="outcome">Emilio misses a game.</p>
           </article>
 
-          <div class="story-link reveal" aria-hidden="true">
+          <div class="story-link" aria-hidden="true">
             <span class="line"></span>
-            <span class="node"><svg class="i"><use href="#i-question"/></svg></span>
+            <span class="node">?</span>
             <span class="line"></span>
           </div>
 
-          <article class="story-card reveal">
+          <article class="story-card lift reveal">
             <header class="person">
-              <div class="avatar">
+              <span class="avatar avatar-lg">
                 <!-- PLACEHOLDER: persona photo. Drop file at assets/people/ricardo.jpg -->
-                <div class="placeholder round"><span>R</span></div>
+                <span class="initial">R</span>
                 <img src="assets/people/ricardo.jpg" alt="Ricardo" onerror="this.remove()">
-              </div>
-              <div class="person-name"><h3>Ricardo</h3><p>Has the ball, the court and four friends</p></div>
+              </span>
+              <div class="person-name"><h3>Ricardo</h3><p>Has the ball and the court</p></div>
               <span class="chip">One player short</span>
             </header>
             <div class="chat">
-              <p class="chat-title">hoops 🏀 · 5 people</p>
-              <div class="bubble me">3v3 at 5? we need one more</div>
-              <div class="bubble"><b>Mateo</b><span>class till 6 😩</span></div>
-              <div class="bubble"><b>Sofi</b><span>can't, homework</span></div>
-              <div class="bubble"><b>Diego</b><span>anyone else??</span></div>
-              <p class="chat-read">Read by 11 · 4:51 PM</p>
+              <p class="chat-title">hoops · 5 people</p>
+              <p class="bubble bubble-own">3v3 at 5? we need one more</p>
+              <p class="bubble bubble-in"><b>Mateo</b>class till 6</p>
+              <p class="bubble bubble-in"><b>Sofi</b>can't, homework</p>
+              <p class="bubble bubble-in"><b>Diego</b>anyone else??</p>
             </div>
-            <p class="outcome">No game for Ricardo either.</p>
+            <p class="outcome">Ricardo's game gets called off.</p>
           </article>
+        </div>
+
+        <!-- Organizer HMW: refilling a no-show beats asking the group chat -->
+        <div class="refill reveal">
+          <p class="kicker">Someone doesn't show? Don't wait on the group chat.</p>
+          <div class="refill-row">
+            <div class="refill-col">
+              <span class="refill-label">Group chat</span>
+              <p class="bubble bubble-own">Diego bailed. anyone??</p>
+              <p class="refill-meta">Read by 11 · no reply</p>
+            </div>
+            <span class="refill-vs" aria-hidden="true">vs</span>
+            <div class="refill-col">
+              <span class="refill-label">masUNO</span>
+              <div class="toast">
+                <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
+                <div><strong>Spot filled</strong><span>Emilio joined 4 min after you reposted</span></div>
+              </div>
+              <p class="refill-meta">Nearby players get pinged the moment you repost</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ STAT (the one orange band) ============ -->
-    <section class="stat">
-      <div class="wrap stat-inner reveal">
-        <p class="stat-num">47%</p>
-        <div>
-          <p class="stat-text">of first-year students say making friends is harder than they expected.</p>
-          <p class="source">Survey of first-year students, cited by Hopelab, &ldquo;There Are a Lot of Lonely People in College.&rdquo;</p>
-        </div>
+    <!-- ============ PLUS ONE (the one green band) ============ -->
+    <section class="band-primary">
+      <div class="wrap band-inner reveal">
+        <p class="display plus-one">+1</p>
+        <p class="band-text">Más uno means plus one. Every game has room for one more.</p>
       </div>
     </section>
 
     <!-- ============ INSIGHT ============ -->
-    <section class="section dark insight">
+    <section class="section dark">
       <div class="wrap insight-grid">
         <div class="reveal">
-          <p class="kicker">Everyone sees a social problem. We see a coordination problem.</p>
-          <h2>Freshmen don't need an icebreaker. <em>They need a role.</em></h2>
-          <p class="insight-body">Walking up to strangers is hard. Walking up to people who asked for you isn't. masUNO puts open spots where the students who want them can see them, so nobody has to ask &ldquo;Can I join?&rdquo;</p>
+          <h2 class="display">You're not asking to join. <span class="tint">You're the one they need.</span></h2>
+          <p class="insight-body">Every game on masUNO is there because it needs one more. When you show up, you're the answer, not the interruption.</p>
         </div>
-        <figure class="quote reveal">
-          <blockquote>&ldquo;Hey, I'm Emilio. I'm your sixth player.&rdquo;</blockquote>
-          <figcaption>Having a role makes the first hello easy. The game gives the friendship somewhere to start.</figcaption>
+        <figure class="quote">
+          <p class="bubble bubble-in reveal"><b>Ricardo</b>Still need one for 3v3 at 6</p>
+          <div class="quote-row reveal">
+            <blockquote class="bubble bubble-own">&ldquo;Hey, I'm Emilio. I'm your sixth player.&rdquo;</blockquote>
+            <span class="avatar avatar-sm halo"><span class="initial">E</span><img src="assets/people/emilio.jpg" alt="" onerror="this.remove()"></span>
+          </div>
         </figure>
       </div>
     </section>
@@ -190,14 +259,15 @@
     <!-- ============ HOW IT WORKS ============ -->
     <section class="section" id="how">
       <div class="wrap">
-        <div class="section-head reveal">
-          <p class="kicker">How it works</p>
-          <h2>Two sides, one open spot</h2>
-        </div>
-
-        <div class="tabs reveal" role="tablist" aria-label="Choose your side">
-          <button class="tab" role="tab" id="tab-play" aria-controls="panel-play" aria-selected="true">I want to play</button>
-          <button class="tab" role="tab" id="tab-host" aria-controls="panel-host" aria-selected="false" tabindex="-1">I need players</button>
+        <div class="how-head reveal">
+          <div>
+            <p class="kicker">How it works</p>
+            <h2 class="display">Two sides, one open spot</h2>
+          </div>
+          <div class="tabs" role="tablist" aria-label="Choose your side">
+            <button class="tab" role="tab" id="tab-play" aria-controls="panel-play" aria-selected="true">I want to play</button>
+            <button class="tab" role="tab" id="tab-host" aria-controls="panel-host" aria-selected="false" tabindex="-1">I need players</button>
+          </div>
         </div>
 
         <!-- Player flow -->
@@ -205,84 +275,95 @@
           <ol class="wt-steps">
             <li><button type="button" class="wt-step" aria-pressed="true">
               <span class="num">1</span>
-              <span class="wt-text"><strong>See what's happening nearby</strong><span>Every pin is a game with an open spot, with walking time and start time. No account needed to look around.</span></span>
+              <span class="wt-text"><strong>See what's happening nearby</strong><span>Every pin is a game with an open spot.</span></span>
             </button></li>
             <li><button type="button" class="wt-step" aria-pressed="false">
               <span class="num">2</span>
-              <span class="wt-text"><strong>Check who's going, then RSVP</strong><span>See the host and the players before you commit. Verify once with your student email.</span></span>
+              <span class="wt-text"><strong>See who's going, with photos</strong><span>Know the faces before you show up.</span></span>
             </button></li>
             <li><button type="button" class="wt-step" aria-pressed="false">
               <span class="num">3</span>
-              <span class="wt-text"><strong>Show up expected</strong><span>You get the details, a group chat and a reminder. Walk in knowing who the host is.</span></span>
+              <span class="wt-text"><strong>Show up expected</strong><span>Details, a group chat and a reminder.</span></span>
             </button></li>
           </ol>
-          <figure class="phone wt-phone">
-            <div class="screen">
-              <!-- PLACEHOLDER: Figma/Xcode screens for the player flow, one layer per step -->
-              <div class="layer is-active">
-                <div class="placeholder"><span class="ph-tag">Figma / Xcode</span><strong>Map (home)</strong><code>assets/screens/map.png</code></div>
-                <img src="assets/screens/map.png" alt="Map of nearby games with walking times" onerror="this.remove()">
+          <div class="phone-col">
+            <p class="anno" aria-hidden="true">
+              <span>Tap a step, the screen follows</span>
+              <svg viewBox="0 0 170 90" fill="none"><path d="M 10 8 C 30 60 90 80 158 62"/><path d="M 144 50 L 160 62 L 142 74"/></svg>
+            </p>
+            <figure class="phone">
+              <div class="screen">
+                <!-- PLACEHOLDER: Figma/Xcode screens for the player flow, one layer per step -->
+                <div class="layer is-active">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Map (home)</strong><span>App screenshot goes here</span><code>assets/screens/map.png</code></div>
+                  <img src="assets/screens/map.png" alt="Map of nearby games with walking times" onerror="this.remove()">
+                </div>
+                <div class="layer">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Event detail</strong><span>App screenshot goes here</span><code>assets/screens/event-detail.png</code></div>
+                  <img src="assets/screens/event-detail.png" alt="Game details with host, players, spots left and join button" onerror="this.remove()">
+                </div>
+                <div class="layer">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Your plans</strong><span>App screenshot goes here</span><code>assets/screens/your-plans.png</code></div>
+                  <img src="assets/screens/your-plans.png" alt="Your plans with upcoming games and group chat" onerror="this.remove()">
+                </div>
               </div>
-              <div class="layer">
-                <div class="placeholder"><span class="ph-tag">Figma / Xcode</span><strong>Event detail</strong><code>assets/screens/event-detail.png</code></div>
-                <img src="assets/screens/event-detail.png" alt="Game details with host, players, spots left and RSVP button" onerror="this.remove()">
-              </div>
-              <div class="layer">
-                <div class="placeholder"><span class="ph-tag">Figma / Xcode</span><strong>Your plans</strong><code>assets/screens/your-plans.png</code></div>
-                <img src="assets/screens/your-plans.png" alt="Your plans with upcoming games and group chat" onerror="this.remove()">
-              </div>
-            </div>
-          </figure>
+            </figure>
+          </div>
         </div>
 
         <!-- Host flow -->
         <div class="panel walkthrough" role="tabpanel" id="panel-host" aria-labelledby="tab-host" hidden>
+          <div class="wt-col">
           <ol class="wt-steps">
             <li><button type="button" class="wt-step" aria-pressed="true">
               <span class="num">1</span>
-              <span class="wt-text"><strong>Post in under a minute</strong><span>What, when, where and how many spots. Mark it casual or competitive.</span></span>
+              <span class="wt-text"><strong>Post in under a minute</strong><span>What, when, where and how many spots.</span></span>
             </button></li>
             <li><button type="button" class="wt-step" aria-pressed="false">
               <span class="num">2</span>
-              <span class="wt-text"><strong>Manage it in one place</strong><span>See who's coming and chat with the group, including people you haven't met yet.</span></span>
+              <span class="wt-text"><strong>Manage it in one place</strong><span>See who's coming and chat with the group.</span></span>
             </button></li>
             <li><button type="button" class="wt-step" aria-pressed="false">
               <span class="num">3</span>
-              <span class="wt-text"><strong>Someone drops? Repost in one tap</strong><span>The spot goes back on the map, and everyone who bookmarked your game hears about it.</span></span>
+              <span class="wt-text"><strong>No-show? Refill it before tip-off</strong><span>Tap repost. Nearby players and anyone who bookmarked your game get pinged right away.</span></span>
             </button></li>
           </ol>
-          <figure class="phone wt-phone">
-            <div class="screen">
-              <!-- PLACEHOLDER: Figma/Xcode screens for the host flow, one layer per step -->
-              <div class="layer is-active">
-                <div class="placeholder"><span class="ph-tag">Figma / Xcode</span><strong>Create event</strong><code>assets/screens/create-event.png</code></div>
-                <img src="assets/screens/create-event.png" alt="Create event form" onerror="this.remove()">
+          <p class="host-cta"><span>Hosting games?</span> <a href="#join" class="btn btn-primary" data-role="host">Get early access as a host</a></p>
+          </div>
+          <div class="phone-col">
+            <figure class="phone">
+              <div class="screen">
+                <!-- PLACEHOLDER: Figma/Xcode screens for the host flow, one layer per step -->
+                <div class="layer is-active">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Create event</strong><span>App screenshot goes here</span><code>assets/screens/create-event.png</code></div>
+                  <img src="assets/screens/create-event.png" alt="Create event form" onerror="this.remove()">
+                </div>
+                <div class="layer">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>You're the host</strong><span>App screenshot goes here</span><code>assets/screens/host.png</code></div>
+                  <img src="assets/screens/host.png" alt="Host view with players and group chat" onerror="this.remove()">
+                </div>
+                <div class="layer">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Repost a spot</strong><span>App screenshot goes here</span><code>assets/screens/repost.png</code></div>
+                  <img src="assets/screens/repost.png" alt="Reposting an open spot after someone drops" onerror="this.remove()">
+                </div>
               </div>
-              <div class="layer">
-                <div class="placeholder"><span class="ph-tag">Figma / Xcode</span><strong>You're the host</strong><code>assets/screens/host.png</code></div>
-                <img src="assets/screens/host.png" alt="Host view with players and group chat" onerror="this.remove()">
-              </div>
-              <div class="layer">
-                <div class="placeholder"><span class="ph-tag">Figma / Xcode</span><strong>Repost a spot</strong><code>assets/screens/repost.png</code></div>
-                <img src="assets/screens/repost.png" alt="Reposting an open spot after someone drops" onerror="this.remove()">
-              </div>
-            </div>
-          </figure>
+            </figure>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ============ OPEN SPOTS DEMO ============ -->
-    <section class="section section-alt">
+    <section class="section section-card">
       <div class="wrap demo">
         <div class="demo-copy reveal">
           <p class="kicker">Open spots</p>
-          <h2>The map only shows games you can join</h2>
-          <p class="muted">No walking over to a full court. And when a spot opens up, it goes to the people who already wanted in.</p>
+          <h2 class="display">The map only shows games you can join</h2>
+          <p class="muted">No walking over to a full court.</p>
           <div class="demo-steps">
             <button type="button" class="demo-step" data-state="open" aria-pressed="true">
               <span class="icon-circle"><svg class="i"><use href="#i-bookmark"/></svg></span>
-              <span><strong>Game is open</strong><span>RSVP, or bookmark it to keep an eye on it</span></span>
+              <span><strong>Game is open</strong><span>Join or bookmark it</span></span>
             </button>
             <button type="button" class="demo-step" data-state="full" aria-pressed="false">
               <span class="icon-circle"><svg class="i"><use href="#i-eyeoff"/></svg></span>
@@ -290,38 +371,39 @@
             </button>
             <button type="button" class="demo-step" data-state="drop" aria-pressed="false">
               <span class="icon-circle"><svg class="i"><use href="#i-bell"/></svg></span>
-              <span><strong>Someone drops</strong><span>It comes back, and bookmarkers get a heads-up</span></span>
+              <span><strong>Someone no-shows</strong><span>The host reposts, and nearby players get pinged</span></span>
             </button>
           </div>
         </div>
 
         <div class="demo-stage reveal" data-state="open">
-          <div class="demo-map" aria-hidden="true">
-            <span class="pin p1"></span><span class="pin p2"></span><span class="pin p3"></span>
+          <div class="map" aria-hidden="true">
+            <span class="street s1"></span><span class="street s2"></span><span class="street s3"></span>
+            <span class="pin p1"></span><span class="pin p2"></span>
+            <span class="pin pin-main"><span class="ping"></span></span>
           </div>
           <div class="toast demo-toast" aria-hidden="true">
-            <span class="toast-icon"><svg class="i"><use href="#i-bell"/></svg></span>
-            <div><strong>A spot just opened</strong><span>3v3 at the rec center · 6:00 PM</span></div>
+            <span class="icon-circle"><svg class="i"><use href="#i-bell"/></svg></span>
+            <div><strong>A spot just opened near you</strong><span>3v3 at the rec center · starts in 10 min</span></div>
           </div>
-          <article class="game-card demo-card" aria-hidden="true">
+          <article class="card game-card demo-card" aria-hidden="true">
             <div class="gc-top">
               <span class="sport"><svg class="i"><use href="#i-ball"/></svg></span>
               <div class="gc-title"><strong>3v3 at the rec center</strong><span>Today · 6:00 PM · 4 min walk</span></div>
-              <span class="tag">Casual</span>
             </div>
             <div class="gc-people">
-              <div class="stack"><span class="av a1">R</span><span class="av a2">M</span><span class="av a3">S</span><span class="av a4">D</span><span class="av a5">L</span><span class="av slot"><b class="slot-open">+1</b><b class="slot-full">E</b></span></div>
+              <div class="stack"><span class="av">R</span><span class="av">M</span><span class="av">S</span><span class="av">D</span><span class="av">L</span><span class="av slot"><b class="slot-open">+1</b><b class="slot-full">E</b></span></div>
               <span class="spots" data-spots>1 spot left</span>
             </div>
+            <p class="gc-faces"><svg class="i"><use href="#i-users"/></svg>See everyone's face before you go</p>
             <div class="gc-foot">
               <span>Hosted by <b>Ricardo</b></span>
-              <span class="fake-btn">RSVP</span>
+              <span class="fake-btn">Join game</span>
             </div>
           </article>
           <p class="demo-caption" data-caption role="status">On the map</p>
         </div>
       </div>
-      <p class="wrap note reveal">Games go up 1–2 days ahead, so there's time to plan around them.</p>
     </section>
 
     <!-- ============ LOW PRESSURE ============ -->
@@ -329,69 +411,65 @@
       <div class="wrap">
         <div class="section-head reveal">
           <p class="kicker">Low pressure, by design</p>
-          <h2>Just show up and play</h2>
+          <h2 class="display">Just show up and play</h2>
         </div>
         <div class="grid-4">
-          <div class="feature reveal">
+          <div class="feature lift reveal">
             <span class="icon-circle"><svg class="i"><use href="#i-shield"/></svg></span>
             <h3>Students only</h3>
-            <p>Everyone signs in with a university email, so you're only meeting other students.</p>
+            <p>Verified with a university email.</p>
           </div>
-          <div class="feature reveal">
+          <div class="feature lift reveal">
             <span class="icon-circle"><svg class="i"><use href="#i-users"/></svg></span>
-            <h3>See who's going</h3>
-            <p>The host and players are right there before you commit.</p>
+            <h3>No walking in cold</h3>
+            <p>See everyone's face before you go.</p>
           </div>
-          <div class="feature reveal">
-            <span class="icon-circle"><svg class="i"><use href="#i-sliders"/></svg></span>
-            <h3>Casual or competitive</h3>
-            <p>Every game says which, so you know what you're walking into.</p>
+          <div class="feature lift reveal">
+            <span class="icon-circle"><svg class="i"><use href="#i-ball"/></svg></span>
+            <h3>One game at a time</h3>
+            <p>No team to join, no season to commit to.</p>
           </div>
-          <div class="feature reveal">
+          <div class="feature lift reveal">
             <span class="icon-circle"><svg class="i"><use href="#i-pin"/></svg></span>
             <h3>Public places</h3>
-            <p>Campus courts and the rec center. One game, not a whole season.</p>
+            <p>Campus courts and the rec center.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ============ FAQ ============ -->
-    <section class="section section-alt" id="faq">
+    <section class="section section-card" id="faq">
       <div class="wrap faq-grid">
         <div class="reveal">
           <p class="kicker">FAQ</p>
-          <h2>Questions</h2>
-          <p class="muted">Something else on your mind? Join the waitlist and reply to our first email. It goes straight to the four of us.</p>
+          <h2 class="display">Questions</h2>
+          <p class="muted">Anything else? Reply to our first email.</p>
         </div>
         <div class="faq reveal">
-          <details>
-            <summary>Why not just use GroupMe or Instagram?</summary>
-            <p>Group chats only reach people you already know. That's the problem: Emilio isn't in Ricardo's group chat. masUNO is built around open spots, so a group can reach new people and you can join without having to ask.</p>
+          <details open>
+            <summary>Why not just use a group chat?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
+            <p>Group chats only reach people you already know. Emilio isn't in Ricardo's.</p>
           </details>
           <details>
-            <summary>What if I'm not good enough?</summary>
-            <p>Every game says whether it's casual or competitive. And the group posted because they wanted another player, so you're arriving as someone they asked for, not someone interrupting.</p>
+            <summary>Do I need to be good?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
+            <p>It's pickup, not tryouts. The game is posted because it needs one more, and that's you.</p>
           </details>
           <details>
-            <summary>Is it safe?</summary>
-            <p>Everyone verifies with a university email, you can see who's hosting and who's going before you show up, and games happen in public places like campus courts and the rec center.</p>
+            <summary>Is it safe?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
+            <p>Students only, public places, and you see who's going first.</p>
           </details>
           <details>
-            <summary>What about no-shows?</summary>
-            <p>Everyone gets a reminder before the game. If someone drops, the host reposts the spot in one tap and everyone who bookmarked the game is notified.</p>
+            <summary>What about no-shows?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
+            <p>The host reposts the spot in one tap, and nearby players and bookmarkers hear about it right away. Way faster than &ldquo;anyone??&rdquo; in the group chat.</p>
           </details>
           <details>
-            <summary>I have an Android phone. Can I use it?</summary>
-            <p>We're starting on iOS. Join the waitlist anyway and we'll let you know when there's a way in for you.</p>
+            <summary>What about Android?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
+            <p>We're starting on iOS. Join the waitlist and we'll let you know.</p>
           </details>
           <details>
-            <summary>What's coming after launch?</summary>
-            <p>We're starting with sports that need a set number of players: basketball, soccer and volleyball. Next up are club events, organizer approval, bringing a friend, and running it back with the same group every week.</p>
-          </details>
-          <details>
-            <summary>What do you do with my email?</summary>
-            <p>We use it to tell you when masUNO launches near you, and that's it. We don't sell it or use it for ads, and you can ask us to delete it anytime. The details are in our <a href="privacy.html">privacy notice</a>.</p>
+            <summary>What do you do with my email?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
+            <p>We only use it to tell you when masUNO launches near you. We never sell it, and you can ask us to delete it anytime. <a href="privacy.html">Privacy notice</a></p>
           </details>
         </div>
       </div>
@@ -401,20 +479,17 @@
     <section class="cta dark" id="join">
       <div class="wrap cta-inner">
         <div class="pair reveal" aria-hidden="true">
-          <div class="avatar">
-            <div class="placeholder round"><span>E</span></div>
-            <img src="assets/people/emilio.jpg" alt="" onerror="this.remove()">
-          </div>
-          <span class="pair-line"></span>
-          <span class="pair-node"><svg class="i"><use href="#i-ball"/></svg></span>
-          <span class="pair-line"></span>
-          <div class="avatar">
-            <div class="placeholder round"><span>R</span></div>
-            <img src="assets/people/ricardo.jpg" alt="" onerror="this.remove()">
-          </div>
+          <svg class="ribbon ribbon-pair" viewBox="0 0 560 140" fill="none" preserveAspectRatio="none">
+            <path pathLength="1" d="M 500 70 C 440 10 380 10 340 60" stroke="var(--sports)"/>
+            <path pathLength="1" d="M 340 60 C 300 120 250 120 220 70" stroke="var(--coffee)"/>
+            <path pathLength="1" d="M 220 70 C 180 10 120 20 60 70" stroke="var(--games)"/>
+          </svg>
+          <span class="avatar avatar-xl halo pair-e"><span class="initial">E</span><img src="assets/people/emilio.jpg" alt="" onerror="this.remove()"></span>
+          <span class="avatar avatar-xl pair-r"><span class="initial">R</span><img src="assets/people/ricardo.jpg" alt="" onerror="this.remove()"></span>
         </div>
-        <p class="payoff reveal">Emilio found his game. <span>Ricardo found his player.</span></p>
-        <h2 class="cta-title reveal">Your game is out there. Be the first to find it.</h2>
+        <p class="payoff reveal">Emilio found his game. <span class="tint">Ricardo found his player.</span></p>
+        <h2 class="display cta-title reveal">Your game is out there</h2>
+        <p class="lede reveal">Be the first to find it.</p>
 
         <div class="join-wrap reveal">
           <form class="join" novalidate>
@@ -428,7 +503,7 @@
           </form>
           <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
           <!-- Short privacy notice (aviso de privacidad simplificado) -->
-          <p class="notice">masUNO uses your email only to add you to the waitlist and tell you when we launch near you. <a href="privacy.html">Privacy notice</a></p>
+          <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
         </div>
       </div>
 
