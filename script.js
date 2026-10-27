@@ -24,7 +24,7 @@ const MSG = {
   "demo.full.spots": "Full",
   "demo.full.caption": "Full games leave the map",
   "demo.drop.spots": "1 spot left",
-  "demo.drop.caption": "Back on the map",
+  "demo.drop.caption": "Reposted, nearby players pinged",
 };
 const t = (key, vars = {}) => (MSG[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
 const render = (el, key, vars) => { el.textContent = t(key, vars); };
@@ -206,6 +206,12 @@ joinForms.forEach((form) => {
     }
   });
 });
+
+// Host CTA: jump to the final signup with "Fill my games" pre-selected for step 2
+document.querySelectorAll("a[data-role]").forEach((a) => a.addEventListener("click", () => {
+  detailsForm.elements.role.value = a.dataset.role;
+  document.getElementById("cta-email").focus({ preventScroll: true });
+}));
 
 dialog.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => dialog.close()));
 dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); }); // click on backdrop

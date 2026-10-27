@@ -22,13 +22,13 @@ Every screenshot and photo spot shows a placeholder with its expected file path 
 | File | What it shows | Used in |
 |---|---|---|
 | `assets/screens/map.png` | Map (home) | "I want to play" step 1 |
-| `assets/screens/event-detail.png` | Event detail with RSVP | "I want to play" step 2 |
+| `assets/screens/event-detail.png` | Event detail with who's going (photos) | "I want to play" step 2 |
 | `assets/screens/your-plans.png` | Your plans | "I want to play" step 3 |
 | `assets/screens/create-event.png` | Create event | "I need players" step 1 |
 | `assets/screens/host.png` | You're the host | "I need players" step 2 |
-| `assets/screens/repost.png` | Reposting a spot after someone drops | "I need players" step 3 |
-| `assets/people/emilio.jpg` | Emilio (square crop) | Story card and closing section |
-| `assets/people/ricardo.jpg` | Ricardo (square crop) | Story card and closing section |
+| `assets/screens/repost.png` | Reposting a spot after a no-show | "I need players" step 3 |
+| `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
+| `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
 | `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
 
@@ -64,7 +64,9 @@ If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anythin
 
 </details>
 
-**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a popup showing their place in line ("You're #42 on the list") with two optional questions: player or host, campus, and sports. Answering fills in the same row.
+**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a popup showing their place in line ("You're #42 on the list") with three optional questions: player or host, campus, and sports. Answering fills in the same row.
+
+The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role.
 
 **What gets saved:** join time, email, role, campus, sports, source, and when details were added. Source comes from `?ref=` or `?utm_source=` in the link, so you can tell signups apart, for example `…/?ref=clubfair` or `…/?ref=instagram`. A hidden Token column stops anyone from editing someone else's row.
 
@@ -96,6 +98,12 @@ The page collects emails, so Mexican data-protection law (LFPDPPP) requires a pr
 - Have someone who knows Mexican data-protection law review it.
 - When someone asks to see, correct or delete their data, find their row in the Sheet and update or delete it.
 
+## Writing copy for the page
+
+- **Never frame people as lonely.** Don't lead with loneliness stats or "making friends is hard." The angle is the opposite: the game is looking for *you*, and you're the player they need.
+- **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: the host taps Repost, the spot goes back on the map, and nearby players and bookmarkers get a push.
+- **Both sides should be visible.** Players are the main audience, but the host's problem (refilling a no-show faster than the group chat) appears in the hero, the story section, the "I need players" tab and the FAQ. Keep it there when you change things.
+
 ## Still to decide
 
 These come from the open decisions in DESIGN.md and show up on the page:
@@ -103,3 +111,4 @@ These come from the open decisions in DESIGN.md and show up on the page:
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
 - **Language:** the page is English only for now. A Spanish version is planned for the Mexico launch. All the copy is in `index.html`, plus the runtime messages at the top of `script.js`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
+- **Example numbers:** "4 min after repost" (hero notification and the group chat vs. masUNO block) is a placeholder. Swap in a real fill time from testing.
