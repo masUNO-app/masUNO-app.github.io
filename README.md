@@ -21,7 +21,7 @@ The page loads each image from a fixed file path. Until a file exists, its spot 
 
 **Screenshots (all added).** Taken from the iOS app's simulator build (iPhone 17 Pro, branch `green-design-system`, mock data), scaled to 888 px wide and reduced to a 256-color palette so the page stays light. To update one, overwrite the file under the same name.
 
-To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar: `xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100`.
+To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar (`xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100`). Capture with `xcrun simctl io booted screenshot --mask=black shot.png` so the Dynamic Island is drawn; the page's 40 px screen corners hide the black mask corners.
 
 | File | What it shows | Used in |
 |---|---|---|
