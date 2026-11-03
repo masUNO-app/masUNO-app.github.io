@@ -11,13 +11,15 @@ privacy.html        privacy notice, linked under each form and in the footer
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
 script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
-assets/screens/     app screenshots from Figma or Xcode
+assets/screens/     app screenshots used on the page (only files index.html references)
 assets/people/      persona photos
 ```
 
-## 1. Add the screenshots and photos
+## 1. Screenshots and photos
 
-Every screenshot and photo spot shows a placeholder with its expected file path (persona photos show initials until then). Save a file at that path and it replaces the placeholder automatically; you don't need to edit any HTML.
+The page loads each image from a fixed file path. Until a file exists, its spot shows a placeholder with that path (persona photos show initials). Saving a file at the path replaces the placeholder automatically, and you don't need to edit any HTML.
+
+**Screenshots (all added).** To update one, overwrite the file with a new export under the same name.
 
 | File | What it shows | Used in |
 |---|---|---|
@@ -27,6 +29,11 @@ Every screenshot and photo spot shows a placeholder with its expected file path 
 | `assets/screens/create-event.png` | Create event | "I need players" step 1 |
 | `assets/screens/host.png` | You're the host | "I need players" step 2 |
 | `assets/screens/repost.png` | Reposting a spot after a no-show | "I need players" step 3 |
+
+**Still missing:**
+
+| File | What it shows | Used in |
+|---|---|---|
 | `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
 | `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
@@ -36,6 +43,8 @@ Export screens at full iPhone resolution (1179×2556 from the iPhone 15/16 Pro s
 
 - **Xcode:** run the app in the simulator, then press Cmd+S.
 - **Figma:** select the frame, then Export → PNG at 3x.
+
+Only commit the screenshots the page uses. Keep spare or work-in-progress exports outside the repo.
 
 ## 2. The waitlist (Google Sheets)
 
