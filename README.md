@@ -19,16 +19,18 @@ assets/people/      persona photos
 
 The page loads each image from a fixed file path. Until a file exists, its spot shows a placeholder with that path (persona photos show initials). Saving a file at the path replaces the placeholder automatically, and you don't need to edit any HTML.
 
-**Screenshots (all added).** To update one, overwrite the file with a new export under the same name.
+**Screenshots (all added).** Taken from the iOS app's simulator build (iPhone 17 Pro, branch `green-design-system`, mock data), scaled to 888 px wide and reduced to a 256-color palette so the page stays light. To update one, overwrite the file under the same name.
+
+To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar: `xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100`.
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/screens/map.png` | Map (home) | "I want to play" step 1 |
-| `assets/screens/event-detail.png` | Event detail with who's going (photos) | "I want to play" step 2 |
-| `assets/screens/your-plans.png` | Your plans | "I want to play" step 3 |
-| `assets/screens/create-event.png` | Create event | "I need players" step 1 |
-| `assets/screens/host.png` | You're the host | "I need players" step 2 |
-| `assets/screens/repost.png` | Reposting a spot after a no-show | "I need players" step 3 |
+| `assets/screens/map.png` | Map (home) with pins around Tec | "I want to play" step 1 |
+| `assets/screens/event-detail.png` | Event detail (After-work hoops) with who's going | "I want to play" step 2 |
+| `assets/screens/your-plans.png` | Me · Going | "I want to play" step 3 |
+| `assets/screens/create-event.png` | Add game form, filled in | "I need players" step 1 |
+| `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
+| `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
 
 **Still missing:**
 
