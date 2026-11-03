@@ -112,7 +112,7 @@ The page collects emails, so Mexican data-protection law (LFPDPPP) requires a pr
 ## Writing copy for the page
 
 - **Never frame people as lonely.** Don't lead with loneliness stats or "making friends is hard." The angle is the opposite: the game is looking for *you*, and you're the player they need.
-- **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: the host taps Repost, the spot goes back on the map, and nearby players and bookmarkers get a push.
+- **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: when a player drops out of a full game, the app bumps the game back to the top of the map on its own (the "Auto-repost" toggle in the Add game form, on by default). There's no Repost button for hosts to tap, and push notifications to nearby players or bookmarkers aren't in the first release, so don't mention pings or notifications.
 - **Both sides should be visible.** Players are the main audience, but the host's problem (refilling a no-show faster than the group chat) appears in the hero, the story section, the "I need players" tab and the FAQ. Keep it there when you change things.
 
 ## Still to decide
@@ -122,4 +122,4 @@ These come from the open decisions in DESIGN.md and show up on the page:
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
 - **Language:** the page is English only for now. A Spanish version is planned for the Mexico launch. All the copy is in `index.html`, plus the runtime messages at the top of `script.js`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
-- **Example numbers:** "4 min after repost" (hero notification and the group chat vs. masUNO block) is a placeholder. Swap in a real fill time from testing.
+- **Example numbers:** "4 min after repost" (hero notification) and "4 min after it auto-reposted" (the group chat vs. masUNO block) are placeholders. Swap in a real fill time from testing.
