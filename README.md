@@ -19,9 +19,9 @@ assets/people/      persona photos
 
 The page loads each image from a fixed file path. Until a file exists, its spot shows a placeholder with that path (persona photos show initials). Saving a file at the path replaces the placeholder automatically, and you don't need to edit any HTML.
 
-**Screenshots (all added).** Taken from the iOS app's simulator build (iPhone 17 Pro, branch `green-design-system`, mock data), scaled to 888 px wide and reduced to a 256-color palette so the page stays light. To update one, overwrite the file under the same name.
+**Screenshots (all added).** Taken from the iOS app's simulator build (iPhone 18 Pro, iOS 27.2, branch `green-design-system`, mock data), scaled to 888 px wide and reduced to a 256-color palette so the page stays light. To update one, overwrite the file under the same name.
 
-To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar (`xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100`). Capture with `xcrun simctl io booted screenshot --mask=black shot.png` so the Dynamic Island is drawn; the page's 40 px screen corners hide the black mask corners.
+To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar (`xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100 --dataNetwork wifi --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4`). Capture with `xcrun simctl io booted screenshot --mask=black shot.png` so the Dynamic Island is drawn; the page's 47 px screen corners hide the black mask corners.
 
 | File | What it shows | Used in |
 |---|---|---|
@@ -41,7 +41,7 @@ To retake them from the `ios` repo, run a Debug build with `-screen` set to `map
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
 | `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
 
-Export screens at full iPhone resolution (1179×2556 from the iPhone 15/16 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
+Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
 - **Xcode:** run the app in the simulator, then press Cmd+S.
 - **Figma:** select the frame, then Export → PNG at 3x.
