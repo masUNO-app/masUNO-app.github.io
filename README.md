@@ -102,9 +102,8 @@ Use lowercase labels with no spaces, and reuse the same label for the same place
 
 ## Before launching in Mexico
 
-The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `privacy.html` is a first draft, and every form has a short notice linking to it. Before launch:
+The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `privacy.html` is a short notice, and every form has a short notice linking to it. Before launch:
 
-- Fill in the highlighted placeholders in `privacy.html`: who is responsible for the data, their address in Mexico, a privacy contact email, and how long you keep the data.
 - Add a Spanish version (aviso de privacidad). That's the version that counts in Mexico.
 - Have someone who knows Mexican data-protection law review it.
 - When someone asks to see, correct or delete their data, find their row in the Sheet and update or delete it.
