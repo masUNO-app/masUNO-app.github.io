@@ -215,16 +215,43 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 
 .hero-toast { position: absolute; right: -2%; top: 43%; width: 240px; box-shadow: var(--shadow-dialog); rotate: -3deg; }
 
+.ribbon-phone { display: none; }
+
 @media (max-width: 560px) {
-  .people-card { width: 180px; padding: 12px; }
-  .pc-msg { font-size: 13px; }
-  .float-game { left: 22%; }
   .game-card { width: 250px; }
-  .sticker { width: 100px; height: 100px; top: 40%; }
-  .you { transform: scale(.8); }
-  .hero-toast { width: 200px; right: -4%; top: 44%; padding: 10px 12px; }
-  .hero-toast .icon-circle { width: 32px; height: 32px; }
 }
+
+/* Phones: the cards can't shrink with the stage and stay readable, so they get their own
+   350×490 layout. Zoom scales it as a whole to fit the screen. */
+@media (max-width: 640px) {
+  .hero-visual { flex-basis: 100%; }
+  .hero-stage { width: 350px; flex: none; aspect-ratio: auto; height: 490px; zoom: 1.2; }
+  .ribbon-wide { display: none; }
+  .ribbon-phone { display: block; }
+  .ribbon-phone path { stroke-width: 18; }
+
+  .float-host { left: 0; top: 4px; }
+  .people-card { width: 200px; padding: 12px; gap: 10px; }
+  .pc-top { gap: 8px; }
+  .pc-top .avatar { width: 40px; height: 40px; flex: none; }
+  .people-card .chip { font-size: 11px; padding: 3px 8px; }
+  .pc-msg { font-size: 13px; padding: 8px 12px; }
+
+  .you { left: 249px; top: 22px; width: 72px; }
+  .avatar-you { width: 72px; height: 72px; font-size: 26px; }
+
+  .sticker { left: 0; top: 128px; width: 96px; height: 96px; }
+  .sticker > .i { width: 26px; height: 26px; }
+
+  .hero-toast { left: 155px; right: auto; top: 150px; width: 195px; padding: 10px 12px; }
+  .hero-toast .icon-circle { width: 32px; height: 32px; }
+
+  .float-game { left: 30px; top: 242px; }
+  .float-game .game-card { width: 300px; rotate: 3deg; }
+}
+@media (max-width: 479px) { .hero-stage { zoom: 1; } }
+@media (max-width: 389px) { .hero-stage { zoom: .9; } }
+@media (max-width: 354px) { .hero-stage { zoom: .8; } }
 
 /* ---------- Marquee ---------- */
 .marquee { background: var(--primary-tint); padding: 22px 0; overflow: hidden; border-block: 1px solid var(--line); }
