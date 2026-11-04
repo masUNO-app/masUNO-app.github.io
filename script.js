@@ -24,7 +24,7 @@ const MSG = {
   "demo.full.spots": "Full",
   "demo.full.caption": "Full games leave the map",
   "demo.drop.spots": "1 spot left",
-  "demo.drop.caption": "Reposted, nearby players pinged",
+  "demo.drop.caption": "Reposted to the top of the map",
 };
 const t = (key, vars = {}) => (MSG[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
 const render = (el, key, vars) => { el.textContent = t(key, vars); };

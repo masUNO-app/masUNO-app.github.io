@@ -222,9 +222,9 @@
               <span class="refill-label">masUNO</span>
               <div class="toast">
                 <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
-                <div><strong>Spot filled</strong><span>Emilio joined 4 min after you reposted</span></div>
+                <div><strong>Spot filled</strong><span>Emilio joined 4 min after it auto-reposted</span></div>
               </div>
-              <p class="refill-meta">Nearby players get pinged the moment you repost</p>
+              <p class="refill-meta">masUNO bumps your game back to the top of the map on its own</p>
             </div>
           </div>
         </div>
@@ -296,15 +296,15 @@
                 <!-- PLACEHOLDER: Figma/Xcode screens for the player flow, one layer per step -->
                 <div class="layer is-active">
                   <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Map (home)</strong><span>App screenshot goes here</span><code>assets/screens/map.png</code></div>
-                  <img src="assets/screens/map.png" alt="Map of nearby games with walking times" onerror="this.remove()">
+                  <img src="assets/screens/map.png" alt="Map of pickup games near Tec" onerror="this.remove()">
                 </div>
                 <div class="layer">
                   <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Event detail</strong><span>App screenshot goes here</span><code>assets/screens/event-detail.png</code></div>
-                  <img src="assets/screens/event-detail.png" alt="Game details with host, players, spots left and join button" onerror="this.remove()">
+                  <img src="assets/screens/event-detail.png" alt="Game details with the host, who's going, spots left and a Join game button" onerror="this.remove()">
                 </div>
                 <div class="layer">
-                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Your plans</strong><span>App screenshot goes here</span><code>assets/screens/your-plans.png</code></div>
-                  <img src="assets/screens/your-plans.png" alt="Your plans with upcoming games and group chat" onerror="this.remove()">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Me · Going</strong><span>App screenshot goes here</span><code>assets/screens/your-plans.png</code></div>
+                  <img src="assets/screens/your-plans.png" alt="Me screen with upcoming games you're going to and their group chats" onerror="this.remove()">
                 </div>
               </div>
             </figure>
@@ -325,7 +325,7 @@
             </button></li>
             <li><button type="button" class="wt-step" aria-pressed="false">
               <span class="num">3</span>
-              <span class="wt-text"><strong>No-show? Refill it before tip-off</strong><span>Tap repost. Nearby players and anyone who bookmarked your game get pinged right away.</span></span>
+              <span class="wt-text"><strong>No-show? Refill it before tip-off</strong><span>When someone drops out, masUNO bumps your game back to the top of the map so the spot fills.</span></span>
             </button></li>
           </ol>
           <p class="host-cta"><span>Hosting games?</span> <a href="#join" class="btn btn-primary" data-role="host">Get early access as a host</a></p>
@@ -335,16 +335,16 @@
               <div class="screen">
                 <!-- PLACEHOLDER: Figma/Xcode screens for the host flow, one layer per step -->
                 <div class="layer is-active">
-                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Create event</strong><span>App screenshot goes here</span><code>assets/screens/create-event.png</code></div>
-                  <img src="assets/screens/create-event.png" alt="Create event form" onerror="this.remove()">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Add game</strong><span>App screenshot goes here</span><code>assets/screens/create-event.png</code></div>
+                  <img src="assets/screens/create-event.png" alt="Add game form with the Auto-repost toggle" onerror="this.remove()">
                 </div>
                 <div class="layer">
-                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>You're the host</strong><span>App screenshot goes here</span><code>assets/screens/host.png</code></div>
-                  <img src="assets/screens/host.png" alt="Host view with players and group chat" onerror="this.remove()">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Me · Hosting</strong><span>App screenshot goes here</span><code>assets/screens/host.png</code></div>
+                  <img src="assets/screens/host.png" alt="Me screen showing the games you're hosting, with Edit and group chat" onerror="this.remove()">
                 </div>
                 <div class="layer">
-                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Repost a spot</strong><span>App screenshot goes here</span><code>assets/screens/repost.png</code></div>
-                  <img src="assets/screens/repost.png" alt="Reposting an open spot after someone drops" onerror="this.remove()">
+                  <div class="placeholder"><span class="ph-icon"><svg class="i"><use href="#i-image"/></svg></span><strong>Auto-repost</strong><span>App screenshot goes here</span><code>assets/screens/repost.png</code></div>
+                  <img src="assets/screens/repost.png" alt="A hosted game automatically reposted after a player dropped out" onerror="this.remove()">
                 </div>
               </div>
             </figure>
@@ -371,7 +371,7 @@
             </button>
             <button type="button" class="demo-step" data-state="drop" aria-pressed="false">
               <span class="icon-circle"><svg class="i"><use href="#i-bell"/></svg></span>
-              <span><strong>Someone no-shows</strong><span>The host reposts, and nearby players get pinged</span></span>
+              <span><strong>Someone no-shows</strong><span>The game pops back to the top of the map</span></span>
             </button>
           </div>
         </div>
@@ -461,7 +461,7 @@
           </details>
           <details>
             <summary>What about no-shows?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
-            <p>The host reposts the spot in one tap, and nearby players and bookmarkers hear about it right away. Way faster than &ldquo;anyone??&rdquo; in the group chat.</p>
+            <p>When someone drops out of a full game, masUNO bumps it back to the top of the map on its own, so the open spot gets seen. Way faster than &ldquo;anyone??&rdquo; in the group chat.</p>
           </details>
           <details>
             <summary>What about Android?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
