@@ -53,7 +53,7 @@ Only commit the screenshots the page uses. Keep spare or work-in-progress export
 
 The Apps Script is deployed as a web app, and its `/exec` URL is set as `WAITLIST_ENDPOINT` at the top of `script.js`. Opening that URL in a browser should show `{"ok":true,"service":"masUNO waitlist"}`, which is a quick way to check it's still up.
 
-**Changing `Code.gs`:** paste the new code into the Sheet's **Extensions → Apps Script**, save, then use **Deploy → Manage deployments → Edit (pencil) → Version: New version**. Don't create a new deployment: that gives you a different URL, and the live site would keep posting to the old one.
+**Changing `Code.gs`:** paste the new code into the Sheet's **Extensions → Apps Script**, save, then use **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**. Saving alone doesn't change the live site. Don't create a new deployment: that gives you a different URL, and the live site would keep posting to the old one.
 
 **Working with the Sheet:**
 
@@ -80,7 +80,7 @@ If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anythin
 
 The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role.
 
-**What gets saved:** join time, email, role, campus, sports, source, and when details were added. Source comes from `?ref=` or `?utm_source=` in the link, so you can tell signups apart, for example `…/?ref=clubfair` or `…/?ref=instagram`. A hidden Token column stops anyone from editing someone else's row.
+**What gets saved:** join time, email, role, campus, sports, source, when details were added, and country. Source comes from `?ref=` or `?utm_source=` in the link, so you can tell signups apart, for example `…/?ref=clubfair` or `…/?ref=instagram`. A hidden Token column stops anyone from editing someone else's row. Country (`Mexico`, `USA` or `Other`) is an estimate from the browser's time zone, so it shows where the device is at signup, not where someone is from; Campus is the better signal when they fill it in. It's blank for signups from before the column was added.
 
 **Built-in protection:** duplicate emails are ignored, a hidden honeypot field filters out simple bots, and values starting with `=` aren't run as formulas in the Sheet.
 

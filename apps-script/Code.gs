@@ -2,9 +2,10 @@
  * masUNO waitlist → Google Sheets
  *
  * The page signs people up in two steps:
- *   action=join     email + source → appends a row, returns { position, token }
+ *   action=join     email + source + tz → appends a row, returns { position, token }
  *   action=details  email + token + role/campus/sports → fills in that row
  * The token stops anyone from editing someone else's row just by knowing their email.
+ * Country is estimated from the browser's time zone. Only the country is stored, not the zone.
  *
  * Setup (about 20 minutes, full steps in README.md):
  *   1. Create a Google Sheet, then Extensions → Apps Script. Paste this file in.
@@ -22,7 +23,8 @@
 // If you made a standalone script instead, paste the Sheet ID from its URL here.
 const SHEET_ID = "";
 const SHEET_NAME = "Waitlist";
-const HEADERS = ["Joined", "Email", "Role", "Campus", "Sports", "Source", "Details added", "Token"];
+// New columns go at the end: moving Token would break the rows already in the Sheet
+const HEADERS = ["Joined", "Email", "Role", "Campus", "Sports", "Source", "Details added", "Token", "Country"];
 const COL = { email: 2, role: 3, campus: 4, sports: 5, detailsAt: 7, token: 8 };
 
 function doPost(e) {
@@ -55,7 +57,7 @@ function doPost(e) {
     if (row) return json_({ ok: true, duplicate: true });
 
     const token = Utilities.getUuid();
-    sheet.appendRow([new Date(), email, "", "", "", clean_(p.source, 200), "", token]);
+    sheet.appendRow([new Date(), email, "", "", "", clean_(p.source, 200), "", token, country_(p.tz)]);
     return json_({ ok: true, position: sheet.getLastRow() - 1, token: token });
   } catch (err) {
     console.error(err);
@@ -93,6 +95,16 @@ function findRow_(sheet, email) {
   const cell = sheet.getRange(1, COL.email, sheet.getMaxRows(), 1)
     .createTextFinder(email).matchEntireCell(true).findNext();
   return cell ? cell.getRow() : 0;
+}
+
+// Time zone → country. Blank if the browser didn't send one (for example, an old cached page).
+// It reflects where the device is right now, so someone traveling shows up where they are.
+function country_(tz) {
+  const zone = String(tz || "");
+  if (!zone) return "";
+  if (/^(America\/(Bahia_Banderas|Cancun|Chihuahua|Ciudad_Juarez|Ensenada|Hermosillo|Matamoros|Mazatlan|Merida|Mexico_City|Monterrey|Ojinaga|Santa_Isabel|Tijuana)|Mexico\/\w+)$/.test(zone)) return "Mexico";
+  if (/^(America\/(Adak|Anchorage|Atka|Boise|Chicago|Denver|Detroit|Fort_Wayne|Indiana\/\w+|Indianapolis|Juneau|Kentucky\/\w+|Knox_IN|Los_Angeles|Louisville|Menominee|Metlakatla|New_York|Nome|North_Dakota\/\w+|Phoenix|Shiprock|Sitka|Yakutat)|Pacific\/Honolulu|US\/\w+)$/.test(zone)) return "USA";
+  return "Other";
 }
 
 // Trim, cap length, and stop values like "=IMPORTXML(...)" from running as formulas in the Sheet

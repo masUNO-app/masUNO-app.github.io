@@ -147,6 +147,11 @@ function source() {
   return params.get("ref") || params.get("utm_source") || document.referrer || "direct";
 }
 
+// The time zone name (like "America/Monterrey"). The Apps Script turns it into a country and doesn't store it.
+function timeZone() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+}
+
 async function post(payload) {
   if (WAITLIST_ENDPOINT.startsWith("PASTE_")) {
     // Not wired up yet: log the payload so the flow can be tested locally
@@ -197,7 +202,7 @@ joinForms.forEach((form) => {
     button.disabled = true;
     render(button, "form.sending");
     try {
-      const res = await post({ action: "join", email, source: source() });
+      const res = await post({ action: "join", email, source: source(), tz: timeZone() });
       if (res.duplicate) {
         markJoined("done.duplicate");
         return;
