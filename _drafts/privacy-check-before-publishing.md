@@ -2,17 +2,13 @@
 
 For the masUNO team. Not legal advice, and not part of the public page.
 
-## Fill in on the page
-
-Replace the highlighted `[DATE]` in `privacy.html`.
-
 ## (a) Backend developer: verify against Supabase
 
 1. **Hidden fields.** Row-level rules limit rows, not columns. Using a real user token, try to read another user's last name, interests and email through the API.
 2. **Phone location.** Confirm coordinates never leave the phone, including in distance sorting and logs.
 3. **Who's going.** Can people who haven't joined a game see the list? The page says other students in the game can.
 4. **Delete account.** Does it remove the Auth record that holds the email? Check past games, your blocks, reports about you, and 2.0 tokens and saved games. Confirm reports are actually unlinked.
-5. **Backups.** Where are they, who has access, and when is each one replaced? A third-party store belongs in section 5. Does Supabase keep its own backups too?
+5. **Backups.** Where are they, who has access, and when is each one replaced? A third-party store belongs under "Where your data is stored". Does Supabase keep its own backups too?
 6. **Region, logs and SDKs.** Confirm the US region, what Supabase logs (such as IP addresses), and that no analytics or crash SDK is in the build, including inside dependencies.
 7. **Blocks and the filter.** Confirm blocked people can't see blocks, and that the filter covers all four fields.
 
@@ -20,9 +16,9 @@ Replace the highlighted `[DATE]` in `privacy.html`.
 
 **LFPDPPP.** The law was replaced in March 2025, and sources disagree on some of the new notice rules, so check the official text with someone who knows it.
 
-- **Responsible party:** no name or address for notices. Don't assume Boys & Girls Clubs of Chicago agrees to this role.
-- **Rights:** no process for access, correction, deletion or objection (ARCO), or for withdrawing consent, and no response time.
-- **Purposes:** the page mostly doesn't say why each item is collected, or which uses are optional.
+- **Responsible party:** the team is named on the waitlist notice, but neither page gives a legal responsible party or an address for notices. Don't assume Boys & Girls Clubs of Chicago agrees to this role.
+- **Rights:** both pages now explain ARCO rights and how to use them by email, but only say "within the time limits set by law". Check that this and the wording on how to complain are enough.
+- **Purposes:** "Why we use it" says why most items are collected, but not which uses are optional. Confirm each reason is accurate, including that @tec.mx email only checks student status at sign-in.
 - **US servers:** the location is disclosed, but not whether this is a transfer needing consent.
 - **Spanish:** the page is English-only until 2.0, while users are in Mexico.
 - **Authority:** enforcement moved from INAI to the Secretaría Anticorrupción y Buen Gobierno. The page doesn't say how to complain.
@@ -36,7 +32,9 @@ Replace the highlighted `[DATE]` in `privacy.html`.
 - **5.1.1(v):** expects the whole account record and associated data deleted. Compare this with kept reports and check (a)4.
 - **1.2:** make sure someone really reviews reports within 24 hours, including weekends.
 - **App Store Connect:** the App Privacy answers must match this page.
-- **Community guidelines:** the in-app text must match section 7.
+- **Community guidelines:** the in-app text must match "Community rules and safety".
+
+**Waitlist retention.** "While the waitlist is running" is a promise with no end date. Decide when the waitlist ends and delete the data then.
 
 **Own-risk wording.** It may not limit liability, so don't assume it protects the team.
 
