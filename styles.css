@@ -496,6 +496,7 @@ fieldset.field > legend { margin-bottom: 10px; }
 .prose .updated { margin-top: 10px; color: var(--muted); font-size: 14px; }
 .prose .lead { margin-top: 28px; font-size: 19px; }
 .prose h2 { font-size: 22px; font-weight: 700; margin: 44px 0 12px; }
+.prose h3 { font-size: 17px; font-weight: 700; margin: 24px 0 8px; }
 .prose p + p { margin-top: 12px; }
 .prose ul { margin: 12px 0; padding-left: 22px; display: grid; gap: 8px; }
 .prose a { color: var(--ink); text-underline-offset: 2px; }

@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Privacy notice — masUNO</title>
+  <title>Privacy and terms — masUNO</title>
   <meta name="theme-color" content="#141a2b">
   <!-- TODO: add a favicon made from the masUNO app icon once we have one, e.g. <link rel="icon" href="favicon.png"> and <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="privacy-page">
+
+  <!-- TEAM NOTE: draft. Work through _drafts/privacy-check-before-publishing.md before launch. This page covers the app. The waitlist is covered by waitlist-privacy.html. -->
 
   <header class="nav" id="top">
     <div class="wrap nav-inner">
@@ -20,22 +22,121 @@
 
     <article class="prose">
       <p class="kicker">masUNO</p>
-      <h1>Privacy notice</h1>
-      <p class="updated">Last updated: November 4, 2026</p>
+      <h1>Privacy and terms</h1>
+      <p class="updated">Last updated: November 4, 2026<br>Effective for masUNO 1.0</p>
 
-      <p class="lead">We collect very little, and only to run the masUNO waitlist.</p>
+      <p class="lead">This page explains what masUNO collects, who can see it, and the rules for using the app.</p>
+
+      <h2>Who we are</h2>
+      <p>masUNO helps Tec de Monterrey students find pickup basketball, tennis, soccer and volleyball games that are one or two players short. You can host a game or join one on a map.</p>
+      <p>We're a four-person student team, not a company. We built masUNO during the App Accelerator: Startup to 1000 (Everyone Can Code Chicago, with the City of Chicago, JPMorgan Chase and Apple). The app is published under the Boys &amp; Girls Clubs of Chicago Apple developer team.</p>
 
       <h2>What we collect</h2>
-      <p>Your email address, any optional answers you give us (whether you want to find or fill games, your campus, your sports), when you signed up, and how you got to the page.</p>
+      <h3>Your account</h3>
+      <ul>
+        <li>Your @tec.mx email address. We email a 6-digit code to it so you can sign in, and we use it only for sign-in.</li>
+        <li>Your first name, last name, class year and the sports you're interested in.</li>
+        <li>A profile photo, if you add one.</li>
+        <li>The dates you agreed to the community guidelines and the chat rules.</li>
+        <li>Your language setting.</li>
+      </ul>
+      <h3>Your games</h3>
+      <ul>
+        <li>Games you host: title, sport, date and time, duration, number of players, place name, the venue's address and coordinates, and any meet-up spot or notes you add.</li>
+        <li>Games you join.</li>
+        <li>Messages you send in a game's group chat, and which messages you've read.</li>
+      </ul>
+      <h3>Safety</h3>
+      <ul>
+        <li>Reports you make (a reason and an optional note).</li>
+        <li>Blocks you make.</li>
+      </ul>
+      <h3>Version 2.0 only: notifications and saved games</h3>
+      <p>These features aren't in masUNO 1.0. In version 2.0, if you allow notifications, we store a device token and your notification preferences so we can send you:</p>
+      <ul>
+        <li>Game reminders.</li>
+        <li>Changes or cancellations to games you're in.</li>
+        <li>Spot-opened alerts for saved games.</li>
+        <li>New games matching your interests (2 a day at most).</li>
+        <li>Updates on games you host.</li>
+      </ul>
+      <p>Version 2.0 also stores the games you save.</p>
 
-      <h2>How we use it</h2>
-      <p>We use it to email you about masUNO launching on or near your campus, and to decide where to launch first. We don't sell it or use it for advertising.</p>
+      <h2>What we don't collect</h2>
+      <ul>
+        <li><strong>Your phone's location.</strong> The app asks for location to center the map near you, but your phone's location is never sent to our servers or stored. The only location we store is the venue a host chooses for a game.</li>
+        <li><strong>Ad or analytics data.</strong> There are no ads, no analytics SDK and no tracking.</li>
+      </ul>
+      <p>We don't sell your data or share it for marketing.</p>
+      <p>Crash reports reach us only through Apple, and only from people who've opted in on their iPhone.</p>
 
-      <h2>Where it's stored</h2>
-      <p>Your data is stored in Google Sheets, and the site is hosted on GitHub Pages. We don't share it with anyone else unless the law requires it. This site doesn't use cookies, analytics or ad trackers.</p>
+      <h2>Why we use it</h2>
+      <ul>
+        <li><strong>Your email</strong> lets you sign in and shows you're a Tec student.</li>
+        <li><strong>Your name, class year and profile photo</strong> show other students who's hosting or going.</li>
+        <li><strong>Your game details</strong> put games on the map and let people join them.</li>
+        <li><strong>Your messages</strong> let people in a game plan it together. We track which ones you've read so we can show how many are new.</li>
+        <li><strong>Reports and blocks</strong> help us keep masUNO safe and enforce the rules below.</li>
+        <li><strong>Your language setting</strong> sets the language of the app.</li>
+        <li><strong>Your interests</strong> are used in version 2.0 to tell you about new games.</li>
+      </ul>
+
+      <h2>Who sees what</h2>
+      <ul>
+        <li><strong>Other students</strong> see only your first name, last initial (like &ldquo;Emilio G.&rdquo;), class year and profile photo, if you add one.</li>
+        <li><strong>Other signed-in Tec students</strong> can see the games you host, with all the details listed above.</li>
+        <li><strong>Other students in a game you join</strong> can see that you're going, and can read the messages you send in its group chat.</li>
+        <li><strong>No other user</strong> sees your email, your full last name or your interests.</li>
+        <li><strong>Only the masUNO team</strong> sees reports.</li>
+      </ul>
+      <p>Our team runs the database and keeps its backups, so we can see what's stored there, including group chat messages and profile photos.</p>
+
+      <h2>Where your data is stored and who helps us run masUNO</h2>
+      <ul>
+        <li><strong>Supabase</strong> runs our database, sign-in and group chat, and stores profile photos, on servers in the United States. Your data there is protected with row-level access rules.</li>
+        <li><strong>Google (Gmail)</strong> sends your sign-in codes.</li>
+        <li><strong>Apple</strong> distributes the app, and will deliver notifications in version 2.0.</li>
+        <li><strong>Discord/Slack:</strong> when a report is made, an alert goes to our team's private channel. It contains the reason, what was reported and a link to our dashboard.</li>
+      </ul>
+      <p>We also keep weekly database backups in private storage.</p>
+
+      <h2>Keeping and deleting your data</h2>
+      <p>Go to Settings &rsaquo; Delete account. This:</p>
+      <ul>
+        <li>Removes your profile and profile photo right away.</li>
+        <li>Cancels games you're hosting.</li>
+        <li>Removes you from games you joined.</li>
+      </ul>
+      <p>Reports you made are kept for moderation, but they're no longer linked to you. A copy of your data may remain in the weekly backup until that backup is replaced.</p>
+
+      <h2>Community rules and safety</h2>
+      <p>To use masUNO, you must be a Tec student with a @tec.mx email.</p>
+      <p>Be respectful:</p>
+      <ul>
+        <li>No harassment or hate.</li>
+        <li>No inappropriate content, including in photos and messages.</li>
+        <li>No spam or fake games.</li>
+        <li>Don't share anyone's personal info or photos without asking.</li>
+      </ul>
+      <p>Hosts can't post a game more than 7 days ahead. A short text filter checks names, titles, notes, meet-up spots and chat messages.</p>
+      <p>You can report or block anyone from the Who's going list, and report a message in a group chat. We review reports within 24 hours. We may remove content, including photos and messages, cancel games, clear offensive names or suspend accounts.</p>
+      <p>You play at your own risk and are responsible for your own safety at games. In an emergency, call 911 (it works in Mexico and the US) or Tec campus security.</p>
 
       <h2>Your choices</h2>
-      <p>To see, correct or delete your data, or to stop getting emails, write to us at <a href="mailto:official.masuno.app@gmail.com">official.masuno.app@gmail.com</a>.</p>
+      <ul>
+        <li><strong>Location:</strong> say no when the app asks, or change it anytime in your iPhone's Settings.</li>
+        <li><strong>Notifications (version 2.0 only):</strong> choose whether to allow them, and change it anytime in your iPhone's Settings.</li>
+        <li><strong>Blocking:</strong> block anyone from the Who's going list. People you've blocked are listed under Blocked people.</li>
+        <li><strong>Deletion:</strong> go to Settings &rsaquo; Delete account.</li>
+      </ul>
+
+      <h2>Your rights</h2>
+      <p>You can ask to <strong>access</strong> the data we have about you, <strong>correct</strong> it, have it <strong>deleted</strong>, or <strong>object</strong> to how we use it. These are known in Mexico as your ARCO rights. You can also withdraw your consent at any time.</p>
+      <p>To do any of this, or to ask anything about your data, email <a href="mailto:official.masuno.app@gmail.com">official.masuno.app@gmail.com</a> from your @tec.mx address. We'll answer within the time limits set by law.</p>
+      <p>If you think we haven't respected your rights, you can contact the Mexican authority in charge of personal data protection.</p>
+
+      <h2>Changes to this page</h2>
+      <p>If we change this page, we'll post the new version here and update the date at the top.</p>
 
       <p class="back"><a href="./">&larr; Back to masUNO</a></p>
     </article>
@@ -45,7 +146,7 @@
   <footer class="footer dark">
     <div class="wrap footer-inner">
       <a href="./" class="wordmark" aria-label="masUNO">mas<span>UNO</span></a>
-      <p>Made by Ricardo, Arianna, Emilio and Ethan · 2026 App Accelerator</p>
+      <p>Made by Ricardo, Arianna, Emilio and Ethan · 2026 App Accelerator · <a href="waitlist-privacy.html">Waitlist privacy notice</a></p>
     </div>
   </footer>
 

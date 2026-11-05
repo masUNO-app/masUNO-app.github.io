@@ -7,7 +7,8 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 
 ```
 index.html          page content
-privacy.html        privacy notice, linked under each form and in the footer
+privacy.html        app privacy and terms, linked from the app, App Store Connect and the footer
+waitlist-privacy.html  waitlist privacy notice, linked under each form and in the footer
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
 script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
@@ -39,7 +40,7 @@ To retake them from the `ios` repo, run a Debug build with `-screen` set to `map
 | `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
 | `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
-| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
+| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html`, `privacy.html` and `waitlist-privacy.html` with the links it shows |
 
 Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
@@ -102,7 +103,7 @@ Use lowercase labels with no spaces, and reuse the same label for the same place
 
 ## Before launching in Mexico
 
-The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `privacy.html` is a short notice, and every form has a short notice linking to it. Before launch:
+The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `waitlist-privacy.html` is a short notice, and every form has a short notice linking to it. Before launch:
 
 - Add a Spanish version (aviso de privacidad). That's the version that counts in Mexico.
 - Have someone who knows Mexican data-protection law review it.
