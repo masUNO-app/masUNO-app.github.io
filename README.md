@@ -12,31 +12,42 @@ waitlist-privacy.html  waitlist privacy notice, linked under each form and in th
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
 script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
-assets/screens/     app screenshots from Figma or Xcode
+assets/screens/     app screenshots used on the page (only files index.html references)
 assets/people/      persona photos
 ```
 
-## 1. Add the screenshots and photos
+## 1. Screenshots and photos
 
-Every screenshot and photo spot shows a placeholder with its expected file path (persona photos show initials until then). Save a file at that path and it replaces the placeholder automatically; you don't need to edit any HTML.
+The page loads each image from a fixed file path. Until a file exists, its spot shows a placeholder with that path (persona photos show initials). Saving a file at the path replaces the placeholder automatically, and you don't need to edit any HTML.
+
+**Screenshots (all added).** Taken from the iOS app's simulator build (iPhone 18 Pro, iOS 27.2, branch `green-design-system`, mock data), scaled to 888 px wide and reduced to a 256-color palette so the page stays light. To update one, overwrite the file under the same name.
+
+To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar (`xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100 --dataNetwork wifi --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4`). Capture with `xcrun simctl io booted screenshot --mask=black shot.png` so the Dynamic Island is drawn; the page's 47 px screen corners hide the black mask corners.
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/screens/map.png` | Map (home) | "I want to play" step 1 |
-| `assets/screens/event-detail.png` | Event detail with who's going (photos) | "I want to play" step 2 |
-| `assets/screens/your-plans.png` | Your plans | "I want to play" step 3 |
-| `assets/screens/create-event.png` | Create event | "I need players" step 1 |
-| `assets/screens/host.png` | You're the host | "I need players" step 2 |
-| `assets/screens/repost.png` | Reposting a spot after a no-show | "I need players" step 3 |
+| `assets/screens/map.png` | Map (home) with pins around Tec | "I want to play" step 1 |
+| `assets/screens/event-detail.png` | Event detail (After-work hoops) with who's going | "I want to play" step 2 |
+| `assets/screens/your-plans.png` | Me · Going | "I want to play" step 3 |
+| `assets/screens/create-event.png` | Add game form, filled in | "I need players" step 1 |
+| `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
+| `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
+
+**Still missing:**
+
+| File | What it shows | Used in |
+|---|---|---|
 | `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
 | `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
 | `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html`, `privacy.html` and `waitlist-privacy.html` with the links it shows |
 
-Export screens at full iPhone resolution (1179×2556 from the iPhone 15/16 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
+Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
 - **Xcode:** run the app in the simulator, then press Cmd+S.
 - **Figma:** select the frame, then Export → PNG at 3x.
+
+Only commit the screenshots the page uses. Keep spare or work-in-progress exports outside the repo.
 
 ## 2. The waitlist (Google Sheets)
 
@@ -92,9 +103,8 @@ Use lowercase labels with no spaces, and reuse the same label for the same place
 
 ## Before launching in Mexico
 
-The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `waitlist-privacy.html` is a first draft, and every form has a short notice linking to it. Before launch:
+The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `waitlist-privacy.html` is a short notice, and every form has a short notice linking to it. Before launch:
 
-- Fill in the highlighted placeholders in `waitlist-privacy.html`: who is responsible for the data, their address in Mexico, a privacy contact email, and how long you keep the data.
 - Add a Spanish version (aviso de privacidad). That's the version that counts in Mexico.
 - Have someone who knows Mexican data-protection law review it.
 - When someone asks to see, correct or delete their data, find their row in the Sheet and update or delete it.
@@ -102,7 +112,7 @@ The page collects emails, so Mexican data-protection law (LFPDPPP) requires a pr
 ## Writing copy for the page
 
 - **Never frame people as lonely.** Don't lead with loneliness stats or "making friends is hard." The angle is the opposite: the game is looking for *you*, and you're the player they need.
-- **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: the host taps Repost, the spot goes back on the map, and nearby players and bookmarkers get a push.
+- **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: when a player drops out of a full game, the app bumps the game back to the top of the map on its own (the "Auto-repost" toggle in the Add game form, on by default). There's no Repost button for hosts to tap, and push notifications to nearby players or bookmarkers aren't in the first release, so don't mention pings or notifications.
 - **Both sides should be visible.** Players are the main audience, but the host's problem (refilling a no-show faster than the group chat) appears in the hero, the story section, the "I need players" tab and the FAQ. Keep it there when you change things.
 
 ## Still to decide
@@ -112,4 +122,4 @@ These come from the open decisions in DESIGN.md and show up on the page:
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
 - **Language:** the page is English only for now. A Spanish version is planned for the Mexico launch. All the copy is in `index.html`, plus the runtime messages at the top of `script.js`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
-- **Example numbers:** "4 min after repost" (hero notification and the group chat vs. masUNO block) is a placeholder. Swap in a real fill time from testing.
+- **Example numbers:** "4 min after repost" (hero notification) and "4 min after it auto-reposted" (the group chat vs. masUNO block) are placeholders. Swap in a real fill time from testing.

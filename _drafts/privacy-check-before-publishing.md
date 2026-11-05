@@ -4,7 +4,7 @@ For the masUNO team. Not legal advice, and not part of the public page.
 
 ## Fill in on the page
 
-Replace the highlighted `[DATE]` in `privacy.html`. The waitlist notice, now at `waitlist-privacy.html`, still has its own highlighted placeholders.
+Replace the highlighted `[DATE]` in `privacy.html`.
 
 ## (a) Backend developer: verify against Supabase
 

@@ -20,7 +20,7 @@
   --radius-card: 16px;
   --radius-own-bubble: 20px;
   --radius-dialog: 24px;
-  --radius-phone: 52px;
+  --radius-phone: 59px;
   --radius-photo: 48px;
   --radius-pill: 9999px;
 
@@ -215,16 +215,43 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 
 .hero-toast { position: absolute; right: -2%; top: 43%; width: 240px; box-shadow: var(--shadow-dialog); rotate: -3deg; }
 
+.ribbon-phone { display: none; }
+
 @media (max-width: 560px) {
-  .people-card { width: 180px; padding: 12px; }
-  .pc-msg { font-size: 13px; }
-  .float-game { left: 22%; }
   .game-card { width: 250px; }
-  .sticker { width: 100px; height: 100px; top: 40%; }
-  .you { transform: scale(.8); }
-  .hero-toast { width: 200px; right: -4%; top: 44%; padding: 10px 12px; }
-  .hero-toast .icon-circle { width: 32px; height: 32px; }
 }
+
+/* Phones: the cards can't shrink with the stage and stay readable, so they get their own
+   350×490 layout. Zoom scales it as a whole to fit the screen. */
+@media (max-width: 640px) {
+  .hero-visual { flex-basis: 100%; }
+  .hero-stage { width: 350px; flex: none; aspect-ratio: auto; height: 490px; zoom: 1.2; }
+  .ribbon-wide { display: none; }
+  .ribbon-phone { display: block; }
+  .ribbon-phone path { stroke-width: 18; }
+
+  .float-host { left: 0; top: 4px; }
+  .people-card { width: 200px; padding: 12px; gap: 10px; }
+  .pc-top { gap: 8px; }
+  .pc-top .avatar { width: 40px; height: 40px; flex: none; }
+  .people-card .chip { font-size: 11px; padding: 3px 8px; }
+  .pc-msg { font-size: 13px; padding: 8px 12px; }
+
+  .you { left: 249px; top: 22px; width: 72px; }
+  .avatar-you { width: 72px; height: 72px; font-size: 26px; }
+
+  .sticker { left: 0; top: 128px; width: 96px; height: 96px; }
+  .sticker > .i { width: 26px; height: 26px; }
+
+  .hero-toast { left: 155px; right: auto; top: 150px; width: 195px; padding: 10px 12px; }
+  .hero-toast .icon-circle { width: 32px; height: 32px; }
+
+  .float-game { left: 30px; top: 242px; }
+  .float-game .game-card { width: 300px; rotate: 3deg; }
+}
+@media (max-width: 479px) { .hero-stage { zoom: 1; } }
+@media (max-width: 389px) { .hero-stage { zoom: .9; } }
+@media (max-width: 354px) { .hero-stage { zoom: .8; } }
 
 /* ---------- Marquee ---------- */
 .marquee { background: var(--primary-tint); padding: 22px 0; overflow: hidden; border-block: 1px solid var(--line); }
@@ -303,10 +330,11 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .wt-text > span { font-size: 16px; color: var(--muted); }
 
 .phone-col { flex: 0 1 340px; margin: 0 auto; position: relative; }
-.phone { width: 320px; max-width: 100%; aspect-ratio: 320 / 660; margin: 0 auto; padding: 12px; border-radius: var(--radius-phone); background: var(--navy); box-shadow: var(--shadow-dialog); }
-.screen { position: relative; width: 100%; height: 100%; border-radius: 40px; overflow: hidden; background: var(--line); }
-.layer { position: absolute; inset: 0; opacity: 0; transform: translateY(24px); transition: opacity .45s var(--ease), transform .45s var(--ease); }
-.layer.is-active { opacity: 1; transform: none; }
+.phone { width: 320px; max-width: 100%; margin: 0 auto; padding: 12px; border-radius: var(--radius-phone); background: var(--navy); box-shadow: var(--shadow-dialog); }
+.screen { position: relative; width: 100%; aspect-ratio: 1206 / 2622; border-radius: 47px; overflow: hidden; background: var(--line); }
+/* The incoming shot fades in on top while the outgoing one stays opaque beneath it, so the shared status bar and Dynamic Island hold still. */
+.layer { position: absolute; inset: 0; opacity: 0; transition: opacity 0s .45s; }
+.layer.is-active { z-index: 1; opacity: 1; transition: opacity .45s var(--ease); }
 .layer img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
 .placeholder strong { font-size: 20px; color: var(--ink); }
