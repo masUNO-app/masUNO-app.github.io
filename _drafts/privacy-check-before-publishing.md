@@ -10,7 +10,9 @@ For the masUNO team. Not legal advice, and not part of the public page.
 4. **Delete account.** Does it remove the Auth record that holds the email? Check past games, your blocks, reports about you, and 2.0 tokens and saved games. Confirm reports are actually unlinked.
 5. **Backups.** Where are they, who has access, and when is each one replaced? A third-party store belongs under "Where your data is stored". Does Supabase keep its own backups too?
 6. **Region, logs and SDKs.** Confirm the US region, what Supabase logs (such as IP addresses), and that no analytics or crash SDK is in the build, including inside dependencies.
-7. **Blocks and the filter.** Confirm blocked people can't see blocks, and that the filter covers all four fields.
+7. **Blocks and the filter.** Confirm blocked people can't see blocks, and that the filter covers all five fields, including chat messages.
+8. **Group chat.** Confirm only people in a game can read its messages (Appendix A of `ios/docs/SPEC.md`), and that reporting a message works. If messaging misses the Nov 8 release candidate and 1.0 ships the read-only fallback, remove the message and chat-rules lines from the page.
+9. **Profile photos.** The spec still says no photos (decision C4), so nothing here is designed yet. Confirm where photos are stored, who can open them (are the links public?), that they're optional, and that deleting an account removes them.
 
 ## (b) What LFPDPPP or App Review may expect that this page doesn't cover
 
@@ -30,9 +32,11 @@ For the masUNO team. Not legal advice, and not part of the public page.
 
 - **5.1.1(i):** expects retention details. The page has no period for active accounts, because none was provided.
 - **5.1.1(v):** expects the whole account record and associated data deleted. Compare this with kept reports and check (a)4.
-- **1.2:** make sure someone really reviews reports within 24 hours, including weekends.
+- **1.2:** make sure someone really reviews reports within 24 hours, including weekends. Photos and messages are new user content, so check how a bad photo gets found and removed.
 - **App Store Connect:** the App Privacy answers must match this page.
 - **Community guidelines:** the in-app text must match "Community rules and safety".
+
+**Group chat retention and deletion (not on the page yet).** The page doesn't say how long messages are kept, or what happens to them when someone deletes their account. The spec's 30-day deletion is marked as later than 1.0, so don't promise it unless it ships. Decide both, then add them under "Keeping and deleting your data". Apple's 5.1.1(i) and (v) above apply here too.
 
 **Waitlist retention.** "While the waitlist is running" is a promise with no end date. Decide when the waitlist ends and delete the data then.
 
