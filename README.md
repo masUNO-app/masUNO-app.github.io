@@ -33,13 +33,14 @@ To retake them from the `ios` repo, run a Debug build with `-screen` set to `map
 | `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
 | `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
 
-**Placeholder assets:** the two files under `assets/people/` contain generated initials, not photographs; overwrite them with square portraits when available. `favicon.svg` is a simple +1 mark that can likewise be replaced by the final app icon.
-
 **Still missing:**
 
 | File | What it shows | Used in |
 |---|---|---|
+| `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
+| `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
+| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
 
 Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
