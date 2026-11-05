@@ -26,8 +26,19 @@ const MSG = {
   "demo.drop.spots": "1 spot left",
   "demo.drop.caption": "Reposted to the top of the map",
 };
-const t = (key, vars = {}) => (MSG[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
-const render = (el, key, vars) => { el.textContent = t(key, vars); };
+const t = (key, vars = {}) => window.masUNOI18n.translate(MSG[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
+const render = (el, key, vars = {}) => {
+  el.dataset.messageKey = key;
+  el.dataset.messageVars = JSON.stringify(vars);
+  el.textContent = t(key, vars);
+};
+
+// Refresh dynamic messages without resetting the current form, dialog or demo state.
+document.addEventListener("masuno:languagechange", () => {
+  document.querySelectorAll("[data-message-key]").forEach((el) => {
+    render(el, el.dataset.messageKey, JSON.parse(el.dataset.messageVars || "{}"));
+  });
+});
 
 // ---------- Scroll reveal ----------
 const revealObserver = new IntersectionObserver(
