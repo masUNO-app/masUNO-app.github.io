@@ -143,6 +143,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .hero h1 > span + span { margin-top: 8px; }
 /* "Can I join?" gets crossed out once the headline lands */
 .strike { position: relative; color: var(--on-dark-muted); }
+:lang(es) .strike { display: inline-block; white-space: nowrap; }
 .strike::after { content: ""; position: absolute; left: -2%; right: -2%; top: 54%; height: .08em; border-radius: 9999px; background: var(--primary); transform: scaleX(0); transform-origin: left; animation: progress .5s 1.1s var(--ease) forwards; }
 .lede { max-width: 520px; font-size: 20px; line-height: 1.5; color: var(--on-dark-muted); }
 .hero-meta { font-size: 14px; color: var(--on-dark-muted); }
@@ -194,6 +195,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .float-host { left: 0; top: 2%; }
 .float-game { left: 34%; top: 58%; }
 .people-card { rotate: -5deg; box-shadow: var(--shadow-float); padding: 16px; width: 220px; display: flex; flex-direction: column; gap: 12px; }
+:lang(es) .people-card { width: 264px; }
 .pc-top { display: flex; align-items: center; gap: 12px; }
 .pc-name { display: flex; flex-direction: column; margin-right: auto; }
 .pc-name strong { font-size: 17px; }
@@ -247,6 +249,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 
   .float-host { left: 0; top: 4px; }
   .people-card { width: 200px; padding: 12px; gap: 10px; }
+  :lang(es) .people-card { width: 244px; }
   .pc-top { gap: 8px; }
   .pc-top .avatar { width: 40px; height: 40px; flex: none; }
   .people-card .chip { font-size: 11px; padding: 3px 8px; }
