@@ -19,11 +19,11 @@ const MSG = {
   "dlg.save": "Save",
   "dlg.saving": "Saving…",
   "dlg.error": "Couldn't save that. Try again, or skip. You're already on the list.",
-  "demo.open.spots": "1 spot left",
+  "demo.open.spots": "Room for 1 more",
   "demo.open.caption": "On the map",
-  "demo.full.spots": "Full",
+  "demo.full.spots": "Game is full",
   "demo.full.caption": "Full games leave the map",
-  "demo.drop.spots": "1 spot left",
+  "demo.drop.spots": "Room for 1 more",
   "demo.drop.caption": "Reposted to the top of the map",
 };
 const t = (key, vars = {}) => window.masUNOI18n.translate(MSG[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
@@ -51,6 +51,54 @@ const revealObserver = new IntersectionObserver(
   { rootMargin: "0px 0px -8% 0px" }
 );
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+
+// ---------- Nav: one green action per viewport ----------
+// The nav button is plain glass while a signup form is on screen, and green otherwise.
+const nav = document.querySelector(".nav");
+const visibleForms = new Set();
+const formWatcher = new IntersectionObserver((entries) => {
+  entries.forEach((e) => (e.isIntersecting ? visibleForms.add(e.target) : visibleForms.delete(e.target)));
+  nav.classList.toggle("is-away", visibleForms.size === 0);
+});
+document.querySelectorAll(".join-wrap").forEach((el) => formWatcher.observe(el));
+
+// ---------- Hero: the court cycles through the sports ----------
+const hero = document.querySelector(".hero");
+const sportChips = [...document.querySelectorAll(".sport-chip")];
+const SPORT_MS = 4200;
+let sportIndex = 0;
+let sportTimer = null;
+let sportTouched = false;
+
+function showSport(i) {
+  sportIndex = i;
+  hero.dataset.sport = sportChips[i].dataset.pick;
+  sportChips.forEach((c, j) => c.setAttribute("aria-pressed", j === i));
+}
+
+function startSports() {
+  if (reduceMotion || sportTouched || sportTimer) return;
+  sportTimer = setInterval(() => showSport((sportIndex + 1) % sportChips.length), SPORT_MS);
+}
+
+function stopSports() {
+  clearInterval(sportTimer);
+  sportTimer = null;
+}
+
+// Stays on the chosen sport once someone picks one; pauses off screen and on hover or focus
+sportChips.forEach((chip, i) => chip.addEventListener("click", () => {
+  sportTouched = true;
+  stopSports();
+  showSport(i);
+}));
+const sportSwitch = document.querySelector(".sport-switch");
+["pointerenter", "focusin"].forEach((type) => sportSwitch.addEventListener(type, stopSports));
+["pointerleave", "focusout"].forEach((type) => sportSwitch.addEventListener(type, startSports));
+new IntersectionObserver(([e]) => {
+  if (e.isIntersecting) startSports();
+  else stopSports();
+}).observe(document.querySelector(".hero-art"));
 
 // ---------- How it works: side tabs ----------
 const tabs = [...document.querySelectorAll(".tab")];

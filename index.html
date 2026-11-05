@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>masUNO — We're looking for you</title>
   <meta name="description" content="masUNO shows you pickup games on campus that need one more player. Find one nearby, tap join, and show up.">
-  <meta name="theme-color" content="#141a2b">
+  <meta name="theme-color" content="#F2F2F7">
 
   <!-- Social preview. TODO: add assets/og-image.png (1200×630) once the screens are final -->
   <meta property="og:title" content="masUNO">
@@ -14,6 +14,9 @@
   <meta property="og:image" content="assets/og-image.png">
 
   <!-- TODO: add a favicon made from the masUNO app icon once we have one, e.g. <link rel="icon" href="favicon.png"> and <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script>document.documentElement.classList.add("js")</script>
   <script src="i18n.js" defer></script>
@@ -21,26 +24,73 @@
 </head>
 <body>
 
-  <!-- Icon sprite: line icons, used as <svg class="i"><use href="#i-…"/></svg> -->
+  <!-- Sprite: line icons, court art and the map. Used as <svg><use href="#…"/></svg> -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
-    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
-    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
     <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
     <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
-    <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9c4 4 4 10.2 0 14.2M19.1 4.9c-4 4-4 10.2 0 14.2M2 12h20M12 2v20"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
     <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></symbol>
+
+    <symbol id="court-basketball" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice">
+      <g fill="none" stroke="#FFE3CC" stroke-opacity=".6" stroke-width="3" stroke-linecap="round">
+        <rect x="70" y="60" width="1460" height="680" rx="6"/><path d="M800 60v680"/><circle cx="800" cy="400" r="110"/><circle cx="800" cy="400" r="34"/>
+        <rect x="70" y="270" width="300" height="260"/><circle cx="370" cy="400" r="100"/><path d="M70 120h150a300 300 0 0 1 0 560H70"/><circle cx="130" cy="400" r="18"/>
+        <rect x="1230" y="270" width="300" height="260"/><circle cx="1230" cy="400" r="100"/><path d="M1530 120h-150a300 300 0 0 0 0 560h150"/><circle cx="1470" cy="400" r="18"/>
+      </g>
+    </symbol>
+    <symbol id="court-tennis" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice">
+      <g fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="3" stroke-linecap="round">
+        <rect x="120" y="100" width="1360" height="600"/><path d="M120 175h1360M120 625h1360M420 175v450M1180 175v450M420 400h760M120 400h26M1480 400h-26"/><path d="M800 60v680" stroke-width="5"/>
+      </g>
+    </symbol>
+    <symbol id="court-soccer" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice">
+      <path fill="#35A565" d="M0 0h200v800H0zM400 0h200v800H400zM800 0h200v800H800zM1200 0h200v800h-200z"/>
+      <g fill="none" stroke="#E8FFF1" stroke-opacity=".7" stroke-width="3" stroke-linecap="round">
+        <rect x="60" y="50" width="1480" height="700"/><path d="M800 50v700"/><circle cx="800" cy="400" r="130"/><circle cx="800" cy="400" r="5"/>
+        <rect x="60" y="190" width="240" height="420"/><rect x="60" y="290" width="90" height="220"/><path d="M300 320a110 110 0 0 1 0 160"/>
+        <rect x="1300" y="190" width="240" height="420"/><rect x="1450" y="290" width="90" height="220"/><path d="M1300 320a110 110 0 0 0 0 160"/>
+      </g>
+    </symbol>
+    <symbol id="court-volleyball" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice">
+      <g fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round">
+        <rect x="200" y="90" width="1200" height="620"/><path d="M600 90v620M1000 90v620"/><path d="M800 30v740" stroke-width="6"/>
+      </g>
+    </symbol>
+    <symbol id="court-padel" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice">
+      <g fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round">
+        <rect x="150" y="90" width="1300" height="620" rx="26" stroke-opacity=".4"/><rect x="178" y="118" width="1244" height="564" rx="10"/><path d="M440 118v564M1160 118v564M440 400h720"/><path d="M800 60v680" stroke-width="5"/>
+      </g>
+    </symbol>
+
+    <symbol id="map-art" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice">
+      <rect width="800" height="800" fill="#F1EFE6"/>
+      <path fill="#CFE9C3" d="M300 215 548 140l92 208-236 96z"/><path fill="#D8EDCE" d="M44 560l178-72 72 186-176 74zM600 560l150-46 70 170-160 60z"/><circle cx="140" cy="170" r="62" fill="#D8EDCE"/>
+      <g fill="#E4E6DF"><path d="M380 260l60-18 22 56-60 20zM480 230l48-14 18 44-48 16zM410 345l66-22 18 44-66 24z"/></g>
+      <path fill="none" stroke="#BFE3F2" stroke-width="9" stroke-linecap="round" d="M-20 742c120-34 170-2 270-22s170 40 320 6"/>
+      <g fill="none" stroke="#fff" stroke-linecap="round">
+        <path stroke-width="5" d="M-20 66 820-186M-20 186 820-66M-20 306 820 54M-20 546 820 294M-20 666 820 414M-20 786 820 534M-20 906 820 654M-20 1026 820 774M-106-20 146 820M34-20 286 820M174-20 426 820M454-20 706 820M594-20 846 820M734-20 986 820"/>
+        <path stroke-width="11" d="M-20 426 820 174M314-20 566 820"/>
+      </g>
+      <path fill="none" stroke="#DDE1E6" stroke-width="13" stroke-linecap="round" d="M-20 120 820 700"/>
+      <g fill="#5F5C68" fill-opacity=".55" font-size="17" font-weight="800" text-anchor="middle"><text x="430" y="400" transform="rotate(-17 430 400)">Tecnológico</text><text x="176" y="660" transform="rotate(-17 176 660)">Altavista</text></g>
+    </symbol>
   </svg>
 
   <a class="skip" href="#main">Skip to content</a>
 
   <!-- ============ NAV ============ -->
-  <header class="nav" id="top">
-    <div class="wrap nav-inner">
-      <a href="#top" class="wordmark" aria-label="masUNO">mas<span>UNO</span></a>
+  <header class="nav">
+    <div class="nav-inner glass">
+      <a href="#" class="wordmark" aria-label="masUNO"><span class="open open-mark" aria-hidden="true">+1</span>masUNO</a>
       <nav class="nav-links" aria-label="Sections">
         <a href="#story">Why</a>
         <a href="#how">How it works</a>
@@ -51,121 +101,81 @@
           <button type="button" data-language="en" aria-pressed="true">EN</button>
           <button type="button" data-language="es" aria-pressed="false">ES</button>
         </div>
-        <a href="#join" class="btn btn-primary btn-sm">Get early access</a>
+        <a href="#join" class="btn btn-sm glass nav-cta">Get early access</a>
       </div>
     </div>
   </header>
 
   <main id="main">
 
-    <!-- ============ HERO ============ -->
-    <section class="hero dark">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow load rise"><span class="live-dot"></span> Coming to campus soon</p>
+    <!-- ============ HERO: a full-bleed court with one open spot ============ -->
+    <section class="hero" data-sport="basketball">
+      <div class="hero-art" aria-hidden="true">
+        <svg class="court-art" data-court="basketball"><use href="#court-basketball"/></svg>
+        <svg class="court-art" data-court="tennis"><use href="#court-tennis"/></svg>
+        <svg class="court-art" data-court="soccer"><use href="#court-soccer"/></svg>
+        <svg class="court-art" data-court="volleyball"><use href="#court-volleyball"/></svg>
+        <svg class="court-art" data-court="padel"><use href="#court-padel"/></svg>
+      </div>
 
-          <h1 class="display">
-            <span class="load rise d1"><span class="strike">&ldquo;Can I join?&rdquo;</span> becomes</span>
-            <span class="tint load rise d3">&ldquo;We're looking for you.&rdquo;</span>
-          </h1>
-          <p class="lede load rise d4">Find pickup games nearby that are one player short. Tap join, and walk up as the player they were waiting for.</p>
+      <!-- Decorative: the players take their positions as the sport changes -->
+      <div class="lineup" aria-hidden="true">
+        <span class="spot t1">
+          <span class="av p-rt">RT</span>
+          <span class="say" data-say="basketball">Need 1 more for 3v3</span>
+          <span class="say" data-say="tennis">Need one more for doubles!</span>
+          <span class="say" data-say="soccer">Need 1 more for 5-a-side</span>
+          <span class="say" data-say="volleyball">One more and we can start</span>
+          <span class="say" data-say="padel">Need a fourth for padel</span>
+        </span>
+        <span class="spot t2"><span class="av p-mc">MC</span></span>
+        <span class="spot t3"><span class="av p-sr">SR</span></span>
+        <span class="spot t4"><span class="av p-dm">DM</span></span>
+        <span class="spot t5"><span class="av p-sl">SL</span></span>
+        <span class="spot t6">
+          <span class="open open-live">+1</span>
+          <span class="you-tag glass">That's you</span>
+        </span>
+      </div>
 
-          <div class="join-wrap load rise d5">
-            <form class="join" novalidate>
-              <label class="sr-only" for="hero-email">Student email</label>
-              <div class="join-row">
-                <input id="hero-email" name="email" type="email" autocomplete="email" placeholder="you@school.edu" required>
-                <button type="submit" class="btn btn-primary">Join the waitlist</button>
-              </div>
-              <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
-              <p class="join-status" role="status" aria-live="polite"></p>
-            </form>
-            <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
-            <!-- Short privacy notice (aviso de privacidad simplificado) -->
-            <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
-          </div>
-          <p class="hero-meta load rise d6">Free for students · iOS first</p>
+      <div class="wrap hero-body">
+        <div class="sport-switch" role="group" aria-label="Pick a sport">
+          <button type="button" class="sport-chip glass" data-sport="basketball" data-pick="basketball" aria-pressed="true"><span aria-hidden="true">🏀</span> <span class="label">Basketball</span></button>
+          <button type="button" class="sport-chip glass" data-sport="tennis" data-pick="tennis" aria-pressed="false"><span aria-hidden="true">🎾</span> <span class="label">Tennis</span></button>
+          <button type="button" class="sport-chip glass" data-sport="soccer" data-pick="soccer" aria-pressed="false"><span aria-hidden="true">⚽</span> <span class="label">Soccer</span></button>
+          <button type="button" class="sport-chip glass" data-sport="volleyball" data-pick="volleyball" aria-pressed="false"><span aria-hidden="true">🏐</span> <span class="label">Volleyball</span></button>
+          <button type="button" class="sport-chip glass" data-sport="padel" data-pick="padel" aria-pressed="false"><span aria-hidden="true">🎾</span> <span class="label">Padel</span></button>
         </div>
 
-        <!-- Ribbon, people cards and sticker. Decorative: the same facts are in the copy. -->
-        <div class="hero-visual" aria-hidden="true">
-          <div class="hero-stage">
-            <svg class="ribbon ribbon-wide" viewBox="0 0 600 580" fill="none">
-              <path class="r1" pathLength="1" d="M -60 530 C 40 560 140 480 170 400" stroke="var(--sports)"/>
-              <path class="r2" pathLength="1" d="M 170 400 C 200 320 330 380 330 300" stroke="var(--coffee)"/>
-              <path class="r3" pathLength="1" d="M 330 300 C 330 220 400 170 470 150" stroke="var(--games)"/>
-            </svg>
-            <!-- Phone layout: same ribbon, routed through the gaps in the stacked cards -->
-            <svg class="ribbon ribbon-phone" viewBox="0 0 350 490" fill="none">
-              <path class="r1" pathLength="1" d="M -130 460 C -50 440 15 345 80 300" stroke="var(--sports)"/>
-              <path class="r2" pathLength="1" d="M 80 300 C 105 283 122 240 124 182" stroke="var(--coffee)"/>
-              <path class="r3" pathLength="1" d="M 124 182 C 126 140 215 140 285 58" stroke="var(--games)"/>
-            </svg>
-
-            <div class="you load pop d9">
-              <span class="avatar avatar-you halo">
-                <span class="initial">E</span>
-                <img src="assets/people/emilio.jpg" alt="" onerror="this.remove()">
-                <span class="you-dot"></span>
-              </span>
-              <span class="you-label">That's you</span>
-            </div>
-
-            <div class="float float-host bob">
-              <div class="card people-card load drop d4">
-                <div class="pc-top">
-                  <span class="avatar"><span class="initial">R</span><img src="assets/people/ricardo.jpg" alt="" onerror="this.remove()"></span>
-                  <div class="pc-name"><strong>Ricardo</strong><span>Rec center</span></div>
-                  <span class="chip">Host</span>
+        <div class="hero-card load rise">
+          <div class="hero-head">
+            <p class="soon-line">Coming to campus soon</p>
+            <h1 class="display">
+              <span class="h1-from"><span class="strike">&ldquo;Can I join?&rdquo;</span> becomes</span>
+              <span class="h1-to">&ldquo;We're looking for you.&rdquo;</span>
+            </h1>
+          </div>
+          <div class="hero-side">
+            <p class="lede">Find pickup games nearby that are one player short. Tap join, and walk up as the player they were waiting for.</p>
+            <div class="join-wrap">
+              <form class="join" novalidate>
+                <label class="sr-only" for="hero-email">Student email</label>
+                <div class="join-row">
+                  <input id="hero-email" name="email" type="email" autocomplete="email" placeholder="you@school.edu" required>
+                  <button type="submit" class="btn glass glass--primary">Join the waitlist</button>
                 </div>
-                <p class="pc-msg">Need 1 more for 3v3</p>
-              </div>
+                <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <p class="join-status" role="status" aria-live="polite"></p>
+              </form>
+              <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
+              <!-- Short privacy notice (aviso de privacidad simplificado) -->
+              <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
             </div>
-
-            <div class="sticker load pop d6">
-              <svg viewBox="0 0 132 132" class="sticker-ring">
-                <defs><path id="stickerRing" d="M 66 66 m -48 0 a 48 48 0 1 1 96 0 a 48 48 0 1 1 -96 0"/></defs>
-                <text><textPath href="#stickerRing">1 spot left · 1 spot left · 1 spot left ·</textPath></text>
-              </svg>
-              <svg class="i"><use href="#i-ball"/></svg>
-            </div>
-
-            <div class="float float-game bob bob-late">
-              <div class="card game-card load drop d5">
-                <div class="gc-top">
-                  <span class="sport"><svg class="i"><use href="#i-ball"/></svg></span>
-                  <div class="gc-title"><strong>3v3 at the rec center</strong><span>Today · 6:00 PM · 4 min walk</span></div>
-                </div>
-                <div class="gc-people">
-                  <div class="stack"><span class="av">R</span><span class="av">M</span><span class="av">S</span><span class="av">D</span><span class="av slot">+1</span></div>
-                  <span class="spots">1 spot left</span>
-                </div>
-                <p class="gc-faces"><svg class="i"><use href="#i-users"/></svg>See everyone's face before you go</p>
-                <span class="fake-btn">Join game</span>
-              </div>
-            </div>
-
-            <!-- The host side: a no-show refilled without the group chat -->
-            <div class="toast hero-toast load pop d10">
-              <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
-              <div><strong>Spot filled</strong><span>Sunday soccer · 4 min after repost</span></div>
-            </div>
+            <p class="hero-meta">Free for students · iOS first</p>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- ============ MARQUEE ============ -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track">
-        <div class="marquee-set">
-          <span>1 spot left</span><i class="dot sports"></i><span>Starts at 6:00 PM</span><i class="dot coffee"></i><span>4 min walk</span><i class="dot games"></i><span>Basketball, soccer, volleyball</span><i class="dot sports"></i><span>Hosted by students</span><i class="dot coffee"></i><span>Faces before you go</span><i class="dot games"></i>
-        </div>
-        <div class="marquee-set">
-          <span>1 spot left</span><i class="dot sports"></i><span>Starts at 6:00 PM</span><i class="dot coffee"></i><span>4 min walk</span><i class="dot games"></i><span>Basketball, soccer, volleyball</span><i class="dot sports"></i><span>Hosted by students</span><i class="dot coffee"></i><span>Faces before you go</span><i class="dot games"></i>
-        </div>
-      </div>
-    </div>
 
     <!-- ============ STORY ============ -->
     <section class="section" id="story">
@@ -176,19 +186,15 @@
         </div>
 
         <div class="story">
-          <article class="story-card lift reveal">
-            <header class="person">
-              <span class="avatar avatar-lg ring-you">
-                <!-- PLACEHOLDER: persona photo. Drop file at assets/people/emilio.jpg -->
-                <span class="initial">E</span>
-                <img src="assets/people/emilio.jpg" alt="Emilio" onerror="this.remove()">
-              </span>
-              <div class="person-name"><h3>Emilio</h3><p>Freshman, loves to play</p></div>
+          <article class="story-card reveal">
+            <header class="person p-eg">
+              <span class="av av-xl p-eg">EG</span>
               <span class="chip">Wants to play</span>
+              <div class="person-name"><h3>Emilio</h3><p>Freshman, loves to play</p></div>
             </header>
             <ol class="timeline">
               <li><time>4:50 PM</time><p>Walks past a pickup game and slows down to watch.</p></li>
-              <li class="thought"><span></span><p>&ldquo;Maybe I could join&hellip;&rdquo;</p></li>
+              <li class="thought"><time></time><p>&ldquo;Maybe I could join&hellip;&rdquo;</p></li>
               <li><time>4:52 PM</time><p>Not sure if they need anyone. Keeps walking.</p></li>
             </ol>
             <p class="outcome">Emilio misses a game.</p>
@@ -196,46 +202,42 @@
 
           <div class="story-link" aria-hidden="true">
             <span class="line"></span>
-            <span class="node">?</span>
+            <span class="open">+1</span>
             <span class="line"></span>
           </div>
 
-          <article class="story-card lift reveal">
-            <header class="person">
-              <span class="avatar avatar-lg">
-                <!-- PLACEHOLDER: persona photo. Drop file at assets/people/ricardo.jpg -->
-                <span class="initial">R</span>
-                <img src="assets/people/ricardo.jpg" alt="Ricardo" onerror="this.remove()">
-              </span>
-              <div class="person-name"><h3>Ricardo</h3><p>Has the ball and the court</p></div>
+          <article class="story-card reveal" data-sport="basketball">
+            <header class="person p-rt">
+              <span class="av av-xl p-rt">RT</span>
               <span class="chip">One player short</span>
+              <div class="person-name"><h3>Ricardo</h3><p>Has the ball and the court</p></div>
             </header>
-            <div class="chat">
-              <p class="chat-title">hoops · 5 people</p>
-              <p class="bubble bubble-own">3v3 at 5? we need one more</p>
-              <p class="bubble bubble-in"><b>Mateo</b>class till 6</p>
-              <p class="bubble bubble-in"><b>Sofi</b>can't, homework</p>
-              <p class="bubble bubble-in"><b>Diego</b>anyone else??</p>
+            <div class="story-chat">
+              <p class="system-line">hoops · 5 people</p>
+              <div class="msg msg-me"><p class="bubble bubble-me">3v3 at 5? we need one more</p></div>
+              <div class="msg"><span class="av p-mc">MC</span><div><p class="msg-from">Mateo</p><p class="bubble">class till 6</p></div></div>
+              <div class="msg"><span class="av p-sr">SR</span><div><p class="msg-from">Sofi</p><p class="bubble">can't, homework</p></div></div>
+              <div class="msg"><span class="av p-dm">DM</span><div><p class="msg-from">Diego</p><p class="bubble">anyone else??</p></div></div>
             </div>
             <p class="outcome">Ricardo's game gets called off.</p>
           </article>
         </div>
 
         <!-- Organizer HMW: refilling a no-show beats asking the group chat -->
-        <div class="refill reveal">
-          <p class="kicker">Someone doesn't show? Don't wait on the group chat.</p>
+        <div class="refill reveal" data-sport="soccer">
+          <p class="refill-title">Someone doesn't show? Don't wait on the group chat.</p>
           <div class="refill-row">
             <div class="refill-col">
               <span class="refill-label">Group chat</span>
-              <p class="bubble bubble-own">Diego bailed. anyone??</p>
+              <div class="msg msg-me"><p class="bubble bubble-me">Diego bailed. anyone??</p></div>
               <p class="refill-meta">Read by 11 · no reply</p>
             </div>
             <span class="refill-vs" aria-hidden="true">vs</span>
             <div class="refill-col">
               <span class="refill-label">masUNO</span>
-              <div class="toast">
-                <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
-                <div><strong>Spot filled</strong><span>Emilio joined 4 min after it auto-reposted</span></div>
+              <div class="join-pill join-pill-block">
+                <span class="av p-eg">EG</span>
+                <span><strong>Spot filled</strong><span>Emilio joined 4 min after it auto-reposted</span></span>
               </div>
               <p class="refill-meta">masUNO bumps your game back to the top of the map on its own</p>
             </div>
@@ -244,66 +246,89 @@
       </div>
     </section>
 
-    <!-- ============ PLUS ONE (the one green band) ============ -->
-    <section class="band-primary">
-      <div class="wrap band-inner reveal">
-        <p class="display plus-one">+1</p>
-        <p class="band-text">Más uno means plus one. Every game has room for one more.</p>
+    <!-- ============ PLUS ONE: capacity at a glance ============ -->
+    <section class="plus court" data-sport="volleyball">
+      <svg class="court-art" aria-hidden="true"><use href="#court-volleyball"/></svg>
+      <div class="wrap plus-inner reveal">
+        <div class="plus-row" aria-hidden="true">
+          <span class="av p-rt">RT</span><span class="av p-mc">MC</span><span class="av p-sr">SR</span><span class="av p-dm">DM</span><span class="av p-sl">SL</span>
+          <span class="plus-slot">
+            <span class="open">+1</span>
+            <span class="av p-eg">EG</span>
+            <span class="plus-in glass">You're in!</span>
+          </span>
+        </div>
+        <p class="plus-text">Más uno means plus one. Every game has room for one more.</p>
       </div>
     </section>
 
-    <!-- ============ INSIGHT ============ -->
-    <section class="section dark">
+    <!-- ============ INSIGHT: chat preview ============ -->
+    <section class="section">
       <div class="wrap insight-grid">
         <div class="reveal">
-          <h2 class="display">You're not asking to join. <span class="tint">You're the one they need.</span></h2>
-          <p class="insight-body">Every game on masUNO is there because it needs one more. When you show up, you're the answer, not the interruption.</p>
+          <h2 class="display"><span class="soft">You're not asking to join.</span> <span>You're the one they need.</span></h2>
+          <p class="body-lg">Every game on masUNO is there because it needs one more. When you show up, you're the answer, not the interruption.</p>
         </div>
-        <figure class="quote">
-          <p class="bubble bubble-in reveal"><b>Ricardo</b>Still need one for 3v3 at 6</p>
-          <div class="quote-row reveal">
-            <blockquote class="bubble bubble-own">&ldquo;Hey, I'm Emilio. I'm your sixth player.&rdquo;</blockquote>
-            <span class="avatar avatar-sm halo"><span class="initial">E</span><img src="assets/people/emilio.jpg" alt="" onerror="this.remove()"></span>
+
+        <figure class="chat chat-card reveal" data-sport="basketball" role="img" aria-label="Group chat where Emilio takes the last spot in Ricardo's 3v3">
+          <div class="chat-band court">
+            <svg class="court-art"><use href="#court-basketball"/></svg>
+            <div class="band-nav">
+              <span class="round glass"><svg class="i"><use href="#i-back"/></svg></span>
+              <div class="band-title"><strong>3v3 at the rec center</strong><span>🏀 Basketball · 6 going</span></div>
+              <span class="stack stack-glass"><span class="av p-rt">RT</span><span class="av p-mc">MC</span><span class="av p-eg">EG</span></span>
+            </div>
+          </div>
+          <div class="pinned">
+            <span class="pinned-tag">Pinned</span>
+            <p><svg class="i"><use href="#i-clock"/></svg><span>Today · 6:00 PM</span></p>
+            <p><svg class="i"><use href="#i-pin"/></svg><span>Rec center courts</span></p>
+          </div>
+          <div class="chat-body">
+            <span class="day-pill">Today</span>
+            <div class="msg"><span class="av p-rt">RT</span><div><p class="msg-from">Ricardo · Host · 5:12 PM</p><p class="bubble">Still need one for 3v3 at 6</p></div></div>
+            <div class="join-pill"><span class="open">+1</span><span>Emilio took the last spot · game is full</span></div>
+            <div class="msg msg-me"><div><p class="bubble bubble-me">Hey, I'm Emilio. I'm your sixth player.</p><p class="msg-after">5:14 PM · Read</p></div></div>
+            <div class="msg"><span class="av p-rt">RT</span><div><p class="msg-from">Ricardo · Host · 5:15 PM</p><p class="bubble">Let's go. See you at 6</p></div></div>
           </div>
         </figure>
       </div>
     </section>
 
     <!-- ============ HOW IT WORKS ============ -->
-    <section class="section" id="how">
+    <section class="section section-tight" id="how">
       <div class="wrap">
         <div class="how-head reveal">
           <div>
             <p class="kicker">How it works</p>
             <h2 class="display">Two sides, one open spot</h2>
           </div>
-          <div class="tabs" role="tablist" aria-label="Choose your side">
+          <div class="tabs glass" role="tablist" aria-label="Choose your side">
             <button class="tab" role="tab" id="tab-play" aria-controls="panel-play" aria-selected="true">I want to play</button>
             <button class="tab" role="tab" id="tab-host" aria-controls="panel-host" aria-selected="false" tabindex="-1">I need players</button>
           </div>
         </div>
 
-        <!-- Player flow -->
-        <div class="panel walkthrough" role="tabpanel" id="panel-play" aria-labelledby="tab-play">
-          <ol class="wt-steps">
-            <li><button type="button" class="wt-step" aria-pressed="true">
-              <span class="num">1</span>
-              <span class="wt-text"><strong>See what's happening nearby</strong><span>Every pin is a game with an open spot.</span></span>
-            </button></li>
-            <li><button type="button" class="wt-step" aria-pressed="false">
-              <span class="num">2</span>
-              <span class="wt-text"><strong>See who's going, with photos</strong><span>Know the faces before you show up.</span></span>
-            </button></li>
-            <li><button type="button" class="wt-step" aria-pressed="false">
-              <span class="num">3</span>
-              <span class="wt-text"><strong>Show up expected</strong><span>Details, a group chat and a reminder.</span></span>
-            </button></li>
-          </ol>
+        <!-- Player flow: a basketball game -->
+        <div class="panel walkthrough" role="tabpanel" id="panel-play" aria-labelledby="tab-play" data-sport="basketball">
+          <div class="wt-col">
+            <ol class="wt-steps">
+              <li><button type="button" class="wt-step" aria-pressed="true">
+                <span class="num">1</span>
+                <span class="wt-text"><strong>See open spots nearby</strong><span>Every pin is a game with an open spot.</span></span>
+              </button></li>
+              <li><button type="button" class="wt-step" aria-pressed="false">
+                <span class="num">2</span>
+                <span class="wt-text"><strong>See who's going before you join</strong><span>Know who you'll play with before you show up.</span></span>
+              </button></li>
+              <li><button type="button" class="wt-step" aria-pressed="false">
+                <span class="num">3</span>
+                <span class="wt-text"><strong>Show up expected</strong><span>Details, a group chat and a reminder.</span></span>
+              </button></li>
+            </ol>
+            <p class="wt-hint">Tap a step, the screen follows</p>
+          </div>
           <div class="phone-col">
-            <p class="anno" aria-hidden="true">
-              <span>Tap a step, the screen follows</span>
-              <svg viewBox="0 0 170 90" fill="none"><path d="M 10 8 C 30 60 90 80 158 62"/><path d="M 144 50 L 160 62 L 142 74"/></svg>
-            </p>
             <figure class="phone">
               <div class="screen">
                 <!-- PLACEHOLDER: Figma/Xcode screens for the player flow, one layer per step -->
@@ -324,24 +349,24 @@
           </div>
         </div>
 
-        <!-- Host flow -->
-        <div class="panel walkthrough" role="tabpanel" id="panel-host" aria-labelledby="tab-host" hidden>
+        <!-- Host flow: a soccer game -->
+        <div class="panel walkthrough" role="tabpanel" id="panel-host" aria-labelledby="tab-host" data-sport="soccer" hidden>
           <div class="wt-col">
-          <ol class="wt-steps">
-            <li><button type="button" class="wt-step" aria-pressed="true">
-              <span class="num">1</span>
-              <span class="wt-text"><strong>Post in under a minute</strong><span>What, when, where and how many spots.</span></span>
-            </button></li>
-            <li><button type="button" class="wt-step" aria-pressed="false">
-              <span class="num">2</span>
-              <span class="wt-text"><strong>Manage it in one place</strong><span>See who's coming and chat with the group.</span></span>
-            </button></li>
-            <li><button type="button" class="wt-step" aria-pressed="false">
-              <span class="num">3</span>
-              <span class="wt-text"><strong>No-show? Refill it before tip-off</strong><span>When someone drops out, masUNO bumps your game back to the top of the map so the spot fills.</span></span>
-            </button></li>
-          </ol>
-          <p class="host-cta"><span>Hosting games?</span> <a href="#join" class="btn btn-primary" data-role="host">Get early access as a host</a></p>
+            <ol class="wt-steps">
+              <li><button type="button" class="wt-step" aria-pressed="true">
+                <span class="num">1</span>
+                <span class="wt-text"><strong>Post in under a minute</strong><span>What, when, where and how many spots.</span></span>
+              </button></li>
+              <li><button type="button" class="wt-step" aria-pressed="false">
+                <span class="num">2</span>
+                <span class="wt-text"><strong>Manage it in one place</strong><span>See who's coming and chat with the group.</span></span>
+              </button></li>
+              <li><button type="button" class="wt-step" aria-pressed="false">
+                <span class="num">3</span>
+                <span class="wt-text"><strong>No-show? Refill it before tip-off</strong><span>When someone drops out, masUNO bumps your game back to the top of the map so the spot fills.</span></span>
+              </button></li>
+            </ol>
+            <p class="host-cta"><span>Hosting games?</span> <a href="#join" class="btn glass glass--mint" data-role="host">Get early access as a host</a></p>
           </div>
           <div class="phone-col">
             <figure class="phone">
@@ -367,98 +392,94 @@
     </section>
 
     <!-- ============ OPEN SPOTS DEMO ============ -->
-    <section class="section section-card">
+    <section class="section section-tight">
       <div class="wrap demo">
         <div class="demo-copy reveal">
           <p class="kicker">Open spots</p>
           <h2 class="display">The map only shows games you can join</h2>
-          <p class="muted">No walking over to a full court.</p>
-          <div class="demo-steps">
+          <p class="body-lg">No walking over to a full court.</p>
+          <div class="demo-steps" data-sport="basketball">
             <button type="button" class="demo-step" data-state="open" aria-pressed="true">
-              <span class="icon-circle"><svg class="i"><use href="#i-bookmark"/></svg></span>
-              <span><strong>Game is open</strong><span>Join or bookmark it</span></span>
+              <span class="tile" style="--tile:#DDF1E8"><svg class="i"><use href="#i-bookmark"/></svg></span>
+              <span class="demo-text"><strong>Game is open</strong><span>Join or bookmark it</span></span>
             </button>
             <button type="button" class="demo-step" data-state="full" aria-pressed="false">
-              <span class="icon-circle"><svg class="i"><use href="#i-eyeoff"/></svg></span>
-              <span><strong>Game fills up</strong><span>It quietly leaves the map</span></span>
+              <span class="tile" style="--tile:#E3DDFC"><svg class="i"><use href="#i-eyeoff"/></svg></span>
+              <span class="demo-text"><strong>Game fills up</strong><span>It quietly leaves the map</span></span>
             </button>
             <button type="button" class="demo-step" data-state="drop" aria-pressed="false">
-              <span class="icon-circle"><svg class="i"><use href="#i-bell"/></svg></span>
-              <span><strong>Someone no-shows</strong><span>The game pops back to the top of the map</span></span>
+              <span class="tile" style="--tile:#FFE3CC"><svg class="i"><use href="#i-repeat"/></svg></span>
+              <span class="demo-text"><strong>Someone no-shows</strong><span>The game pops back to the top of the map</span></span>
             </button>
           </div>
         </div>
 
         <div class="demo-stage reveal" data-state="open">
-          <div class="map" aria-hidden="true">
-            <span class="street s1"></span><span class="street s2"></span><span class="street s3"></span>
-            <span class="pin p1"></span><span class="pin p2"></span>
-            <span class="pin pin-main"><span class="ping"></span></span>
+          <div class="demo-map" aria-hidden="true">
+            <svg class="map-art"><use href="#map-art"/></svg>
+            <span class="pin" data-sport="tennis" style="left:13%;top:27%"><span class="pin-body"><span>🎾</span></span></span>
+            <span class="pin" data-sport="volleyball" style="left:88%;top:22%"><span class="pin-body"><span>🏐</span></span></span>
+            <span class="pin" data-sport="soccer" style="left:86%;top:86%"><span class="pin-body"><span>⚽</span></span></span>
+            <span class="pin" data-sport="padel" style="left:11%;top:80%"><span class="pin-body"><span>🎾</span></span></span>
+            <span class="pin pin-main" data-sport="basketball"><span class="pin-body"><span>🏀</span></span></span>
           </div>
-          <div class="toast demo-toast" aria-hidden="true">
-            <span class="icon-circle"><svg class="i"><use href="#i-bell"/></svg></span>
-            <div><strong>A spot just opened near you</strong><span>3v3 at the rec center · starts in 10 min</span></div>
-          </div>
-          <article class="card game-card demo-card" aria-hidden="true">
-            <div class="gc-top">
-              <span class="sport"><svg class="i"><use href="#i-ball"/></svg></span>
-              <div class="gc-title"><strong>3v3 at the rec center</strong><span>Today · 6:00 PM · 4 min walk</span></div>
+          <article class="popup demo-popup" data-sport="basketball" aria-hidden="true">
+            <p class="g-line">🏀 Basketball · Hosted by Ricardo</p>
+            <p class="g-title">3v3 at the rec center</p>
+            <div class="g-cap">
+              <span class="stack"><span class="av p-rt">RT</span><span class="av p-mc">MC</span><span class="av p-sr">SR</span><span class="av p-dm">DM</span><span class="av p-sl">SL</span>
+                <span class="demo-slot"><span class="open">+1</span><span class="av p-eg">EG</span></span>
+              </span>
             </div>
-            <div class="gc-people">
-              <div class="stack"><span class="av">R</span><span class="av">M</span><span class="av">S</span><span class="av">D</span><span class="av">L</span><span class="av slot"><b class="slot-open">+1</b><b class="slot-full">E</b></span></div>
-              <span class="spots" data-spots>1 spot left</span>
-            </div>
-            <p class="gc-faces"><svg class="i"><use href="#i-users"/></svg>See everyone's face before you go</p>
-            <div class="gc-foot">
-              <span>Hosted by <b>Ricardo</b></span>
-              <span class="fake-btn">Join game</span>
-            </div>
+            <p class="g-capline" data-spots>Room for 1 more</p>
+            <p class="g-meta"><svg class="i"><use href="#i-clock"/></svg>Today · 6:00 PM · 4 min walk</p>
+            <p class="g-meta g-reposted demo-reposted"><svg class="i"><use href="#i-repeat"/></svg>Reposted now</p>
           </article>
-          <p class="demo-caption" data-caption role="status">On the map</p>
+          <p class="demo-caption glass" data-caption role="status">On the map</p>
         </div>
       </div>
     </section>
 
-    <!-- ============ LOW PRESSURE ============ -->
-    <section class="section">
-      <div class="wrap">
-        <div class="section-head reveal">
+    <!-- ============ LOW PRESSURE: settings-style list ============ -->
+    <section class="section section-tight">
+      <div class="wrap settings-grid">
+        <div class="reveal">
           <p class="kicker">Low pressure, by design</p>
           <h2 class="display">Just show up and play</h2>
         </div>
-        <div class="grid-4">
-          <div class="feature lift reveal">
-            <span class="icon-circle"><svg class="i"><use href="#i-shield"/></svg></span>
-            <h3>Students only</h3>
-            <p>Verified with a university email.</p>
-          </div>
-          <div class="feature lift reveal">
-            <span class="icon-circle"><svg class="i"><use href="#i-users"/></svg></span>
-            <h3>No walking in cold</h3>
-            <p>See everyone's face before you go.</p>
-          </div>
-          <div class="feature lift reveal">
-            <span class="icon-circle"><svg class="i"><use href="#i-ball"/></svg></span>
-            <h3>One game at a time</h3>
-            <p>No team to join, no season to commit to.</p>
-          </div>
-          <div class="feature lift reveal">
-            <span class="icon-circle"><svg class="i"><use href="#i-pin"/></svg></span>
-            <h3>Public places</h3>
-            <p>Campus courts and the rec center.</p>
-          </div>
-        </div>
+        <ul class="group reveal">
+          <li class="row">
+            <span class="tile" style="--tile:#DDF1E8"><svg class="i"><use href="#i-shield"/></svg></span>
+            <div><h3>Students only</h3><p>Verified with a university email.</p></div>
+            <span class="switch" aria-hidden="true"></span>
+          </li>
+          <li class="row">
+            <span class="tile" style="--tile:#74C0F5"><svg class="i"><use href="#i-eye"/></svg></span>
+            <div><h3>No walking in cold</h3><p>See who's going before you go.</p></div>
+            <span class="switch" aria-hidden="true"></span>
+          </li>
+          <li class="row">
+            <span class="tile" style="--tile:#FFF0C4"><svg class="i"><use href="#i-calendar"/></svg></span>
+            <div><h3>One game at a time</h3><p>No team to join, no season to commit to.</p></div>
+            <span class="switch" aria-hidden="true"></span>
+          </li>
+          <li class="row">
+            <span class="tile" style="--tile:#E3DDFC"><svg class="i"><use href="#i-pin"/></svg></span>
+            <div><h3>Public places</h3><p>Campus courts and the rec center.</p></div>
+            <span class="switch" aria-hidden="true"></span>
+          </li>
+        </ul>
       </div>
     </section>
 
     <!-- ============ FAQ ============ -->
-    <section class="section section-card" id="faq">
-      <div class="wrap faq-grid">
+    <section class="section section-tight" id="faq">
+      <div class="wrap settings-grid">
         <div class="reveal">
           <h2 class="display">FAQ</h2>
-          <p class="muted">Anything else? Reply to our first email.</p>
+          <p class="body-lg">Anything else? Reply to our first email.</p>
         </div>
-        <div class="faq reveal">
+        <div class="group faq reveal">
           <details open>
             <summary>Why not just use a group chat?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
             <p>Group chats only reach people you already know. Emilio isn't in Ricardo's.</p>
@@ -488,54 +509,51 @@
     </section>
 
     <!-- ============ FINAL CTA ============ -->
-    <section class="cta dark" id="join">
-      <div class="wrap cta-inner">
-        <div class="pair reveal" aria-hidden="true">
-          <svg class="ribbon ribbon-pair" viewBox="0 0 560 140" fill="none" preserveAspectRatio="none">
-            <path pathLength="1" d="M 500 70 C 440 10 380 10 340 60" stroke="var(--sports)"/>
-            <path pathLength="1" d="M 340 60 C 300 120 250 120 220 70" stroke="var(--coffee)"/>
-            <path pathLength="1" d="M 220 70 C 180 10 120 20 60 70" stroke="var(--games)"/>
-          </svg>
-          <span class="avatar avatar-xl halo pair-e"><span class="initial">E</span><img src="assets/people/emilio.jpg" alt="" onerror="this.remove()"></span>
-          <span class="avatar avatar-xl pair-r"><span class="initial">R</span><img src="assets/people/ricardo.jpg" alt="" onerror="this.remove()"></span>
-        </div>
-        <p class="payoff reveal">Emilio found his game. <span class="tint">Ricardo found his player.</span></p>
-        <h2 class="display cta-title reveal">Your game is out there</h2>
-        <p class="lede reveal">Be the first to find it.</p>
+    <section class="cta" id="join" data-sport="soccer">
+      <div class="cta-art court" aria-hidden="true">
+        <svg class="court-art"><use href="#court-soccer"/></svg>
+        <div class="pair reveal"><span class="av av-xl p-eg">EG</span><span class="av av-xl p-rt">RT</span></div>
+      </div>
+      <div class="wrap">
+        <div class="cta-card reveal">
+          <p class="payoff"><span>Emilio found his game.</span> <span>Ricardo found his player.</span></p>
+          <h2 class="display">Your game is out there</h2>
+          <p class="lede">Be the first to find it.</p>
 
-        <div class="join-wrap reveal">
-          <form class="join" novalidate>
-            <label class="sr-only" for="cta-email">Student email</label>
-            <div class="join-row">
-              <input id="cta-email" name="email" type="email" autocomplete="email" placeholder="you@school.edu" required>
-              <button type="submit" class="btn btn-primary">Join the waitlist</button>
-            </div>
-            <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <p class="join-status" role="status" aria-live="polite"></p>
-          </form>
-          <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
-          <!-- Short privacy notice (aviso de privacidad simplificado) -->
-          <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
+          <div class="join-wrap">
+            <form class="join" novalidate>
+              <label class="sr-only" for="cta-email">Student email</label>
+              <div class="join-row">
+                <input id="cta-email" name="email" type="email" autocomplete="email" placeholder="you@school.edu" required>
+                <button type="submit" class="btn glass glass--primary">Join the waitlist</button>
+              </div>
+              <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <p class="join-status" role="status" aria-live="polite"></p>
+            </form>
+            <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
+            <!-- Short privacy notice (aviso de privacidad simplificado) -->
+            <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
+          </div>
         </div>
       </div>
-
-      <footer class="footer">
-        <div class="wrap footer-inner">
-          <a href="#top" class="wordmark" aria-label="masUNO">mas<span>UNO</span></a>
-          <p><span>Made by Ricardo, Arianna, Emilio and Ethan · 2026 App Accelerator</span> · <a href="privacy.html">Privacy notice</a></p>
-        </div>
-      </footer>
     </section>
 
   </main>
 
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a href="#" class="wordmark" aria-label="masUNO"><span class="open open-mark" aria-hidden="true">+1</span>masUNO</a>
+      <p><span>Made by Ricardo, Arianna, Emilio and Ethan · 2026 App Accelerator</span> · <a href="privacy.html">Privacy notice</a></p>
+    </div>
+  </footer>
+
   <!-- ============ STEP 2: optional details, opens after someone joins ============ -->
   <dialog class="sheet" id="details" aria-labelledby="details-title">
     <form id="details-form" method="dialog">
-      <button type="button" class="sheet-close" data-close aria-label="Close">&times;</button>
-      <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
+      <span class="grabber" aria-hidden="true"></span>
+      <button type="button" class="round glass sheet-close" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
       <h2 id="details-title" data-title>You're on the list</h2>
-      <p class="muted">Two quick questions so we launch where you are. Totally optional.</p>
+      <p class="sheet-sub">Two quick questions so we launch where you are. Totally optional.</p>
 
       <fieldset class="field">
         <legend>I want to…</legend>
@@ -562,17 +580,19 @@
       <fieldset class="field">
         <legend>What do you play?</legend>
         <div class="pills">
-          <label><input type="checkbox" name="sports" value="basketball"><span>Basketball</span></label>
-          <label><input type="checkbox" name="sports" value="soccer"><span>Soccer</span></label>
-          <label><input type="checkbox" name="sports" value="volleyball"><span>Volleyball</span></label>
+          <label data-sport="basketball"><input type="checkbox" name="sports" value="basketball"><span>🏀 Basketball</span></label>
+          <label data-sport="soccer"><input type="checkbox" name="sports" value="soccer"><span>⚽ Soccer</span></label>
+          <label data-sport="tennis"><input type="checkbox" name="sports" value="tennis"><span>🎾 Tennis</span></label>
+          <label data-sport="volleyball"><input type="checkbox" name="sports" value="volleyball"><span>🏐 Volleyball</span></label>
+          <label data-sport="padel"><input type="checkbox" name="sports" value="padel"><span>🎾 Padel</span></label>
           <label><input type="checkbox" name="sports" value="other"><span>Something else</span></label>
         </div>
       </fieldset>
 
       <p class="details-status" role="status" aria-live="polite"></p>
       <div class="sheet-actions">
-        <button type="button" class="btn btn-text" data-close>Skip</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-block glass glass--primary">Save</button>
+        <button type="button" class="btn btn-block glass glass--mint" data-close>Not now</button>
       </div>
     </form>
   </dialog>
