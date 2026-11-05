@@ -115,7 +115,22 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
   transition: background .2s, border-color .2s;
 }
 .nav-links a:hover { background: rgba(253, 252, 254, .08); border-color: rgba(253, 252, 254, .5); }
-@media (max-width: 640px) { .nav-links { display: none; } }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.language-toggle { display: inline-flex; flex: none; border: 1.5px solid rgba(253, 252, 254, .28); border-radius: var(--radius-pill); overflow: hidden; }
+.language-toggle button {
+  min-width: 44px; height: 44px; padding: 0 10px; border: 0; background: transparent;
+  color: var(--on-dark); font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: background .2s, color .2s, transform .2s;
+}
+.language-toggle button:hover { background: rgba(253, 252, 254, .12); }
+.language-toggle button:active { transform: scale(.94); }
+.language-toggle button[aria-pressed="true"] { background: var(--card); color: var(--ink); }
+@media (max-width: 640px) {
+  html { scroll-padding-top: 140px; }
+  .nav-links { display: none; }
+  .nav-actions { width: 100%; }
+  .nav-actions .btn { flex: 1; }
+}
 
 /* ---------- Hero ---------- */
 .hero { padding: clamp(48px, 7vw, 96px) 0 clamp(64px, 8vw, 120px); }

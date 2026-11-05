@@ -1,6 +1,6 @@
 # masUNO landing page
 
-The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no build step.
+The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no build step. Run `npm run dev` for a local preview on port 7100 (no dependency installation needed).
 
 - **Live site:** https://masuno-app.github.io/ (GitHub Pages, deployed from `main`)
 - **Waitlist:** connected. Signups go to the **Waitlist** tab of the masUNO waitlist Google Sheet through the Apps Script in `apps-script/Code.gs`.
@@ -8,6 +8,7 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 ```
 index.html          page content
 privacy.html        privacy notice, linked under each form and in the footer
+i18n.js             Spanish translations, browser-language detection and the language toggle
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
 script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
@@ -32,14 +33,13 @@ To retake them from the `ios` repo, run a Debug build with `-screen` set to `map
 | `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
 | `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
 
+**Placeholder assets:** the two files under `assets/people/` contain generated initials, not photographs; overwrite them with square portraits when available. `favicon.svg` is a simple +1 mark that can likewise be replaced by the final app icon.
+
 **Still missing:**
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
-| `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
-| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
 
 Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
@@ -114,11 +114,14 @@ The page collects emails, so Mexican data-protection law (LFPDPPP) requires a pr
 - **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: when a player drops out of a full game, the app bumps the game back to the top of the map on its own (the "Auto-repost" toggle in the Add game form, on by default). There's no Repost button for hosts to tap, and push notifications to nearby players or bookmarkers aren't in the first release, so don't mention pings or notifications.
 - **Both sides should be visible.** Players are the main audience, but the host's problem (refilling a no-show faster than the group chat) appears in the hero, the story section, the "I need players" tab and the FAQ. Keep it there when you change things.
 
+## Language
+
+The English source copy stays in the HTML and in the runtime messages at the top of `script.js`; Spanish translations live in `i18n.js`. Spanish-language browsers get Spanish automatically and all other browsers get English. The EN/ES header toggle overrides detection and stores the choice in this browser's `localStorage` (`masUNO-language`). When adding visible copy, keep the English source in the HTML and add its Spanish equivalent to `i18n.js`.
+
 ## Still to decide
 
 These come from the open decisions in DESIGN.md and show up on the page:
 
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
-- **Language:** the page is English only for now. A Spanish version is planned for the Mexico launch. All the copy is in `index.html`, plus the runtime messages at the top of `script.js`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
 - **Example numbers:** "4 min after repost" (hero notification) and "4 min after it auto-reposted" (the group chat vs. masUNO block) are placeholders. Swap in a real fill time from testing.
