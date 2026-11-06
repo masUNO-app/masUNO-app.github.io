@@ -14,8 +14,9 @@ const MSG = {
   "done.joined": "You're on the list. We'll be in touch.",
   "done.duplicate": "You're already on the list. See you soon.",
   "done.details": "Thanks! We'll let you know when games go live near you.",
-  "dlg.title": "You're the +1",
-  "dlg.position": "You're the +1 · #{n} on the list",
+  "dlg.title": "You're in",
+  "dlg.position": "You're in · #{n} on the list",
+  "dlg.sharePosition": "#{n} on the list",
   "dlg.save": "Save",
   "dlg.saving": "Saving…",
   "dlg.error": "Couldn't save that. Try again, or skip. You're already on the list.",
@@ -31,11 +32,11 @@ const MSG = {
   "hero.joined.status": "You're in. Show up expected.",
   "hero.joined.toast": "That's your spot",
   "hero.joined.toastCopy": "No asking. No awkward arrival.",
-  "share.message": "I'm joining masUNO to find pickup games on campus. Join the early-access list with me:",
+  "share.message": "I'm joining masUNO to find pickup games on campus. Join the early-access list with my invite:",
   "share.note": "One invite can be the start of your next game.",
   "share.opened": "WhatsApp opened. Choose your team or group chat.",
   "share.done": "Thanks for bringing your team.",
-  "share.copied": "Link copied. Send it to your team.",
+  "share.copied": "Personal invite link copied. Send it to your team.",
   "share.copyFallback": "Select and copy the link above to share it.",
 };
 const t = (key, vars = {}) => window.masUNOI18n.translate(MSG[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
@@ -190,7 +191,7 @@ heroJoin.addEventListener("click", () => {
 });
 
 // ---------- Waitlist ----------
-// Step 1: email only. Step 2: optional details. Step 3: invite your team.
+// Step 1: email only. Step 2: role and campus. Step 3: personal invite.
 const joinForms = [...document.querySelectorAll("form.join")];
 const dialog = document.getElementById("details");
 const detailsForm = document.getElementById("details-form");
@@ -200,7 +201,7 @@ const shareLink = document.getElementById("share-link");
 const shareWhatsapp = document.getElementById("share-whatsapp");
 const shareNative = document.getElementById("share-native");
 const shareStatus = document.getElementById("share-status");
-let signup = null; // { email, token } from step 1, used to attach step-2 details
+let signup = null; // { email, token, referralCode, position } from step 1
 
 function source() {
   const params = new URLSearchParams(window.location.search);
@@ -216,7 +217,7 @@ async function post(payload) {
   if (WAITLIST_ENDPOINT.startsWith("PASTE_")) {
     console.warn("[masUNO] WAITLIST_ENDPOINT not set. Would have sent:", payload);
     await new Promise((r) => setTimeout(r, 450));
-    return { ok: true, position: 128, token: "local-test" };
+    return { ok: true, position: 128, token: "local-test", referralCode: "LOCAL123" };
   }
   // A form-encoded body keeps this a "simple" CORS request, so Apps Script doesn't need a preflight
   const res = await fetch(WAITLIST_ENDPOINT, { method: "POST", body: new URLSearchParams(payload) });
@@ -238,7 +239,7 @@ function waitlistShareUrl() {
   const url = new URL(window.location.href);
   url.hash = "";
   url.search = "";
-  url.searchParams.set("ref", "team");
+  url.searchParams.set("ref", signup?.referralCode || "team");
   return url.href;
 }
 
@@ -254,6 +255,8 @@ function showShare() {
   shareStep.hidden = false;
   dialog.querySelector("[data-progress-details]").classList.remove("is-active");
   dialog.querySelector("[data-progress-share]").classList.add("is-active");
+  dialog.querySelector("#host-invite").hidden = !["host", "both"].includes(detailsForm.elements.role.value);
+  if (signup?.position) render(dialog.querySelector("[data-share-position]"), "dlg.sharePosition", { n: signup.position });
   updateShareLinks();
   render(shareStatus, "share.note");
   shareStep.querySelector("h2").focus?.();
@@ -294,7 +297,7 @@ joinForms.forEach((form) => {
         markJoined("done.duplicate");
         return;
       }
-      signup = { email, token: res.token };
+      signup = { email, token: res.token, referralCode: res.referralCode, position: res.position };
       markJoined("done.joined");
       detailsStep.hidden = false;
       shareStep.hidden = true;
@@ -359,7 +362,6 @@ detailsForm.addEventListener("submit", async (e) => {
       token: signup.token,
       role: detailsForm.elements.role.value,
       campus: detailsForm.elements.campus.value,
-      sports: [...detailsForm.querySelectorAll("input[name=sports]:checked")].map((c) => c.value).join(", "),
     });
     markJoined("done.details");
     showShare();

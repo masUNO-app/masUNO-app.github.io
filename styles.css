@@ -162,6 +162,8 @@ html:not(.js) .countdown-units { display: none; }
 
 /* Waitlist form */
 .join-wrap { display: flex; flex-direction: column; gap: 12px; max-width: 520px; width: 100%; }
+.launch-note { margin: 0; max-width: 52ch; color: var(--on-dark-muted); font-size: 15px; line-height: 1.55; }
+.launch-note strong { display: block; color: var(--on-dark); font-size: 16px; }
 .join-row { display: flex; gap: 8px; flex-wrap: wrap; background: rgba(253, 252, 254, .08); padding: 6px; border-radius: var(--radius-pill); }
 .join-row input {
   flex: 1 1 200px; min-width: 0; height: 50px; padding: 0 20px; border-radius: var(--radius-pill);
@@ -571,18 +573,24 @@ fieldset.field > legend { margin-bottom: 10px; }
 .hero-game .slot-plus, .hero-game .slot-you { display: flex; align-items: center; justify-content: center; }
 .hero-game .slot-you { display: none; }
 .hero-join {
-  width: 100%; min-height: 44px; padding: 8px 18px; border: 0; border-radius: var(--radius-pill);
+  width: 100%; min-height: 44px; padding: 8px 18px; border: 2px solid rgba(255, 255, 255, .5); border-radius: var(--radius-pill);
   background: var(--primary); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
-  transition: transform .2s var(--ease), background .2s, color .2s;
+  box-shadow: 0 0 0 3px var(--primary-tint);
+  animation: hero-cta-pulse 2.8s ease-in-out infinite;
+  transition: background .2s, box-shadow .2s;
 }
-.hero-join:hover { transform: translateY(-2px); filter: brightness(1.06); }
-.hero-join:active { transform: scale(.97); }
+.hero-join:hover { background: #0f7651; box-shadow: 0 0 0 4px var(--primary-tint); animation-play-state: paused; }
+.hero-join:active { transform: scale(.98); }
+@keyframes hero-cta-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .86; }
+}
 .hero-game-status { display: none; font-size: 13px; font-weight: 600; text-align: center; color: var(--primary); }
 .hero-game.is-joined { box-shadow: 0 0 0 3px var(--primary), var(--shadow-dialog); }
 .hero-game.is-joined .slot { background: var(--primary); border: 2px solid var(--card); color: #fff; transform: scale(1.12); }
 .hero-game.is-joined .slot-plus { display: none; }
 .hero-game.is-joined .slot-you { display: flex; }
-.hero-game.is-joined .hero-join { background: var(--primary-tint); color: var(--ink); cursor: default; }
+.hero-game.is-joined .hero-join { background: var(--primary-tint); color: var(--ink); cursor: default; box-shadow: none; animation: none; }
 .hero-game.is-joined .hero-game-status { display: block; }
 .hero-toast { transition: transform .25s var(--ease), background .25s, color .25s; }
 .hero-toast.is-joined { background: var(--primary); color: #fff; transform: rotate(3deg) scale(1.04); }
@@ -622,4 +630,26 @@ fieldset.field > legend { margin-bottom: 10px; }
   .share-copy-row { flex-wrap: wrap; }
   .share-copy-row input { flex-basis: 100%; }
   .share-copy-row .btn { width: 100%; }
+}
+
+
+/* ---------- Launch conversion and participation ---------- */
+.band-message { flex: 1 1 420px; display: grid; gap: 16px; }
+.band-message .band-text { max-width: 30ch; }
+.band-message .display { font-size: clamp(36px, 4.4vw, 60px); }
+.band-message > p:last-child { margin: 0; font-size: 18px; line-height: 1.55; }
+.how-demo { padding-bottom: 0; }
+.host-cta { align-items: flex-start; }
+.host-cta p { flex: 1 1 320px; margin: 0; font-weight: 500; line-height: 1.55; }
+.host-cta p span { display: block; font-weight: 800; }
+.host-cta .btn { flex: none; }
+.founder-summary { margin: -8px 0 4px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.optional { color: var(--muted); font-size: 12px; font-weight: 500; }
+.share-position { margin: -12px 0 0; color: var(--primary); font-weight: 800; }
+.host-invite { width: 100%; padding: 10px 0 0; border-top: 1px solid var(--line); text-align: center; font-size: 13px; line-height: 1.5; }
+.host-invite strong { margin-right: 6px; font-size: 13px; }
+.host-invite a { color: var(--primary); font-weight: 600; text-underline-offset: 3px; }
+.sheet-success .share-actions { margin-top: 0; }
+@media (max-width: 560px) {
+  .launch-note { font-size: 14px; }
 }

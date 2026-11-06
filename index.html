@@ -62,17 +62,15 @@
     <section class="hero dark">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow load rise"><span class="live-dot"></span> Coming to campus soon</p>
-
           <h1 class="display">
             <span class="load rise d1"><span class="strike">&ldquo;Can I join?&rdquo;</span> becomes</span>
             <span class="tint load rise d3">&ldquo;We're looking for you.&rdquo;</span>
           </h1>
-          <p class="lede load rise d4">Find pickup games nearby that are one player short. Tap join, and walk up as the player they were waiting for.</p>
+          <p class="lede load rise d4">Find pickup games that need one more. Join and show up expected.</p>
 
           <!-- Launch countdown. script.js fills in the numbers (LAUNCH_AT) and hides this block once launch passes. -->
           <div class="countdown load rise d5" data-countdown>
-            <p class="countdown-label">Launching December 16 · 12:00 PM Chicago time</p>
+            <p class="countdown-label">Dec 16 · 12 PM Chicago</p>
             <div class="countdown-units" role="timer">
               <span class="countdown-unit"><strong data-unit="days">00</strong> <span>Days</span></span>
               <span class="countdown-unit"><strong data-unit="hours">00</strong> <span>Hours</span></span>
@@ -82,6 +80,7 @@
           </div>
 
           <div class="join-wrap load rise d5">
+            <p class="launch-note"><strong>Invite-only at Tec de Monterrey.</strong> Get first access to weekly games.</p>
             <form class="join" novalidate>
               <label class="sr-only" for="hero-email">Student email</label>
               <div class="join-row">
@@ -95,7 +94,6 @@
             <!-- Short privacy notice (aviso de privacidad simplificado) -->
             <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
           </div>
-          <p class="hero-meta load rise d6">Free for students · iOS first</p>
         </div>
 
         <!-- Ribbon, people cards and sticker. Decorative: the same facts are in the copy. -->
@@ -233,51 +231,18 @@
           </article>
         </div>
 
-        <!-- Organizer HMW: refilling a no-show beats asking the group chat -->
-        <div class="refill reveal">
-          <p class="kicker">Someone doesn't show? Don't wait on the group chat.</p>
-          <div class="refill-row">
-            <div class="refill-col">
-              <span class="refill-label">Group chat</span>
-              <p class="bubble bubble-own">Diego bailed. anyone??</p>
-              <p class="refill-meta">Read by 11 · no reply</p>
-            </div>
-            <span class="refill-vs" aria-hidden="true">vs</span>
-            <div class="refill-col">
-              <span class="refill-label">masUNO</span>
-              <div class="toast">
-                <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
-                <div><strong>Spot filled</strong><span>Emilio joined 4 min after it auto-reposted</span></div>
-              </div>
-              <p class="refill-meta">masUNO bumps your game back to the top of the map on its own</p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- ============ PLUS ONE (the one green band) ============ -->
-    <section class="band-primary">
+    <!-- ============ THE MEANING OF masUNO ============ -->
+    <section class="band-primary" aria-labelledby="meaning-title">
       <div class="wrap band-inner reveal">
-        <p class="display plus-one">+1</p>
-        <p class="band-text">Más uno means plus one. Every game has room for one more.</p>
-      </div>
-    </section>
-
-    <!-- ============ INSIGHT ============ -->
-    <section class="section dark">
-      <div class="wrap insight-grid">
-        <div class="reveal">
-          <h2 class="display">You're not asking to join. <span class="tint">You're the one they need.</span></h2>
-          <p class="insight-body">Every game on masUNO is there because it needs one more. When you show up, you're the answer, not the interruption.</p>
+        <p class="display plus-one" aria-hidden="true">+1</p>
+        <div class="band-message">
+          <p class="band-text">Más uno means plus one. Every game has room for one more.</p>
+          <h2 class="display" id="meaning-title">You're the one they need.</h2>
+          <p>Show up as the answer, not the interruption.</p>
         </div>
-        <figure class="quote">
-          <p class="bubble bubble-in reveal"><b>Ricardo</b>Still need one for 3v3 at 6</p>
-          <div class="quote-row reveal">
-            <blockquote class="bubble bubble-own">&ldquo;Hey, I'm Emilio. I'm your sixth player.&rdquo;</blockquote>
-            <span class="avatar avatar-sm halo"><span class="initial">E</span><img src="assets/people/emilio.jpg" alt="" onerror="this.remove()"></span>
-          </div>
-        </figure>
       </div>
     </section>
 
@@ -353,7 +318,10 @@
               <span class="wt-text"><strong>No-show? Refill it before tip-off</strong><span>When someone drops out, masUNO bumps your game back to the top of the map so the spot fills.</span></span>
             </button></li>
           </ol>
-          <p class="host-cta"><span>Hosting games?</span> <a href="#join" class="btn btn-primary" data-role="host">Get early access as a host</a></p>
+          <div class="host-cta">
+            <p><span>Hosting games?</span> Help us host one of the first masUNO games. Founding hosts get priority onboarding.</p>
+            <a href="#join" class="btn btn-primary" data-role="host">Get early access as a host</a>
+          </div>
           </div>
           <div class="phone-col">
             <figure class="phone">
@@ -375,9 +343,6 @@
             </figure>
           </div>
         </div>
-      </div>
-    </section>
-
     <!-- ============ OPEN SPOTS DEMO ============ -->
     <section class="section section-card">
       <div class="wrap demo">
@@ -428,6 +393,9 @@
           </article>
           <p class="demo-caption" data-caption role="status">On the map</p>
         </div>
+      </div>
+    </section>
+
       </div>
     </section>
 
@@ -516,6 +484,7 @@
         <p class="lede reveal">Be the first to find it.</p>
 
         <div class="join-wrap reveal">
+          <p class="launch-note"><strong>Invite-only launch at Tec de Monterrey.</strong> Join the waitlist for first access to masUNO and our first weekly games.</p>
           <form class="join" novalidate>
             <label class="sr-only" for="cta-email">Student email</label>
             <div class="join-row">
@@ -541,7 +510,7 @@
 
   </main>
 
-  <!-- ============ SIGNUP: founding-player details, then invite the team ============ -->
+  <!-- ============ SIGNUP: details, then sports and personal invites ============ -->
   <dialog class="sheet" id="details" aria-labelledby="details-title">
     <form id="details-form" method="dialog">
       <button type="button" class="sheet-close" data-close aria-label="Close">&times;</button>
@@ -549,8 +518,8 @@
 
       <div class="sheet-step" data-signup-step="details">
         <span class="founder-badge"><svg class="i"><use href="#i-check"/></svg>Founding player</span>
-        <h2 id="details-title" data-title>You're the +1</h2>
-        <p class="muted">You're on the early-access list. Tell us where to launch and what you play. Totally optional.</p>
+        <h2 id="details-title" data-title>You're in</h2>
+        <p class="founder-summary">Early access · First weekly games · Host priority</p>
 
         <fieldset class="field">
           <legend>I want to…</legend>
@@ -562,7 +531,7 @@
         </fieldset>
 
         <div class="field">
-          <label for="campus">Campus</label>
+          <label for="campus">Campus <span class="optional">Optional</span></label>
           <select id="campus" name="campus">
             <option value="">Choose your campus</option>
             <option>Tec de Monterrey</option>
@@ -573,16 +542,6 @@
           </select>
         </div>
 
-        <fieldset class="field">
-          <legend>What do you play?</legend>
-          <div class="pills">
-            <label><input type="checkbox" name="sports" value="basketball"><span>Basketball</span></label>
-            <label><input type="checkbox" name="sports" value="soccer"><span>Soccer</span></label>
-            <label><input type="checkbox" name="sports" value="volleyball"><span>Volleyball</span></label>
-            <label><input type="checkbox" name="sports" value="other"><span>Something else</span></label>
-          </div>
-        </fieldset>
-
         <p class="details-status" role="status" aria-live="polite"></p>
         <div class="sheet-actions">
           <button type="button" class="btn btn-text" data-show-share>Skip</button>
@@ -592,19 +551,23 @@
 
       <div class="sheet-step sheet-success" data-signup-step="share" hidden>
         <span class="founder-badge"><svg class="i"><use href="#i-check"/></svg>Founding player</span>
-        <div class="share-plus-one" aria-hidden="true">+1</div>
-        <h2 tabindex="-1">Now bring your team</h2>
-        <p class="muted">masUNO works better with people to play with. Send the waitlist to your group chat.</p>
+        <h2 tabindex="-1">You’re the +1. Now bring the other five.</h2>
+        <p class="share-position" data-share-position></p>
+
         <div class="share-actions">
           <a class="btn btn-whatsapp" id="share-whatsapp" href="https://wa.me/?text=masUNO%20early%20access" target="_blank" rel="noopener">Share on WhatsApp</a>
           <button type="button" class="btn btn-primary" id="share-native" hidden>Share masUNO</button>
           <div class="share-copy-row">
-            <label class="sr-only" for="share-link">Waitlist link</label>
+            <label class="sr-only" for="share-link">Your personal invite link</label>
             <input id="share-link" type="text" readonly>
             <button type="button" class="btn btn-primary" id="copy-link">Copy link</button>
           </div>
         </div>
         <p class="share-note" id="share-status" role="status" aria-live="polite">One invite can be the start of your next game.</p>
+        <div class="host-invite" id="host-invite" hidden>
+          <strong>Already organizing games?</strong>
+          <a href="mailto:official.masuno.app@gmail.com?subject=Founding%20host">Contact us</a>
+        </div>
         <button type="button" class="btn btn-text" data-close>Done</button>
       </div>
     </form>
