@@ -576,16 +576,21 @@ fieldset.field > legend { margin-bottom: 10px; }
   width: 100%; min-height: 44px; padding: 8px 18px; border: 2px solid rgba(255, 255, 255, .5); border-radius: var(--radius-pill);
   background: var(--primary); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
   box-shadow: 0 0 0 3px var(--primary-tint);
-  transition: transform .2s var(--ease), background .2s, box-shadow .2s;
+  animation: hero-cta-pulse 2.8s ease-in-out infinite;
+  transition: background .2s, box-shadow .2s;
 }
-.hero-join:hover { transform: translateY(-1px); background: #0f7651; box-shadow: 0 0 0 4px var(--primary-tint); }
+.hero-join:hover { background: #0f7651; box-shadow: 0 0 0 4px var(--primary-tint); animation-play-state: paused; }
 .hero-join:active { transform: scale(.98); }
+@keyframes hero-cta-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
 .hero-game-status { display: none; font-size: 13px; font-weight: 600; text-align: center; color: var(--primary); }
 .hero-game.is-joined { box-shadow: 0 0 0 3px var(--primary), var(--shadow-dialog); }
 .hero-game.is-joined .slot { background: var(--primary); border: 2px solid var(--card); color: #fff; transform: scale(1.12); }
 .hero-game.is-joined .slot-plus { display: none; }
 .hero-game.is-joined .slot-you { display: flex; }
-.hero-game.is-joined .hero-join { background: var(--primary-tint); color: var(--ink); cursor: default; box-shadow: none; }
+.hero-game.is-joined .hero-join { background: var(--primary-tint); color: var(--ink); cursor: default; box-shadow: none; animation: none; }
 .hero-game.is-joined .hero-game-status { display: block; }
 .hero-toast { transition: transform .25s var(--ease), background .25s, color .25s; }
 .hero-toast.is-joined { background: var(--primary); color: #fff; transform: rotate(3deg) scale(1.04); }
