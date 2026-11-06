@@ -582,8 +582,8 @@ fieldset.field > legend { margin-bottom: 10px; }
 .hero-join:hover { background: #0f7651; box-shadow: 0 0 0 4px var(--primary-tint); animation-play-state: paused; }
 .hero-join:active { transform: scale(.98); }
 @keyframes hero-cta-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.025); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: .86; }
 }
 .hero-game-status { display: none; font-size: 13px; font-weight: 600; text-align: center; color: var(--primary); }
 .hero-game.is-joined { box-shadow: 0 0 0 3px var(--primary), var(--shadow-dialog); }
