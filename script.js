@@ -53,6 +53,30 @@ document.addEventListener("masuno:languagechange", () => {
   });
 });
 
+// ---------- Launch countdown ----------
+// Noon in Chicago on launch day (CST, UTC-6). The date shown to visitors is in index.html.
+const LAUNCH_AT = Date.parse("2026-12-16T12:00:00-06:00");
+const countdown = document.querySelector("[data-countdown]");
+if (countdown) {
+  const setUnit = (name, value) => {
+    countdown.querySelector(`[data-unit="${name}"]`).textContent = String(value).padStart(2, "0");
+  };
+  const tick = () => {
+    const left = LAUNCH_AT - Date.now();
+    if (left <= 0) {
+      countdown.hidden = true;
+      return;
+    }
+    const seconds = Math.ceil(left / 1000);
+    setUnit("days", Math.floor(seconds / 86400));
+    setUnit("hours", Math.floor(seconds / 3600) % 24);
+    setUnit("minutes", Math.floor(seconds / 60) % 60);
+    setUnit("seconds", seconds % 60);
+    setTimeout(tick, left % 1000 || 1000);
+  };
+  tick();
+}
+
 // ---------- Scroll reveal ----------
 const revealObserver = new IntersectionObserver(
   (entries) => entries.forEach((e) => {

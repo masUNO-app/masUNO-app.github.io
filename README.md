@@ -10,7 +10,7 @@ index.html          page content
 privacy.html        privacy notice, linked under each form and in the footer
 i18n.js             Spanish translations, browser-language detection and the language toggle
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
-script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
+script.js           interactions, the launch countdown (LAUNCH_AT) and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
 assets/screens/     app screenshots used on the page (only files index.html references)
 assets/people/      persona photos
