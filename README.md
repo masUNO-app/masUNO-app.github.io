@@ -75,11 +75,13 @@ If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anythin
 
 </details>
 
-**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a founding-player popup showing their place in line with three optional questions: player or host, campus, and sports. Answering fills in the same row. Saving or skipping opens the final sharing step, with WhatsApp, the native share sheet when available, and a copyable `?ref=team` waitlist link. The private edit token is never included in shared links.
+**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a founding-player popup showing their place in line with two optional questions: player or host and campus. Saving or skipping opens the participation step, where they can select multiple sports, save or skip that selection, and share a personal `?ref=CODIGO` invite through WhatsApp, the native share sheet or the copy button. Sports are saved in the same row through the existing `details` action. The private edit token and email are never included in shared links.
 
-The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role.
+The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role. People who select host or both also see the team's real email contact for founding-host onboarding.
 
-**What gets saved:** join time, email, role, campus, sports, source, when details were added, and country. Source comes from `?ref=` or `?utm_source=` in the link, so you can tell signups apart, for example `…/?ref=clubfair` or `…/?ref=instagram`. A hidden Token column stops anyone from editing someone else's row. Country (`Mexico`, `USA` or `Other`) is an estimate from the browser's time zone, so it shows where the device is at signup, not where someone is from; Campus is the better signal when they fill it in. It's blank for signups from before the column was added.
+**What gets saved:** join time, email, role, campus, sports, source, when details were added, country, a public referral code and the referring code when the invite belongs to an existing signup. Source comes from `?ref=` or `?utm_source=` in the link, so campaign tags still work. **Referred by** is only filled when `?ref=` matches an existing personal code. A hidden Token column stops anyone from editing someone else's row. Country (`Mexico`, `USA` or `Other`) is an estimate from the browser's time zone, so it shows where the device is at signup, not where someone is from; Campus is the better signal when they fill it in. It's blank for signups from before the column was added.
+
+**Referral-code migration:** run `setup()` once after pasting the updated Apps Script. It adds **Referral code** and **Referred by** at the far right without moving Token. New signups receive an eight-character, non-secret unique code. If an existing email joins again, its row receives a code if it did not have one, but its private Token is never returned. Redeploy the existing web app as a new version after this change.
 
 **Built-in protection:** duplicate emails are ignored, a hidden honeypot field filters out simple bots, and values starting with `=` aren't run as formulas in the Sheet.
 
@@ -124,4 +126,4 @@ These come from the open decisions in DESIGN.md and show up on the page:
 
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
-- **Example numbers:** "4 min after repost" (hero notification) and "4 min after it auto-reposted" (the group chat vs. masUNO block) are placeholders. Swap in a real fill time from testing.
+- **Example number:** "4 min walk" in the demo game cards is illustrative. Swap in real examples from testing when available.
