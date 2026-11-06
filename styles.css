@@ -176,9 +176,9 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .notice { font-size: 13px; line-height: 18px; color: var(--on-dark-muted); }
 .notice a { color: var(--primary-tint); }
 
-/* Hero visual: everything is placed in % of a 600×580 stage so it scales down */
+/* Hero visual: everything is placed in % of a 600×620 stage so it scales down */
 .hero-visual { flex: 1 1 460px; min-width: 0; display: flex; justify-content: center; }
-.hero-stage { position: relative; width: min(600px, 100%); aspect-ratio: 600 / 580; }
+.hero-stage { position: relative; width: min(600px, 100%); aspect-ratio: 600 / 620; }
 .ribbon { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .ribbon path { stroke-width: 28; stroke-linecap: round; }
 .hero .ribbon path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .8s cubic-bezier(.6, 0, .35, 1) forwards; }
@@ -186,14 +186,14 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .hero .ribbon .r2 { animation-delay: 1.55s; }
 .hero .ribbon .r3 { animation-delay: 2.2s; }
 
-.you { position: absolute; left: calc(78.33% - 44px); top: calc(25.86% - 44px); width: 88px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.you { position: absolute; left: calc(78.33% - 44px); top: 10%; width: 88px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .avatar-you { width: 88px; height: 88px; font-size: 32px; border: 3px solid #fff; }
 .you-dot { position: absolute; right: 2px; bottom: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); border: 3px solid #fff; z-index: 1; }
 .you-label { background: var(--card); color: var(--ink); font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: var(--radius-pill); white-space: nowrap; }
 
 .float { position: absolute; }
 .float-host { left: 0; top: 2%; }
-.float-game { left: 34%; top: 58%; }
+.float-game { left: 34%; top: 61%; }
 .people-card { rotate: -5deg; box-shadow: var(--shadow-float); padding: 16px; width: 220px; display: flex; flex-direction: column; gap: 12px; }
 :lang(es) .people-card { width: 264px; }
 .pc-top { display: flex; align-items: center; gap: 12px; }
@@ -203,9 +203,10 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .people-card .chip { font-size: 12px; padding: 4px 10px; }
 .pc-msg { background: var(--bg); padding: 10px 14px; border-radius: var(--radius-pill); font-size: 14px; }
 
-.sticker { position: absolute; left: 4%; top: 36%; width: 132px; height: 132px; rotate: -8deg; border-radius: 50%; background: var(--primary-tint); color: var(--ink); display: flex; align-items: center; justify-content: center; }
+.sticker { position: absolute; left: 4%; top: 35%; width: 132px; height: 132px; rotate: -8deg; border-radius: 50%; background: var(--primary-tint); color: var(--ink); display: flex; align-items: center; justify-content: center; }
 .sticker-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sticker-ring text { font-family: var(--font); font-size: 13.5px; font-weight: 700; letter-spacing: 1.5px; fill: var(--ink); }
+:lang(es) .sticker-ring text { font-size: 11.5px; letter-spacing: .5px; }
 .sticker > .i { width: 34px; height: 34px; }
 
 /* Game card (hero + demo) */
@@ -230,7 +231,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .gc-foot { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--muted); }
 .gc-foot b { color: var(--ink); }
 
-.hero-toast { position: absolute; right: -2%; top: 43%; width: 240px; box-shadow: var(--shadow-dialog); rotate: -3deg; }
+.hero-toast { position: absolute; right: -2%; top: 37%; width: 240px; box-shadow: var(--shadow-dialog); rotate: -3deg; }
 
 .ribbon-phone { display: none; }
 
@@ -239,10 +240,10 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 }
 
 /* Phones: the cards can't shrink with the stage and stay readable, so they get their own
-   350×490 layout. Zoom scales it as a whole to fit the screen. */
+   350×560 layout. Zoom scales it as a whole to fit the screen. */
 @media (max-width: 640px) {
   .hero-visual { flex-basis: 100%; }
-  .hero-stage { width: 350px; flex: none; aspect-ratio: auto; height: 490px; zoom: 1.2; }
+  .hero-stage { width: 350px; flex: none; aspect-ratio: auto; height: 560px; zoom: 1.2; }
   .ribbon-wide { display: none; }
   .ribbon-phone { display: block; }
   .ribbon-phone path { stroke-width: 18; }
@@ -258,13 +259,13 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
   .you { left: 249px; top: 22px; width: 72px; }
   .avatar-you { width: 72px; height: 72px; font-size: 26px; }
 
-  .sticker { left: 0; top: 128px; width: 96px; height: 96px; }
+  .sticker { left: 0; top: 142px; width: 96px; height: 96px; }
   .sticker > .i { width: 26px; height: 26px; }
 
-  .hero-toast { left: 155px; right: auto; top: 150px; width: 195px; padding: 10px 12px; }
+  .hero-toast { left: 155px; right: auto; top: 158px; width: 195px; padding: 10px 12px; }
   .hero-toast .icon-circle { width: 32px; height: 32px; }
 
-  .float-game { left: 30px; top: 242px; }
+  .float-game { left: 30px; top: 312px; }
   .float-game .game-card { width: 300px; rotate: 3deg; }
 }
 @media (max-width: 479px) { .hero-stage { zoom: 1; } }
