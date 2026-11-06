@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/og-image.png">
 
-  <!-- TODO: add a favicon made from the masUNO app icon once we have one, e.g. <link rel="icon" href="favicon.png"> and <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2312825a'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,sans-serif' font-size='34' font-weight='700' fill='white'%3E%2B1%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
   <script>document.documentElement.classList.add("js")</script>
   <script src="i18n.js" defer></script>
@@ -131,24 +131,25 @@
             </div>
 
             <div class="float float-game bob bob-late">
-              <div class="card game-card load drop d5">
+              <div class="card game-card hero-game load drop d5" id="hero-game">
                 <div class="gc-top">
                   <span class="sport"><svg class="i"><use href="#i-ball"/></svg></span>
                   <div class="gc-title"><strong>3v3 at the rec center</strong><span>Today · 6:00 PM · 4 min walk</span></div>
                 </div>
                 <div class="gc-people">
-                  <div class="stack"><span class="av">R</span><span class="av">M</span><span class="av">S</span><span class="av">D</span><span class="av slot">+1</span></div>
-                  <span class="spots">1 spot left</span>
+                  <div class="stack"><span class="av">R</span><span class="av">M</span><span class="av">S</span><span class="av">D</span><span class="av slot"><span class="slot-plus">+1</span><span class="slot-you">E</span></span></div>
+                  <span class="spots" data-hero-spots>1 spot left</span>
                 </div>
-                <p class="gc-faces"><svg class="i"><use href="#i-users"/></svg>See everyone's face before you go</p>
-                <span class="fake-btn">Join game</span>
+                <p class="gc-faces"><svg class="i"><use href="#i-users"/></svg><span data-hero-faces>See everyone's face before you go</span></p>
+                <button type="button" class="hero-join" id="hero-join">Be the +1</button>
+                <p class="hero-game-status" id="hero-game-status" role="status" aria-live="polite"></p>
               </div>
             </div>
 
-            <!-- The host side: a no-show refilled without the group chat -->
-            <div class="toast hero-toast load pop d10">
+            <!-- The interactive payoff: the visitor becomes the expected +1 -->
+            <div class="toast hero-toast load pop d10" id="hero-toast">
               <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
-              <div><strong>Spot filled</strong><span>Sunday soccer · 4 min after repost</span></div>
+              <div><strong data-hero-toast-title>One tap. That's your spot.</strong><span data-hero-toast-copy>Try it: join this game.</span></div>
             </div>
           </div>
         </div>
@@ -529,50 +530,71 @@
 
   </main>
 
-  <!-- ============ STEP 2: optional details, opens after someone joins ============ -->
+  <!-- ============ SIGNUP: founding-player details, then invite the team ============ -->
   <dialog class="sheet" id="details" aria-labelledby="details-title">
     <form id="details-form" method="dialog">
       <button type="button" class="sheet-close" data-close aria-label="Close">&times;</button>
-      <span class="icon-circle icon-solid"><svg class="i"><use href="#i-check"/></svg></span>
-      <h2 id="details-title" data-title>You're on the list</h2>
-      <p class="muted">Two quick questions so we launch where you are. Totally optional.</p>
+      <div class="sheet-progress" aria-hidden="true"><span class="is-active" data-progress-details></span><span data-progress-share></span></div>
 
-      <fieldset class="field">
-        <legend>I want to…</legend>
-        <div class="pills">
-          <label><input type="radio" name="role" value="player" checked><span>Find games</span></label>
-          <label><input type="radio" name="role" value="host"><span>Fill my games</span></label>
-          <label><input type="radio" name="role" value="both"><span>Both</span></label>
+      <div class="sheet-step" data-signup-step="details">
+        <span class="founder-badge"><svg class="i"><use href="#i-check"/></svg>Founding player</span>
+        <h2 id="details-title" data-title>You're the +1</h2>
+        <p class="muted">You're on the early-access list. Tell us where to launch and what you play. Totally optional.</p>
+
+        <fieldset class="field">
+          <legend>I want to…</legend>
+          <div class="pills">
+            <label><input type="radio" name="role" value="player" checked><span>Find games</span></label>
+            <label><input type="radio" name="role" value="host"><span>Fill my games</span></label>
+            <label><input type="radio" name="role" value="both"><span>Both</span></label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label for="campus">Campus</label>
+          <select id="campus" name="campus">
+            <option value="">Choose your campus</option>
+            <option>Tec de Monterrey</option>
+            <option>Illinois Tech (IIT)</option>
+            <option>UIC</option>
+            <option>Princeton</option>
+            <option value="other">Somewhere else</option>
+          </select>
         </div>
-      </fieldset>
 
-      <div class="field">
-        <label for="campus">Campus</label>
-        <select id="campus" name="campus">
-          <option value="">Choose your campus</option>
-          <!-- TODO: update once the launch campus is decided -->
-          <option>Tec de Monterrey</option>
-          <option>Illinois Tech (IIT)</option>
-          <option>UIC</option>
-          <option>Princeton</option>
-          <option value="other">Somewhere else</option>
-        </select>
+        <fieldset class="field">
+          <legend>What do you play?</legend>
+          <div class="pills">
+            <label><input type="checkbox" name="sports" value="basketball"><span>Basketball</span></label>
+            <label><input type="checkbox" name="sports" value="soccer"><span>Soccer</span></label>
+            <label><input type="checkbox" name="sports" value="volleyball"><span>Volleyball</span></label>
+            <label><input type="checkbox" name="sports" value="other"><span>Something else</span></label>
+          </div>
+        </fieldset>
+
+        <p class="details-status" role="status" aria-live="polite"></p>
+        <div class="sheet-actions">
+          <button type="button" class="btn btn-text" data-show-share>Skip</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
       </div>
 
-      <fieldset class="field">
-        <legend>What do you play?</legend>
-        <div class="pills">
-          <label><input type="checkbox" name="sports" value="basketball"><span>Basketball</span></label>
-          <label><input type="checkbox" name="sports" value="soccer"><span>Soccer</span></label>
-          <label><input type="checkbox" name="sports" value="volleyball"><span>Volleyball</span></label>
-          <label><input type="checkbox" name="sports" value="other"><span>Something else</span></label>
+      <div class="sheet-step sheet-success" data-signup-step="share" hidden>
+        <span class="founder-badge"><svg class="i"><use href="#i-check"/></svg>Founding player</span>
+        <div class="share-plus-one" aria-hidden="true">+1</div>
+        <h2 tabindex="-1">Now bring your team</h2>
+        <p class="muted">masUNO works better with people to play with. Send the waitlist to your group chat.</p>
+        <div class="share-actions">
+          <a class="btn btn-whatsapp" id="share-whatsapp" href="https://wa.me/?text=masUNO%20early%20access" target="_blank" rel="noopener">Share on WhatsApp</a>
+          <button type="button" class="btn btn-primary" id="share-native" hidden>Share masUNO</button>
+          <div class="share-copy-row">
+            <label class="sr-only" for="share-link">Waitlist link</label>
+            <input id="share-link" type="text" readonly>
+            <button type="button" class="btn btn-primary" id="copy-link">Copy link</button>
+          </div>
         </div>
-      </fieldset>
-
-      <p class="details-status" role="status" aria-live="polite"></p>
-      <div class="sheet-actions">
-        <button type="button" class="btn btn-text" data-close>Skip</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <p class="share-note" id="share-status" role="status" aria-live="polite">One invite can be the start of your next game.</p>
+        <button type="button" class="btn btn-text" data-close>Done</button>
       </div>
     </form>
   </dialog>

@@ -33,14 +33,13 @@ To retake them from the `ios` repo, run a Debug build with `-screen` set to `map
 | `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
 | `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
 
+The persona avatars are lightweight branded initials. Replace `assets/people/emilio.jpg` and `assets/people/ricardo.jpg` with real square photos whenever they are available; no HTML changes are needed.
+
 **Still missing:**
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
-| `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
-| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
 
 Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
@@ -76,7 +75,7 @@ If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anythin
 
 </details>
 
-**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a popup showing their place in line ("You're #42 on the list") with three optional questions: player or host, campus, and sports. Answering fills in the same row.
+**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a founding-player popup showing their place in line with three optional questions: player or host, campus, and sports. Answering fills in the same row. Saving or skipping opens the final sharing step, with WhatsApp, the native share sheet when available, and a copyable `?ref=team` waitlist link. The private edit token is never included in shared links.
 
 The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role.
 

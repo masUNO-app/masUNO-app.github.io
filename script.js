@@ -14,8 +14,8 @@ const MSG = {
   "done.joined": "You're on the list. We'll be in touch.",
   "done.duplicate": "You're already on the list. See you soon.",
   "done.details": "Thanks! We'll let you know when games go live near you.",
-  "dlg.title": "You're on the list",
-  "dlg.position": "You're #{n} on the list",
+  "dlg.title": "You're the +1",
+  "dlg.position": "You're the +1 · #{n} on the list",
   "dlg.save": "Save",
   "dlg.saving": "Saving…",
   "dlg.error": "Couldn't save that. Try again, or skip. You're already on the list.",
@@ -25,6 +25,18 @@ const MSG = {
   "demo.full.caption": "Full games leave the map",
   "demo.drop.spots": "1 spot left",
   "demo.drop.caption": "Reposted to the top of the map",
+  "hero.joined.button": "You're the +1",
+  "hero.joined.spots": "Game on",
+  "hero.joined.faces": "They know you're coming",
+  "hero.joined.status": "You're in. Show up expected.",
+  "hero.joined.toast": "That's your spot",
+  "hero.joined.toastCopy": "No asking. No awkward arrival.",
+  "share.message": "I'm joining masUNO to find pickup games on campus. Join the early-access list with me:",
+  "share.note": "One invite can be the start of your next game.",
+  "share.opened": "WhatsApp opened. Choose your team or group chat.",
+  "share.done": "Thanks for bringing your team.",
+  "share.copied": "Link copied. Send it to your team.",
+  "share.copyFallback": "Select and copy the link above to share it.",
 };
 const t = (key, vars = {}) => window.masUNOI18n.translate(MSG[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
 const render = (el, key, vars = {}) => {
@@ -135,11 +147,35 @@ new IntersectionObserver(([e]) => {
   else stopDemo();
 }, { threshold: 0.4 }).observe(stage);
 
+// ---------- Interactive hero: take the open spot ----------
+const heroGame = document.getElementById("hero-game");
+const heroJoin = document.getElementById("hero-join");
+const heroToast = document.getElementById("hero-toast");
+
+heroJoin.addEventListener("click", () => {
+  if (heroGame.classList.contains("is-joined")) return;
+  heroGame.classList.add("is-joined");
+  heroToast.classList.add("is-joined");
+  heroJoin.disabled = true;
+  render(heroJoin, "hero.joined.button");
+  render(heroGame.querySelector("[data-hero-spots]"), "hero.joined.spots");
+  render(heroGame.querySelector("[data-hero-faces]"), "hero.joined.faces");
+  render(document.getElementById("hero-game-status"), "hero.joined.status");
+  render(heroToast.querySelector("[data-hero-toast-title]"), "hero.joined.toast");
+  render(heroToast.querySelector("[data-hero-toast-copy]"), "hero.joined.toastCopy");
+});
+
 // ---------- Waitlist ----------
-// Step 1: email only (hero or final CTA). Step 2: optional details in a dialog.
+// Step 1: email only. Step 2: optional details. Step 3: invite your team.
 const joinForms = [...document.querySelectorAll("form.join")];
 const dialog = document.getElementById("details");
 const detailsForm = document.getElementById("details-form");
+const detailsStep = dialog.querySelector('[data-signup-step="details"]');
+const shareStep = dialog.querySelector('[data-signup-step="share"]');
+const shareLink = document.getElementById("share-link");
+const shareWhatsapp = document.getElementById("share-whatsapp");
+const shareNative = document.getElementById("share-native");
+const shareStatus = document.getElementById("share-status");
 let signup = null; // { email, token } from step 1, used to attach step-2 details
 
 function source() {
@@ -154,7 +190,6 @@ function timeZone() {
 
 async function post(payload) {
   if (WAITLIST_ENDPOINT.startsWith("PASTE_")) {
-    // Not wired up yet: log the payload so the flow can be tested locally
     console.warn("[masUNO] WAITLIST_ENDPOINT not set. Would have sent:", payload);
     await new Promise((r) => setTimeout(r, 450));
     return { ok: true, position: 128, token: "local-test" };
@@ -174,6 +209,35 @@ function markJoined(key) {
     done.hidden = false;
   });
 }
+
+function waitlistShareUrl() {
+  const url = new URL(window.location.href);
+  url.hash = "";
+  url.search = "";
+  url.searchParams.set("ref", "team");
+  return url.href;
+}
+
+function updateShareLinks() {
+  const url = waitlistShareUrl();
+  const message = t("share.message");
+  shareLink.value = url;
+  shareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(`${message} ${url}`)}`;
+}
+
+function showShare() {
+  detailsStep.hidden = true;
+  shareStep.hidden = false;
+  dialog.querySelector("[data-progress-details]").classList.remove("is-active");
+  dialog.querySelector("[data-progress-share]").classList.add("is-active");
+  updateShareLinks();
+  render(shareStatus, "share.note");
+  shareStep.querySelector("h2").focus?.();
+}
+
+updateShareLinks();
+document.addEventListener("masuno:languagechange", updateShareLinks);
+if (navigator.share) shareNative.hidden = false;
 
 joinForms.forEach((form) => {
   const input = form.elements.email;
@@ -196,7 +260,6 @@ joinForms.forEach((form) => {
       input.focus();
       return;
     }
-    // Bots fill the hidden field; pretend it worked and drop it
     if (form.elements.website.value) return markJoined("done.joined");
 
     button.disabled = true;
@@ -209,6 +272,10 @@ joinForms.forEach((form) => {
       }
       signup = { email, token: res.token };
       markJoined("done.joined");
+      detailsStep.hidden = false;
+      shareStep.hidden = true;
+      dialog.querySelector("[data-progress-details]").classList.add("is-active");
+      dialog.querySelector("[data-progress-share]").classList.remove("is-active");
       const title = dialog.querySelector("[data-title]");
       if (res.position) render(title, "dlg.position", { n: res.position });
       else render(title, "dlg.title");
@@ -230,7 +297,29 @@ document.querySelectorAll("a[data-role]").forEach((a) => a.addEventListener("cli
 }));
 
 dialog.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => dialog.close()));
-dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); }); // click on backdrop
+dialog.querySelector("[data-show-share]").addEventListener("click", showShare);
+dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
+
+shareWhatsapp.addEventListener("click", () => render(shareStatus, "share.opened"));
+shareNative.addEventListener("click", async () => {
+  try {
+    await navigator.share({ title: "masUNO", text: t("share.message"), url: waitlistShareUrl() });
+    render(shareStatus, "share.done");
+  } catch (err) {
+    if (err.name !== "AbortError") render(shareStatus, "share.copyFallback");
+  }
+});
+
+document.getElementById("copy-link").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(waitlistShareUrl());
+    render(shareStatus, "share.copied");
+  } catch (_) {
+    shareLink.focus();
+    shareLink.select();
+    render(shareStatus, "share.copyFallback");
+  }
+});
 
 detailsForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -249,7 +338,7 @@ detailsForm.addEventListener("submit", async (e) => {
       sports: [...detailsForm.querySelectorAll("input[name=sports]:checked")].map((c) => c.value).join(", "),
     });
     markJoined("done.details");
-    dialog.close();
+    showShare();
   } catch (err) {
     console.error(err);
     render(status, "dlg.error");
