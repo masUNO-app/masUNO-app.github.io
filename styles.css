@@ -634,7 +634,7 @@ fieldset.field > legend { margin-bottom: 10px; }
 .founder-summary { margin: -8px 0 4px; color: var(--muted); font-size: 15px; line-height: 1.55; }
 .optional { color: var(--muted); font-size: 12px; font-weight: 500; }
 .share-position { margin: -12px 0 0; color: var(--primary); font-weight: 800; }
-.host-invite { width: 100%; padding: 10px 0 0; border-top: 1px solid var(--line); text-align: left; font-size: 13px; line-height: 1.5; }
+.host-invite { width: 100%; padding: 10px 0 0; border-top: 1px solid var(--line); text-align: center; font-size: 13px; line-height: 1.5; }
 .host-invite strong { margin-right: 6px; font-size: 13px; }
 .host-invite a { color: var(--primary); font-weight: 600; text-underline-offset: 3px; }
 .sheet-success .share-actions { margin-top: 0; }

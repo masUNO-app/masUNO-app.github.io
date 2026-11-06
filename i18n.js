@@ -210,7 +210,7 @@ const ES = {
   "Couldn't save your sports. You can try again or keep sharing.": "No pudimos guardar tus deportes. Puedes intentarlo de nuevo o seguir compartiendo.",
   "Already organizing games?": "¿Ya armas retas?",
   "We’d love to help you post one of the first masUNO games.": "Queremos ayudarte a publicar una de las primeras retas de masUNO.",
-  "Contact us about hosting": "Escríbenos para organizar una reta",
+  "Contact us": "Contáctanos",
   "Your personal invite link": "Tu enlace personal de invitación",
   "I'm joining masUNO to find pickup games on campus. Join the early-access list with my invite:": "Voy a usar masUNO para encontrar retas en mi campus. Únete a la lista de acceso anticipado con mi invitación:",
   "Personal invite link copied. Send it to your team.": "Enlace personal copiado. Mándaselo a tu equipo.",
