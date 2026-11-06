@@ -573,22 +573,13 @@ fieldset.field > legend { margin-bottom: 10px; }
 .hero-game .slot-plus, .hero-game .slot-you { display: flex; align-items: center; justify-content: center; }
 .hero-game .slot-you { display: none; }
 .hero-join {
-  position: relative; width: 100%; min-height: 44px; padding: 8px 18px; border: 0; border-radius: var(--radius-pill);
+  width: 100%; min-height: 44px; padding: 8px 18px; border: 2px solid rgba(255, 255, 255, .5); border-radius: var(--radius-pill);
   background: var(--primary); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
-  box-shadow: 0 5px 0 #0b6244, 0 9px 18px rgba(18, 130, 90, .22);
-  transition: transform .2s var(--ease), background .2s, color .2s, box-shadow .2s;
+  box-shadow: 0 0 0 3px var(--primary-tint);
+  transition: transform .2s var(--ease), background .2s, box-shadow .2s;
 }
-.hero-join::after {
-  content: ""; position: absolute; inset: -5px; border: 2px solid var(--primary); border-radius: var(--radius-pill);
-  pointer-events: none; animation: hero-cta-hint 2.4s ease-out infinite;
-}
-.hero-join:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 7px 0 #0b6244, 0 12px 22px rgba(18, 130, 90, .28); }
-.hero-join:active { transform: translateY(3px); box-shadow: 0 1px 0 #0b6244, 0 4px 10px rgba(18, 130, 90, .18); }
-.hero-join:disabled::after { display: none; }
-@keyframes hero-cta-hint {
-  0%, 45% { opacity: .65; transform: scale(1); }
-  80%, 100% { opacity: 0; transform: scale(1.04, 1.22); }
-}
+.hero-join:hover { transform: translateY(-1px); background: #0f7651; box-shadow: 0 0 0 4px var(--primary-tint); }
+.hero-join:active { transform: scale(.98); }
 .hero-game-status { display: none; font-size: 13px; font-weight: 600; text-align: center; color: var(--primary); }
 .hero-game.is-joined { box-shadow: 0 0 0 3px var(--primary), var(--shadow-dialog); }
 .hero-game.is-joined .slot { background: var(--primary); border: 2px solid var(--card); color: #fff; transform: scale(1.12); }
