@@ -147,6 +147,12 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .strike::after { content: ""; position: absolute; left: -2%; right: -2%; top: 54%; height: .08em; border-radius: 9999px; background: var(--primary); transform: scaleX(0); transform-origin: left; animation: progress .5s 1.1s var(--ease) forwards; }
 .lede { max-width: 520px; font-size: 20px; line-height: 1.5; color: var(--on-dark-muted); }
 .hero-meta { font-size: 14px; color: var(--on-dark-muted); }
+.countdown { display: flex; flex-direction: column; gap: 10px; }
+.countdown-label { font-size: 14px; font-weight: 600; color: var(--on-dark-muted); }
+.countdown-units { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-width: 400px; }
+html:not(.js) .countdown-units { display: none; }
+.countdown-unit { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 4px; border-radius: var(--radius-card); background: rgba(253, 252, 254, .08); font-size: 13px; color: var(--on-dark-muted); }
+.countdown-unit strong { font: 800 clamp(26px, 3vw, 34px)/1.1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--on-dark); }
 
 /* Chat bubbles: incoming is a pill, yours is the green bubble */
 .bubble { font-size: 16px; padding: 10px 16px; max-width: max-content; }
