@@ -634,18 +634,10 @@ fieldset.field > legend { margin-bottom: 10px; }
 .founder-summary { margin: -8px 0 4px; color: var(--muted); font-size: 15px; line-height: 1.55; }
 .optional { color: var(--muted); font-size: 12px; font-weight: 500; }
 .share-position { margin: -12px 0 0; color: var(--primary); font-weight: 800; }
-.sports-step { width: 100%; margin: 0; padding: 0 18px; border: 1px solid var(--line); border-radius: var(--radius-card); text-align: left; }
-.sports-step summary { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; font-size: 14px; font-weight: 700; }
-.sports-content { padding: 4px 0 18px; }
-.sports-step .pills { justify-content: flex-start; }
-.sports-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-.sports-status { min-height: 20px; margin: 10px 0 0; color: var(--muted); font-size: 14px; }
-.host-invite { width: 100%; padding: 18px 20px; border-radius: var(--radius-card); background: var(--primary-tint); text-align: left; }
-.host-invite h3 { margin: 0 0 6px; }
-.host-invite p { margin: 0 0 8px; line-height: 1.5; }
-.host-invite a { color: var(--primary); font-weight: 800; text-underline-offset: 3px; }
+.host-invite { width: 100%; padding: 10px 0 0; border-top: 1px solid var(--line); text-align: left; font-size: 13px; line-height: 1.5; }
+.host-invite strong { margin-right: 6px; font-size: 13px; }
+.host-invite a { color: var(--primary); font-weight: 600; text-underline-offset: 3px; }
 .sheet-success .share-actions { margin-top: 0; }
 @media (max-width: 560px) {
   .launch-note { font-size: 14px; }
-  .sports-actions .btn { flex: 1; }
 }

@@ -4,7 +4,6 @@
  * The page signs people up in three steps:
  *   action=join     email + source + tz → appends a row, returns { position, token, referralCode }
  *   action=details  email + token + role/campus → fills in that row
- *   action=details  email + token + sports → fills in sports in the same row
  * The token stops anyone from editing someone else's row just by knowing their email.
  * Referral codes are short, public and non-secret; Referred by stores the inviter's code.
  * Country is estimated from the browser's time zone. Only the country is stored, not the zone.
@@ -57,9 +56,6 @@ function doPost(e) {
       }
       if (Object.prototype.hasOwnProperty.call(p, "campus")) {
         sheet.getRange(row, COL.campus).setValue(clean_(p.campus, 80));
-      }
-      if (Object.prototype.hasOwnProperty.call(p, "sports")) {
-        sheet.getRange(row, COL.sports).setValue(clean_(p.sports, 120));
       }
       sheet.getRange(row, COL.detailsAt).setValue(new Date());
       return json_({ ok: true });

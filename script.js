@@ -20,11 +20,6 @@ const MSG = {
   "dlg.save": "Save",
   "dlg.saving": "Saving…",
   "dlg.error": "Couldn't save that. Try again, or skip. You're already on the list.",
-  "sports.save": "Save sports",
-  "sports.saving": "Saving…",
-  "sports.saved": "Saved. Your invite link is ready below.",
-  "sports.skipped": "No problem. Your invite link is ready below.",
-  "sports.error": "Couldn't save your sports. You can try again or keep sharing.",
   "demo.open.spots": "1 spot left",
   "demo.open.caption": "On the map",
   "demo.full.spots": "Full",
@@ -172,7 +167,7 @@ heroJoin.addEventListener("click", () => {
 });
 
 // ---------- Waitlist ----------
-// Step 1: email only. Step 2: role and campus. Step 3: sports and a personal invite.
+// Step 1: email only. Step 2: role and campus. Step 3: personal invite.
 const joinForms = [...document.querySelectorAll("form.join")];
 const dialog = document.getElementById("details");
 const detailsForm = document.getElementById("details-form");
@@ -182,8 +177,6 @@ const shareLink = document.getElementById("share-link");
 const shareWhatsapp = document.getElementById("share-whatsapp");
 const shareNative = document.getElementById("share-native");
 const shareStatus = document.getElementById("share-status");
-const sportsStatus = dialog.querySelector(".sports-status");
-const saveSports = document.getElementById("save-sports");
 let signup = null; // { email, token, referralCode, position } from step 1
 
 function source() {
@@ -240,10 +233,6 @@ function showShare() {
   dialog.querySelector("[data-progress-share]").classList.add("is-active");
   dialog.querySelector("#host-invite").hidden = !["host", "both"].includes(detailsForm.elements.role.value);
   if (signup?.position) render(dialog.querySelector("[data-share-position]"), "dlg.sharePosition", { n: signup.position });
-  sportsStatus.textContent = "";
-  sportsStatus.removeAttribute("data-message-key");
-  saveSports.disabled = false;
-  render(saveSports, "sports.save");
   updateShareLinks();
   render(shareStatus, "share.note");
   shareStep.querySelector("h2").focus?.();
@@ -360,36 +349,3 @@ detailsForm.addEventListener("submit", async (e) => {
     render(button, "dlg.save");
   }
 });
-
-saveSports.addEventListener("click", async () => {
-  saveSports.disabled = true;
-  render(saveSports, "sports.saving");
-  sportsStatus.textContent = "";
-  sportsStatus.removeAttribute("data-message-key");
-  try {
-    await post({
-      action: "details",
-      email: signup.email,
-      token: signup.token,
-      sports: [...detailsForm.querySelectorAll("input[name=sports]:checked")].map((c) => c.value).join(", "),
-    });
-    render(sportsStatus, "sports.saved");
-    render(saveSports, "sports.save");
-  } catch (err) {
-    console.error(err);
-    render(sportsStatus, "sports.error");
-    saveSports.disabled = false;
-    render(saveSports, "sports.save");
-  }
-});
-
-document.getElementById("skip-sports").addEventListener("click", () => {
-  render(sportsStatus, "sports.skipped");
-  shareWhatsapp.focus();
-});
-
-detailsForm.querySelectorAll("input[name=sports]").forEach((input) => input.addEventListener("change", () => {
-  saveSports.disabled = false;
-  sportsStatus.textContent = "";
-  sportsStatus.removeAttribute("data-message-key");
-}));
