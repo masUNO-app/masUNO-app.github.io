@@ -631,11 +631,12 @@ fieldset.field > legend { margin-bottom: 10px; }
 .host-cta p { flex: 1 1 320px; margin: 0; font-weight: 500; line-height: 1.55; }
 .host-cta p span { display: block; font-weight: 800; }
 .host-cta .btn { flex: none; }
-.founder-benefits { margin: -4px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; text-align: left; }
-.founder-benefits li { position: relative; padding-left: 24px; line-height: 1.5; }
-.founder-benefits li::before { content: "+"; position: absolute; left: 2px; color: var(--primary); font-weight: 900; }
+.founder-summary { margin: -8px 0 4px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.optional { color: var(--muted); font-size: 12px; font-weight: 500; }
 .share-position { margin: -12px 0 0; color: var(--primary); font-weight: 800; }
-.sports-step { width: 100%; margin: 0; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius-card); text-align: left; }
+.sports-step { width: 100%; margin: 0; padding: 0 18px; border: 1px solid var(--line); border-radius: var(--radius-card); text-align: left; }
+.sports-step summary { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; font-size: 14px; font-weight: 700; }
+.sports-content { padding: 4px 0 18px; }
 .sports-step .pills { justify-content: flex-start; }
 .sports-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 .sports-status { min-height: 20px; margin: 10px 0 0; color: var(--muted); font-size: 14px; }
@@ -648,8 +649,3 @@ fieldset.field > legend { margin-bottom: 10px; }
   .launch-note { font-size: 14px; }
   .sports-actions .btn { flex: 1; }
 }
-
-.sheet-language { position: absolute; top: 24px; left: 32px; }
-.sheet-language button { color: var(--ink); min-width: 44px; min-height: 44px; }
-.sheet-language button[aria-pressed="true"] { background: var(--primary-tint); }
-@media (max-width: 560px) { .sheet-language { left: 20px; top: 20px; } }

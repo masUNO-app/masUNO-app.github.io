@@ -505,22 +505,13 @@
   <!-- ============ SIGNUP: details, then sports and personal invites ============ -->
   <dialog class="sheet" id="details" aria-labelledby="details-title">
     <form id="details-form" method="dialog">
-      <div class="language-toggle sheet-language" role="group" aria-label="Language">
-        <button type="button" data-language="en" aria-pressed="true">EN</button>
-        <button type="button" data-language="es" aria-pressed="false">ES</button>
-      </div>
       <button type="button" class="sheet-close" data-close aria-label="Close">&times;</button>
       <div class="sheet-progress" aria-hidden="true"><span class="is-active" data-progress-details></span><span data-progress-share></span></div>
 
       <div class="sheet-step" data-signup-step="details">
         <span class="founder-badge"><svg class="i"><use href="#i-check"/></svg>Founding player</span>
-        <h2 id="details-title" data-title>You're the +1</h2>
-        <p class="muted">You're on the early-access list. Two quick questions help us launch where you are. Totally optional.</p>
-        <ul class="founder-benefits">
-          <li>Early access as we roll out masUNO.</li>
-          <li>Access to our first weekly games.</li>
-          <li>Priority onboarding if you want to host.</li>
-        </ul>
+        <h2 id="details-title" data-title>You're in</h2>
+        <p class="founder-summary">Early access · First weekly games · Host priority</p>
 
         <fieldset class="field">
           <legend>I want to…</legend>
@@ -532,7 +523,7 @@
         </fieldset>
 
         <div class="field">
-          <label for="campus">Campus</label>
+          <label for="campus">Campus <span class="optional">Optional</span></label>
           <select id="campus" name="campus">
             <option value="">Choose your campus</option>
             <option>Tec de Monterrey</option>
@@ -555,20 +546,22 @@
         <h2 tabindex="-1">You’re the +1. Now bring the other five.</h2>
         <p class="share-position" data-share-position></p>
 
-        <fieldset class="field sports-step">
-          <legend>What do you want to play first?</legend>
-          <div class="pills">
-            <label><input type="checkbox" name="sports" value="basketball"><span>Basketball</span></label>
-            <label><input type="checkbox" name="sports" value="soccer"><span>Soccer</span></label>
-            <label><input type="checkbox" name="sports" value="volleyball"><span>Volleyball</span></label>
-            <label><input type="checkbox" name="sports" value="other"><span>Something else</span></label>
+        <details class="sports-step">
+          <summary>What do you want to play first? <span>Optional</span></summary>
+          <div class="sports-content">
+            <div class="pills">
+              <label><input type="checkbox" name="sports" value="basketball"><span>Basketball</span></label>
+              <label><input type="checkbox" name="sports" value="soccer"><span>Soccer</span></label>
+              <label><input type="checkbox" name="sports" value="volleyball"><span>Volleyball</span></label>
+              <label><input type="checkbox" name="sports" value="other"><span>Something else</span></label>
+            </div>
+            <p class="sports-status" role="status" aria-live="polite"></p>
+            <div class="sports-actions">
+              <button type="button" class="btn btn-text" id="skip-sports">Skip</button>
+              <button type="button" class="btn btn-secondary" id="save-sports">Save sports</button>
+            </div>
           </div>
-          <p class="sports-status" role="status" aria-live="polite"></p>
-          <div class="sports-actions">
-            <button type="button" class="btn btn-text" id="skip-sports">Skip</button>
-            <button type="button" class="btn btn-secondary" id="save-sports">Save sports</button>
-          </div>
-        </fieldset>
+        </details>
 
         <div class="host-invite" id="host-invite" hidden>
           <h3>Already organizing games?</h3>
