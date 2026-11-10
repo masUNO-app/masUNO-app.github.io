@@ -9,11 +9,11 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 index.html          page content
 privacy.html        privacy notice, linked under each form and in the footer
 i18n.js             Spanish translations, browser-language detection and the language toggle
-styles.css          tokens from the masUNO design system (Verde cancha) and all animations
-script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
+styles.css          tokens from the app's design language (v2.0: sport colors, courts, Liquid Glass) and all animations
+script.js           interactions, the launch countdown (LAUNCH_AT) and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
 assets/screens/     app screenshots used on the page (only files index.html references)
-assets/people/      persona photos
+assets/people/      persona photos (not used by this design; people are colored initials, as in the app)
 ```
 
 ## 1. Screenshots and photos
@@ -33,14 +33,13 @@ To retake them from the `ios` repo, run a Debug build with `-screen` set to `map
 | `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
 | `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
 
+People on the page are colored initials (EG, RT and so on), the same as in the app, so `assets/people/` isn't loaded by this design.
+
 **Still missing:**
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
-| `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
-| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html` and `privacy.html` with the links it shows |
 
 Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
@@ -53,7 +52,7 @@ Only commit the screenshots the page uses. Keep spare or work-in-progress export
 
 The Apps Script is deployed as a web app, and its `/exec` URL is set as `WAITLIST_ENDPOINT` at the top of `script.js`. Opening that URL in a browser should show `{"ok":true,"service":"masUNO waitlist"}`, which is a quick way to check it's still up.
 
-**Changing `Code.gs`:** paste the new code into the Sheet's **Extensions → Apps Script**, save, then use **Deploy → Manage deployments → Edit (pencil) → Version: New version**. Don't create a new deployment: that gives you a different URL, and the live site would keep posting to the old one.
+**Changing `Code.gs`:** paste the new code into the Sheet's **Extensions → Apps Script**, save, then use **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**. Saving alone doesn't change the live site. Don't create a new deployment: that gives you a different URL, and the live site would keep posting to the old one.
 
 **Working with the Sheet:**
 
@@ -76,11 +75,13 @@ If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anythin
 
 </details>
 
-**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a popup showing their place in line ("You're #42 on the list") with three optional questions: player or host, campus, and sports. Answering fills in the same row.
+**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a founding-player popup showing their place in line with two optional questions: player or host and campus. Saving or skipping opens the invitation step, where they can share a personal `?ref=CODIGO` invite through WhatsApp, the native share sheet or the copy button. The private edit token and email are never included in shared links.
 
-The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role.
+The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role. People who select host or both also see a small email contact for founding-host onboarding.
 
-**What gets saved:** join time, email, role, campus, sports, source, and when details were added. Source comes from `?ref=` or `?utm_source=` in the link, so you can tell signups apart, for example `…/?ref=clubfair` or `…/?ref=instagram`. A hidden Token column stops anyone from editing someone else's row.
+**What gets saved:** join time, email, role, campus, source, when details were added, country, a public referral code and the referring code when the invite belongs to an existing signup. The existing **Sports** column stays in place so historical values and column positions are preserved, but the signup no longer collects or updates sports. Source comes from `?ref=` or `?utm_source=` in the link, so campaign tags still work. **Referred by** is only filled when `?ref=` matches an existing personal code. A hidden Token column stops anyone from editing someone else's row. Country (`Mexico`, `USA` or `Other`) is an estimate from the browser's time zone, so it shows where the device is at signup, not where someone is from; Campus is the better signal when they fill it in. It's blank for signups from before the column was added.
+
+**Referral-code migration:** run `setup()` once after pasting the updated Apps Script. It adds **Referral code** and **Referred by** at the far right without moving Token. New signups receive an eight-character, non-secret unique code. If an existing email joins again, its row receives a code if it did not have one, but its private Token is never returned. Redeploy the existing web app as a new version after this change.
 
 **Built-in protection:** duplicate emails are ignored, a hidden honeypot field filters out simple bots, and values starting with `=` aren't run as formulas in the Sheet.
 
@@ -125,4 +126,4 @@ These come from the open decisions in DESIGN.md and show up on the page:
 
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
-- **Example numbers:** "4 min after repost" (hero notification) and "4 min after it auto-reposted" (the group chat vs. masUNO block) are placeholders. Swap in a real fill time from testing.
+- **Example number:** "4 min walk" in the demo game cards is illustrative. Swap in real examples from testing when available.

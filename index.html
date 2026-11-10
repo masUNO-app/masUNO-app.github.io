@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/og-image.png">
 
-  <!-- TODO: add a favicon made from the masUNO app icon once we have one, e.g. <link rel="icon" href="favicon.png"> and <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2312825a'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,sans-serif' font-size='34' font-weight='700' fill='white'%3E%2B1%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap">
@@ -118,25 +118,31 @@
         <svg class="court-art" data-court="padel"><use href="#court-padel"/></svg>
       </div>
 
-      <!-- Decorative: the players take their positions as the sport changes -->
-      <div class="lineup" aria-hidden="true">
-        <span class="spot t1">
+      <!-- The players take their positions as the sport changes. The open spot is a real button:
+           tapping it puts the visitor on the court, the way "Count me in" does in the app. -->
+      <div class="lineup">
+        <span class="spot t1" aria-hidden="true">
           <span class="av p-rt">RT</span>
           <span class="say" data-say="basketball">Need 1 more for 3v3</span>
           <span class="say" data-say="tennis">Need one more for doubles!</span>
           <span class="say" data-say="soccer">Need 1 more for 5-a-side</span>
           <span class="say" data-say="volleyball">One more and we can start</span>
           <span class="say" data-say="padel">Need a fourth for padel</span>
+          <span class="say say-joined">Game on</span>
         </span>
-        <span class="spot t2"><span class="av p-mc">MC</span></span>
-        <span class="spot t3"><span class="av p-sr">SR</span></span>
-        <span class="spot t4"><span class="av p-dm">DM</span></span>
-        <span class="spot t5"><span class="av p-sl">SL</span></span>
-        <span class="spot t6">
-          <span class="open open-live">+1</span>
-          <span class="you-tag glass">That's you</span>
-        </span>
+        <span class="spot t2" aria-hidden="true"><span class="av p-mc">MC</span></span>
+        <span class="spot t3" aria-hidden="true"><span class="av p-sr">SR</span></span>
+        <span class="spot t4" aria-hidden="true"><span class="av p-dm">DM</span></span>
+        <span class="spot t5" aria-hidden="true"><span class="av p-sl">SL</span></span>
+        <button type="button" class="spot t6 take-spot" id="hero-join">
+          <span class="spot-swap" aria-hidden="true">
+            <span class="open open-live">+1</span>
+            <span class="av av-you">You</span>
+          </span>
+          <span class="you-tag glass glass--primary" data-hero-tag>Be the +1</span>
+        </button>
       </div>
+      <p class="sr-only" id="hero-game-status" role="status" aria-live="polite"></p>
 
       <div class="wrap hero-body">
         <div class="sport-switch" role="group" aria-label="Pick a sport">
@@ -144,20 +150,31 @@
           <button type="button" class="sport-chip glass" data-sport="tennis" data-pick="tennis" aria-pressed="false"><span aria-hidden="true">🎾</span> <span class="label">Tennis</span></button>
           <button type="button" class="sport-chip glass" data-sport="soccer" data-pick="soccer" aria-pressed="false"><span aria-hidden="true">⚽</span> <span class="label">Soccer</span></button>
           <button type="button" class="sport-chip glass" data-sport="volleyball" data-pick="volleyball" aria-pressed="false"><span aria-hidden="true">🏐</span> <span class="label">Volleyball</span></button>
-          <button type="button" class="sport-chip glass" data-sport="padel" data-pick="padel" aria-pressed="false"><span aria-hidden="true">🎾</span> <span class="label">Padel</span></button>
+          <button type="button" class="sport-chip glass" data-sport="padel" data-pick="padel" aria-pressed="false"><span aria-hidden="true">🏓</span> <span class="label">Padel</span></button>
         </div>
 
         <div class="hero-card load rise">
           <div class="hero-head">
-            <p class="soon-line">Coming to campus soon</p>
             <h1 class="display">
               <span class="h1-from"><span class="strike">&ldquo;Can I join?&rdquo;</span> becomes</span>
               <span class="h1-to">&ldquo;We're looking for you.&rdquo;</span>
             </h1>
+            <p class="lede">Find pickup games that need one more. Join and show up expected.</p>
           </div>
           <div class="hero-side">
-            <p class="lede">Find pickup games nearby that are one player short. Tap join, and walk up as the player they were waiting for.</p>
+            <!-- Launch countdown. script.js fills in the numbers (LAUNCH_AT) and hides this block once launch passes. -->
+            <div class="countdown" data-countdown>
+              <p class="countdown-label"><svg class="i"><use href="#i-clock"/></svg><span>Dec 16 · 12 PM Chicago</span></p>
+              <div class="countdown-units" role="timer">
+                <span class="countdown-unit"><strong data-unit="days">00</strong> <span>Days</span></span>
+                <span class="countdown-unit"><strong data-unit="hours">00</strong> <span>Hours</span></span>
+                <span class="countdown-unit"><strong data-unit="minutes">00</strong> <span>Min</span></span>
+                <span class="countdown-unit"><strong data-unit="seconds">00</strong> <span>Sec</span></span>
+              </div>
+            </div>
+
             <div class="join-wrap">
+              <p class="launch-note"><strong>Invite-only at Tec de Monterrey.</strong> Get first access to weekly games.</p>
               <form class="join" novalidate>
                 <label class="sr-only" for="hero-email">Student email</label>
                 <div class="join-row">
@@ -171,7 +188,6 @@
               <!-- Short privacy notice (aviso de privacidad simplificado) -->
               <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
             </div>
-            <p class="hero-meta">Free for students · iOS first</p>
           </div>
         </div>
       </div>
@@ -222,52 +238,25 @@
             <p class="outcome">Ricardo's game gets called off.</p>
           </article>
         </div>
-
-        <!-- Organizer HMW: refilling a no-show beats asking the group chat -->
-        <div class="refill reveal" data-sport="soccer">
-          <p class="refill-title">Someone doesn't show? Don't wait on the group chat.</p>
-          <div class="refill-row">
-            <div class="refill-col">
-              <span class="refill-label">Group chat</span>
-              <div class="msg msg-me"><p class="bubble bubble-me">Diego bailed. anyone??</p></div>
-              <p class="refill-meta">Read by 11 · no reply</p>
-            </div>
-            <span class="refill-vs" aria-hidden="true">vs</span>
-            <div class="refill-col">
-              <span class="refill-label">masUNO</span>
-              <div class="join-pill join-pill-block">
-                <span class="av p-eg">EG</span>
-                <span><strong>Spot filled</strong><span>Emilio joined 4 min after it auto-reposted</span></span>
-              </div>
-              <p class="refill-meta">masUNO bumps your game back to the top of the map on its own</p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- ============ PLUS ONE: capacity at a glance ============ -->
-    <section class="plus court" data-sport="volleyball">
+    <!-- ============ THE MEANING OF masUNO: plus one, and the chat where it happens ============ -->
+    <section class="plus court" data-sport="volleyball" aria-labelledby="meaning-title">
       <svg class="court-art" aria-hidden="true"><use href="#court-volleyball"/></svg>
-      <div class="wrap plus-inner reveal">
-        <div class="plus-row" aria-hidden="true">
-          <span class="av p-rt">RT</span><span class="av p-mc">MC</span><span class="av p-sr">SR</span><span class="av p-dm">DM</span><span class="av p-sl">SL</span>
-          <span class="plus-slot">
-            <span class="open">+1</span>
-            <span class="av p-eg">EG</span>
-            <span class="plus-in glass">You're in!</span>
-          </span>
-        </div>
-        <p class="plus-text">Más uno means plus one. Every game has room for one more.</p>
-      </div>
-    </section>
-
-    <!-- ============ INSIGHT: chat preview ============ -->
-    <section class="section">
-      <div class="wrap insight-grid">
-        <div class="reveal">
-          <h2 class="display"><span class="soft">You're not asking to join.</span> <span>You're the one they need.</span></h2>
-          <p class="body-lg">Every game on masUNO is there because it needs one more. When you show up, you're the answer, not the interruption.</p>
+      <div class="wrap plus-grid">
+        <div class="plus-copy reveal">
+          <div class="plus-row" aria-hidden="true">
+            <span class="av p-rt">RT</span><span class="av p-mc">MC</span><span class="av p-sr">SR</span><span class="av p-dm">DM</span><span class="av p-sl">SL</span>
+            <span class="plus-slot">
+              <span class="open">+1</span>
+              <span class="av p-eg">EG</span>
+              <span class="plus-in glass">You're in!</span>
+            </span>
+          </div>
+          <p class="plus-text">Más uno means plus one. Every game has room for one more.</p>
+          <h2 class="display" id="meaning-title">You're the one they need.</h2>
+          <p class="plus-sub">Show up as the answer, not the interruption.</p>
         </div>
 
         <figure class="chat chat-card reveal" data-sport="basketball" role="img" aria-label="Group chat where Emilio takes the last spot in Ricardo's 3v3">
@@ -296,7 +285,7 @@
     </section>
 
     <!-- ============ HOW IT WORKS ============ -->
-    <section class="section section-tight" id="how">
+    <section class="section" id="how">
       <div class="wrap">
         <div class="how-head reveal">
           <div>
@@ -366,7 +355,10 @@
                 <span class="wt-text"><strong>No-show? Refill it before tip-off</strong><span>When someone drops out, masUNO bumps your game back to the top of the map so the spot fills.</span></span>
               </button></li>
             </ol>
-            <p class="host-cta"><span>Hosting games?</span> <a href="#join" class="btn glass glass--mint" data-role="host">Get early access as a host</a></p>
+            <div class="host-cta">
+              <p><span>Hosting games?</span> Help us host one of the first masUNO games. Founding hosts get priority onboarding.</p>
+              <a href="#join" class="btn glass glass--mint" data-role="host">Get early access as a host</a>
+            </div>
           </div>
           <div class="phone-col">
             <figure class="phone">
@@ -388,54 +380,64 @@
             </figure>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ============ OPEN SPOTS DEMO ============ -->
-    <section class="section section-tight">
-      <div class="wrap demo">
-        <div class="demo-copy reveal">
-          <p class="kicker">Open spots</p>
-          <h2 class="display">The map only shows games you can join</h2>
-          <p class="body-lg">No walking over to a full court.</p>
-          <div class="demo-steps" data-sport="basketball">
-            <button type="button" class="demo-step" data-state="open" aria-pressed="true">
-              <span class="tile" style="--tile:#DDF1E8"><svg class="i"><use href="#i-bookmark"/></svg></span>
-              <span class="demo-text"><strong>Game is open</strong><span>Join or bookmark it</span></span>
-            </button>
-            <button type="button" class="demo-step" data-state="full" aria-pressed="false">
-              <span class="tile" style="--tile:#E3DDFC"><svg class="i"><use href="#i-eyeoff"/></svg></span>
-              <span class="demo-text"><strong>Game fills up</strong><span>It quietly leaves the map</span></span>
-            </button>
-            <button type="button" class="demo-step" data-state="drop" aria-pressed="false">
-              <span class="tile" style="--tile:#FFE3CC"><svg class="i"><use href="#i-repeat"/></svg></span>
-              <span class="demo-text"><strong>Someone no-shows</strong><span>The game pops back to the top of the map</span></span>
-            </button>
-          </div>
-        </div>
-
-        <div class="demo-stage reveal" data-state="open">
-          <div class="demo-map" aria-hidden="true">
-            <svg class="map-art"><use href="#map-art"/></svg>
-            <span class="pin" data-sport="tennis" style="left:13%;top:27%"><span class="pin-body"><span>🎾</span></span></span>
-            <span class="pin" data-sport="volleyball" style="left:88%;top:22%"><span class="pin-body"><span>🏐</span></span></span>
-            <span class="pin" data-sport="soccer" style="left:86%;top:86%"><span class="pin-body"><span>⚽</span></span></span>
-            <span class="pin" data-sport="padel" style="left:11%;top:80%"><span class="pin-body"><span>🎾</span></span></span>
-            <span class="pin pin-main" data-sport="basketball"><span class="pin-body"><span>🏀</span></span></span>
-          </div>
-          <article class="popup demo-popup" data-sport="basketball" aria-hidden="true">
-            <p class="g-line">🏀 Basketball · Hosted by Ricardo</p>
-            <p class="g-title">3v3 at the rec center</p>
-            <div class="g-cap">
-              <span class="stack"><span class="av p-rt">RT</span><span class="av p-mc">MC</span><span class="av p-sr">SR</span><span class="av p-dm">DM</span><span class="av p-sl">SL</span>
-                <span class="demo-slot"><span class="open">+1</span><span class="av p-eg">EG</span></span>
-              </span>
+        <!-- Open spots demo: part of "How it works". The map card mirrors the one in the app. -->
+        <div class="demo how-demo">
+          <div class="demo-copy reveal">
+            <p class="kicker">Open spots</p>
+            <h2 class="display">The map only shows games you can join</h2>
+            <p class="body-lg">No walking over to a full court.</p>
+            <div class="demo-steps" data-sport="basketball">
+              <button type="button" class="demo-step" data-state="open" aria-pressed="true">
+                <span class="tile" style="--tile:#DDF1E8"><svg class="i"><use href="#i-bookmark"/></svg></span>
+                <span class="demo-text"><strong>Game is open</strong><span>Join or bookmark it</span></span>
+              </button>
+              <button type="button" class="demo-step" data-state="full" aria-pressed="false">
+                <span class="tile" style="--tile:#E3DDFC"><svg class="i"><use href="#i-eyeoff"/></svg></span>
+                <span class="demo-text"><strong>Game fills up</strong><span>It quietly leaves the map</span></span>
+              </button>
+              <button type="button" class="demo-step" data-state="drop" aria-pressed="false">
+                <span class="tile" style="--tile:#FFE3CC"><svg class="i"><use href="#i-repeat"/></svg></span>
+                <span class="demo-text"><strong>Someone no-shows</strong><span>The game pops back to the top of the map</span></span>
+              </button>
             </div>
-            <p class="g-capline" data-spots>Room for 1 more</p>
-            <p class="g-meta"><svg class="i"><use href="#i-clock"/></svg>Today · 6:00 PM · 4 min walk</p>
-            <p class="g-meta g-reposted demo-reposted"><svg class="i"><use href="#i-repeat"/></svg>Reposted now</p>
-          </article>
-          <p class="demo-caption glass" data-caption role="status">On the map</p>
+          </div>
+
+          <div class="demo-stage reveal" data-state="open">
+            <div class="demo-map" aria-hidden="true">
+              <svg class="map-art"><use href="#map-art"/></svg>
+              <span class="pin" data-sport="tennis" style="left:13%;top:36%"><span class="pin-body"><span>🎾</span></span><span class="pin-crew"><i class="p-ps"></i><i class="p-bo"></i></span></span>
+              <span class="pin" data-sport="volleyball" style="left:88%;top:30%"><span class="pin-soon">Soon</span><span class="pin-body"><span>🏐</span></span><span class="pin-crew"><i class="p-sl"></i><i class="p-nc"></i></span></span>
+              <span class="pin" data-sport="soccer" style="left:86%;top:86%"><span class="pin-body"><span>⚽</span></span><span class="pin-crew"><i class="p-dm"></i><i class="p-jp"></i><i class="p-bo"></i></span></span>
+              <span class="pin" data-sport="padel" style="left:11%;top:80%"><span class="pin-body"><span>🏓</span></span><span class="pin-crew"><i class="p-sr"></i><i class="p-nc"></i></span></span>
+              <span class="pin pin-main" data-sport="basketball"><span class="pin-body"><span>🏀</span></span></span>
+            </div>
+            <p class="map-count glass" aria-hidden="true">
+              <span class="dots"><i data-sport="basketball"></i><i data-sport="tennis"></i><i data-sport="soccer"></i><i data-sport="volleyball"></i><i data-sport="padel"></i></span>
+              <span data-count>5 games nearby</span>
+            </p>
+            <!-- Decorative. The two buttons work with a mouse or a tap; the steps on the left do the same for everyone. -->
+            <article class="popup demo-popup" data-sport="basketball" aria-hidden="true">
+              <div class="gp-head">
+                <p class="g-line">🏀 Basketball · Hosted by Ricardo</p>
+                <p class="g-title">3v3 at the rec center</p>
+                <p class="g-capline" data-spots>Room for 1 more</p>
+                <span class="stack"><span class="av p-rt">RT</span><span class="av p-mc">MC</span><span class="av p-sr">SR</span><span class="av p-dm">DM</span><span class="av p-sl">SL</span>
+                  <span class="demo-slot"><span class="open">+1</span><span class="av p-eg">EG</span></span>
+                </span>
+                <button type="button" class="gp-save" tabindex="-1" aria-pressed="false" data-demo-save><svg class="i"><use href="#i-bookmark"/></svg></button>
+              </div>
+              <div class="gp-body">
+                <p class="g-meta"><svg class="i"><use href="#i-clock"/></svg>Today · 6:00 PM · 4 min walk</p>
+                <p class="g-meta g-reposted demo-reposted"><svg class="i"><use href="#i-repeat"/></svg>Reposted now</p>
+                <div class="gp-actions">
+                  <span class="fake-btn glass glass--mint">Details</span>
+                  <button type="button" class="fake-btn glass glass--primary" tabindex="-1" data-demo-join>Count me in</button>
+                </div>
+              </div>
+            </article>
+            <p class="demo-caption glass" data-caption role="status">On the map</p>
+          </div>
         </div>
       </div>
     </section>
@@ -521,6 +523,7 @@
           <p class="lede">Be the first to find it.</p>
 
           <div class="join-wrap">
+            <p class="launch-note"><strong>Invite-only launch at Tec de Monterrey.</strong> Join the waitlist for first access to masUNO and our first weekly games.</p>
             <form class="join" novalidate>
               <label class="sr-only" for="cta-email">Student email</label>
               <div class="join-row">
@@ -547,52 +550,70 @@
     </div>
   </footer>
 
-  <!-- ============ STEP 2: optional details, opens after someone joins ============ -->
+  <!-- ============ SIGNUP SHEET: role and campus, then a personal invite ============ -->
   <dialog class="sheet" id="details" aria-labelledby="details-title">
     <form id="details-form" method="dialog">
       <span class="grabber" aria-hidden="true"></span>
       <button type="button" class="round glass sheet-close" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
-      <h2 id="details-title" data-title>You're on the list</h2>
-      <p class="sheet-sub">Two quick questions so we launch where you are. Totally optional.</p>
+      <div class="sheet-progress" aria-hidden="true"><span class="is-active" data-progress-details></span><span data-progress-share></span></div>
 
-      <fieldset class="field">
-        <legend>I want to…</legend>
-        <div class="pills">
-          <label><input type="radio" name="role" value="player" checked><span>Find games</span></label>
-          <label><input type="radio" name="role" value="host"><span>Fill my games</span></label>
-          <label><input type="radio" name="role" value="both"><span>Both</span></label>
+      <div class="sheet-step" data-signup-step="details">
+        <span class="founder-badge"><svg class="i"><use href="#i-check"/></svg>Founding player</span>
+        <h2 id="details-title" data-title>You're in</h2>
+        <p class="founder-summary">Early access · First weekly games · Host priority</p>
+
+        <fieldset class="field">
+          <legend>I want to…</legend>
+          <div class="pills">
+            <label><input type="radio" name="role" value="player" checked><span>Find games</span></label>
+            <label><input type="radio" name="role" value="host"><span>Fill my games</span></label>
+            <label><input type="radio" name="role" value="both"><span>Both</span></label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label for="campus">Campus <span class="optional">Optional</span></label>
+          <select id="campus" name="campus">
+            <option value="">Choose your campus</option>
+            <!-- TODO: update once the launch campus is decided -->
+            <option>Tec de Monterrey</option>
+            <option>Illinois Tech (IIT)</option>
+            <option>UIC</option>
+            <option>Princeton</option>
+            <option value="other">Somewhere else</option>
+          </select>
         </div>
-      </fieldset>
 
-      <div class="field">
-        <label for="campus">Campus</label>
-        <select id="campus" name="campus">
-          <option value="">Choose your campus</option>
-          <!-- TODO: update once the launch campus is decided -->
-          <option>Tec de Monterrey</option>
-          <option>Illinois Tech (IIT)</option>
-          <option>UIC</option>
-          <option>Princeton</option>
-          <option value="other">Somewhere else</option>
-        </select>
+        <p class="details-status" role="status" aria-live="polite"></p>
+        <div class="sheet-actions">
+          <button type="submit" class="btn btn-block glass glass--primary">Save</button>
+          <button type="button" class="btn btn-block glass glass--mint" data-show-share>Skip</button>
+        </div>
       </div>
 
-      <fieldset class="field">
-        <legend>What do you play?</legend>
-        <div class="pills">
-          <label data-sport="basketball"><input type="checkbox" name="sports" value="basketball"><span>🏀 Basketball</span></label>
-          <label data-sport="soccer"><input type="checkbox" name="sports" value="soccer"><span>⚽ Soccer</span></label>
-          <label data-sport="tennis"><input type="checkbox" name="sports" value="tennis"><span>🎾 Tennis</span></label>
-          <label data-sport="volleyball"><input type="checkbox" name="sports" value="volleyball"><span>🏐 Volleyball</span></label>
-          <label data-sport="padel"><input type="checkbox" name="sports" value="padel"><span>🎾 Padel</span></label>
-          <label><input type="checkbox" name="sports" value="other"><span>Something else</span></label>
+      <div class="sheet-step sheet-success" data-signup-step="share" hidden>
+        <span class="founder-badge"><svg class="i"><use href="#i-check"/></svg>Founding player</span>
+        <h2 tabindex="-1">You’re the +1. Now bring the other five.</h2>
+        <p class="share-position" data-share-position></p>
+        <div class="share-row" aria-hidden="true">
+          <span class="av av-you">You</span><span class="open">+1</span><span class="open">+1</span><span class="open">+1</span><span class="open">+1</span><span class="open">+1</span>
         </div>
-      </fieldset>
 
-      <p class="details-status" role="status" aria-live="polite"></p>
-      <div class="sheet-actions">
-        <button type="submit" class="btn btn-block glass glass--primary">Save</button>
-        <button type="button" class="btn btn-block glass glass--mint" data-close>Not now</button>
+        <div class="share-actions">
+          <a class="btn btn-block glass glass--primary" id="share-whatsapp" href="https://wa.me/?text=masUNO%20early%20access" target="_blank" rel="noopener">Share on WhatsApp</a>
+          <button type="button" class="btn btn-block glass glass--mint" id="share-native" hidden>Share masUNO</button>
+          <div class="share-copy-row">
+            <label class="sr-only" for="share-link">Your personal invite link</label>
+            <input id="share-link" type="text" readonly>
+            <button type="button" class="btn glass" id="copy-link">Copy link</button>
+          </div>
+        </div>
+        <p class="share-note" id="share-status" role="status" aria-live="polite">One invite can be the start of your next game.</p>
+        <div class="host-invite" id="host-invite" hidden>
+          <strong>Already organizing games?</strong>
+          <a href="mailto:official.masuno.app@gmail.com?subject=Founding%20host">Contact us</a>
+        </div>
+        <button type="button" class="btn btn-block glass glass--mint" data-close>Done</button>
       </div>
     </form>
   </dialog>
