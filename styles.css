@@ -62,7 +62,7 @@ a { color: inherit; }
 button, input, select { font: inherit; color: inherit; }
 button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
-.display { font-weight: 900; letter-spacing: -0.02em; line-height: 1.04; font-size: clamp(36px, 4.6vw, 60px); }
+.display { font-weight: 900; letter-spacing: -0.02em; line-height: 1.04; font-size: clamp(36px, 4.6vw, 60px); text-wrap: balance; }
 .soft { color: var(--ink-2); }
 .kicker { font-size: 15px; font-weight: 800; color: var(--ink-2); margin-bottom: 12px; }
 .body-lg { margin-top: 18px; color: var(--ink-2); font-size: 19px; line-height: 1.4; }
@@ -272,7 +272,8 @@ symbol[id^="court-"] rect, symbol[id^="court-"] path, symbol[id^="court-"] circl
 .strike { position: relative; display: inline-block; white-space: nowrap; }
 .strike::after { content: ""; position: absolute; left: -2%; right: -2%; top: 54%; height: .1em; border-radius: 9999px; background: var(--ink); transform: scaleX(0); transform-origin: left; animation: strike .6s .5s var(--ease) forwards; }
 .hero-head .lede { margin-top: 16px; max-width: 34ch; }
-.hero-side { display: grid; gap: 18px; min-width: 0; }
+/* minmax(0, …) keeps a long button label (Spanish) from widening the column past the card */
+.hero-side { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; min-width: 0; }
 
 /* Launch countdown */
 .countdown { display: grid; gap: 10px; }
@@ -288,9 +289,11 @@ html:not(.js) .countdown-units { display: none; }
 .launch-note strong { display: block; font-size: 16px; font-weight: 800; color: var(--ink); }
 
 /* ---------- Waitlist form ---------- */
-.join-row { display: flex; gap: 8px; }
+/* The button drops under the field, full width, when the two no longer fit on one line */
+.join-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.join-row .btn { flex: 1 0 auto; }
 .join input[type="email"] {
-  flex: 1; min-width: 0; height: 52px; padding: 0 20px; border-radius: var(--r-pill);
+  flex: 999 1 200px; min-width: 0; height: 52px; padding: 0 20px; border-radius: var(--r-pill);
   border: 1.5px solid var(--hairline); background: var(--surface-2); font-weight: 700; color: var(--ink);
   transition: border-color .2s, background .2s;
 }
@@ -585,7 +588,7 @@ button.fake-btn:active { transform: scale(.97); }
 .sheet-step:not([hidden]) { animation: rise .4s var(--ease) both; }
 .founder-badge { display: inline-flex; align-items: center; gap: 6px; justify-self: start; margin-top: 18px; padding: 4px 12px 4px 8px; border-radius: var(--r-pill); background: var(--mint); font-size: 13px; font-weight: 800; }
 .founder-badge .i { width: 15px; height: 15px; color: var(--primary); stroke-width: 3; }
-.sheet h2 { margin-top: 10px; font-size: 28px; font-weight: 900; line-height: 1.15; letter-spacing: -.01em; }
+.sheet h2 { margin-top: 10px; text-wrap: balance; font-size: 28px; font-weight: 900; line-height: 1.15; letter-spacing: -.01em; }
 .sheet h2:focus { outline: none; }
 .founder-summary { margin-top: 6px; font-size: 15px; color: var(--ink-2); }
 .field { border: 0; padding: 0; margin: 18px 0 0; min-width: 0; }
