@@ -513,16 +513,17 @@ fieldset.field > legend { margin-bottom: 10px; }
 .pills input:checked + span { background: var(--primary-tint); border-color: var(--primary-tint); font-weight: 600; }
 .pills input:focus-visible + span { outline: 3px solid var(--sports); outline-offset: 2px; }
 
-/* ---------- Privacy notice page ---------- */
-.privacy-page { display: flex; flex-direction: column; min-height: 100vh; }
-.privacy-page .nav-inner { padding-top: 18px; padding-bottom: 18px; }
-.privacy-page .footer { margin-top: 0; padding: 0 0 32px; }
-.privacy-page .footer-inner { border-top: 0; }
+/* ---------- Privacy notice and support pages ---------- */
+.prose-page { display: flex; flex-direction: column; min-height: 100vh; }
+.prose-page .nav-inner { padding-top: 18px; padding-bottom: 18px; }
+.prose-page .footer { margin-top: 0; padding: 0 0 32px; }
+.prose-page .footer-inner { border-top: 0; }
 .prose-wrap { max-width: 760px; padding-top: 72px; padding-bottom: 96px; flex: 1; }
 .prose h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(34px, 5vw, 48px); letter-spacing: -0.02em; line-height: 1.05; }
 .prose .updated { margin-top: 10px; color: var(--muted); font-size: 14px; }
 .prose .lead { margin-top: 28px; font-size: 19px; }
 .prose h2 { font-size: 22px; font-weight: 700; margin: 44px 0 12px; }
+.prose h3 { font-size: 18px; font-weight: 700; margin: 28px 0 8px; }
 .prose p + p { margin-top: 12px; }
 .prose ul { margin: 12px 0; padding-left: 22px; display: grid; gap: 8px; }
 .prose a { color: var(--ink); text-underline-offset: 2px; }
