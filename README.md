@@ -7,7 +7,8 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 
 ```
 index.html          page content
-privacy.html        privacy notice, linked under each form and in the footer
+privacy.html        app privacy and terms, linked from the app, App Store Connect and the footer
+waitlist-privacy.html  waitlist privacy notice, linked under each form and in the footer
 support.html        support page (the App Store Connect Support URL), linked in the footer
 i18n.js             Spanish translations, browser-language detection and the language toggle
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
@@ -41,6 +42,7 @@ The persona avatars are lightweight branded initials. Replace `assets/people/emi
 | File | What it shows | Used in |
 |---|---|---|
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
+| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html`, `privacy.html` and `waitlist-privacy.html` with the links it shows |
 
 Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
@@ -103,13 +105,21 @@ Whenever you share the waitlist, add `?ref=` and a short label to the end of the
 
 Use lowercase labels with no spaces, and reuse the same label for the same place so the counts add up. Links without a tag show up as the referring website, or as `direct`. `?utm_source=` works too, if a tool adds that instead.
 
-## Before launching in Mexico
+## Privacy pages
 
-The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `privacy.html` is a short notice, and every form has a short notice linking to it. Before launch:
+There are two notices, each in English and Spanish (the Spanish text is in `i18n.js`):
 
-- Add a Spanish version (aviso de privacidad). That's the version that counts in Mexico.
-- Have someone who knows Mexican data-protection law review it.
-- When someone asks to see, correct or delete their data, find their row in the Sheet and update or delete it.
+- **`privacy.html`** covers the app. It's the Privacy Policy URL in App Store Connect (`https://masuno-app.github.io/privacy`), and the app opens it from onboarding and Settings. Every claim on it has to match what the build under review does, and the App Privacy answers in App Store Connect have to match the page.
+- **`waitlist-privacy.html`** covers this website's waitlist. Every form links to it, because the page collects emails and Mexican data-protection law (LFPDPPP) requires a notice.
+
+When you change either page:
+
+- Update the "Last updated" date, in the HTML and in `i18n.js`.
+- Add a Spanish entry in `i18n.js` for every sentence you add or change. The translation matches on the exact English text, so a sentence without an entry stays in English.
+- Work through `_drafts/privacy-check-before-publishing.md` before each App Store submission. It lists what to verify, the suggested App Privacy answers and the decisions still open.
+- Have someone who knows Mexican data-protection law review both pages, especially the Spanish.
+
+When someone asks to see, correct or delete their waitlist data, find their row in the Sheet and update or delete it.
 
 ## Writing copy for the page
 
