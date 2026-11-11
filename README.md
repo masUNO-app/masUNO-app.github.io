@@ -9,6 +9,7 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 index.html          page content
 privacy.html        app privacy and terms, linked from the app, App Store Connect and the footer
 waitlist-privacy.html  waitlist privacy notice, linked under each form and in the footer
+support.html        support page (the App Store Connect Support URL), linked in the footer
 i18n.js             Spanish translations, browser-language detection and the language toggle
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
 script.js           interactions, the launch countdown (LAUNCH_AT) and the waitlist (set WAITLIST_ENDPOINT here)

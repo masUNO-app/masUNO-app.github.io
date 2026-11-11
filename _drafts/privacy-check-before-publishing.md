@@ -65,7 +65,7 @@ The page states each of these as fact. If one isn't true on prod, fix prod or ch
 **URLs**
 
 - Privacy Policy URL: `https://masuno-app.github.io/privacy`. It only shows the app page once this branch is merged into `main`. Until then, that address shows the waitlist notice.
-- Support URL: `https://masuno-app.github.io/support`. The page is on the `support-page` branch and isn't merged, so the address is a 404 today.
+- Support URL: `https://masuno-app.github.io/support`. Live since `support-page` was merged into `main`.
 
 **App Privacy answers** (suggested, from what the build stores on our servers). For every type: linked to the user, not used for tracking, purpose App Functionality.
 
