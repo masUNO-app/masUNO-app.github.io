@@ -1,55 +1,94 @@
-# Check before publishing
+# Check before each App Store submission
 
-For the masUNO team. Not legal advice, and not part of the public page.
+For the masUNO team. Not legal advice, and not part of the public site.
 
-## (a) Backend developer: verify against Supabase
+`privacy.html` was rewritten on Nov 11, 2026 to match the `ios` repo (branch `ethan/group-chat`, version 0.6: the migrations, `delete-account`, `docs/SPEC.md` rev. 7 and the Swift code). Sections (a) to (c) are what the repo can't prove. Section (d) is what to enter in App Store Connect. Section (e) lists decisions nobody has made yet.
 
-1. **Hidden fields.** Row-level rules limit rows, not columns. Using a real user token, try to read another user's last name, interests and email through the API.
-2. **Phone location.** Confirm coordinates never leave the phone, including in distance sorting and logs.
-3. **Who's going.** Can people who haven't joined a game see the list? The page says other students in the game can.
-4. **Delete account.** Does it remove the Auth record that holds the email? Check past games, your blocks, reports about you, and 2.0 tokens and saved games. Confirm reports are actually unlinked.
-5. **Backups.** Where are they, who has access, and when is each one replaced? A third-party store belongs under "Where your data is stored". Does Supabase keep its own backups too?
-6. **Region, logs and SDKs.** Confirm the US region, what Supabase logs (such as IP addresses), and that no analytics or crash SDK is in the build, including inside dependencies.
-7. **Blocks and the filter.** Confirm blocked people can't see blocks, and that the filter covers all five fields, including chat messages.
-8. **Group chat.** Confirm only people in a game can read its messages (Appendix A of `ios/docs/SPEC.md`), and that reporting a message works. If messaging misses the Nov 8 release candidate and 1.0 ships the read-only fallback, remove the message and chat-rules lines from the page.
-9. **Profile photos.** The spec still says no photos (decision C4), so nothing here is designed yet. Confirm where photos are stored, who can open them (are the links public?), that they're optional, and that deleting an account removes them.
+## What changed on Nov 11
 
-## (b) What LFPDPPP or App Review may expect that this page doesn't cover
+- **Sign-in** is described as the school account (Microsoft at Tec), not an emailed 6-digit code. Gmail is no longer listed as sending sign-in codes.
+- **Profile photos** are gone from the page. The app has none (SPEC C4).
+- **Padel** is in the sports list.
+- **Who sees what** now says every signed-in student at your campus can see who's going to a game. The old page said only people in the game could, but the `rsvps` rule allows the whole campus.
+- **Location** now mentions the one case where a phone's position reaches the server: a host picking "current location" as the game's place.
+- **Saved games** (on the phone only), **Add to calendar**, Apple's map search and the Google Maps directions option are disclosed.
+- **Deletion** matches `delete-account`: the sign-in record, hosted games and their chats, sent messages and blocks go. Reports stay, unlinked, with the copy of a reported message.
+- **Chat messages** are deleted 30 days after the game ends (the `purge-old-chat` job).
+- **Report alerts** name Discord and say what the alert contains (reason, kind of target, report ID), taken from `alert_new_report`.
+- **Community rules** are the four rules the app shows in onboarding, word for word.
+- **Version numbers** are gone. Notifications and synced Saved games are under "Coming in a later version".
+- **Spanish** exists for both pages, in `i18n.js`. A fluent reader should check it.
+- **The waitlist notice** lists the invite codes and approximate country that main now collects.
+
+## (a) Backend: confirm on `masuno-prod`
+
+The page states each of these as fact. If one isn't true on prod, fix prod or change the page.
+
+1. **Report alerts go to Discord.** `supabase/README.md` says the webhook isn't set up on either project. Set it up, or remove the Discord line from the page.
+2. **Weekly backups in private storage.** Confirm someone runs `supabase db dump` weekly, where the file goes, who can open it and when each one is replaced. The page gives no period for how long a backup lasts.
+3. **Servers in the United States.** Confirm the region of `masuno-prod`.
+4. **What Supabase Auth stores from the school sign-in** (B21). The page says name, school email and an account ID, and nothing else. Check `auth.users` and `auth.identities` after a real Tec sign-in.
+5. **Chat cleanup.** Confirm `purge-old-chat` shows under Integrations → Cron on prod before `chat_enabled` is turned on.
+6. **Hidden columns.** With a real user token, try to read another user's last name, interests and email through the API.
+7. **Delete account.** Run it on prod and check that the Auth user, profile, hosted games, RSVPs, blocks and messages are gone, and that reports remain with empty `reporter_id` and `user_id`.
+8. **Logs.** Check what Supabase logs (such as IP addresses) and for how long. The page doesn't mention logs.
+9. **No analytics or crash SDK** in the build, including inside dependencies.
+
+## (b) App: confirm in the build you submit
+
+1. **Edit profile works.** "Your choices" says you can change your name, class year and sports in the app. If Edit profile is cut from the build, remove that line.
+2. **The map works with location off** and centers on campus, as the page says.
+3. **In-app text matches the page:** the four community rules, the Delete account alert, and the location prompt ("masUNO uses your location to show how far games are. It's never shared with other people.").
+4. **Blocking hides both ways** as the page says: names, hosted games and messages.
+5. **Privacy manifest.** The `ios` repo has no `PrivacyInfo.xcprivacy`, and the app uses `UserDefaults`, which Apple lists as a required-reason API. Add the manifest (reason `CA92.1`) so the upload doesn't get flagged.
+
+## (c) Law and review points the page doesn't settle
 
 **LFPDPPP.** The law was replaced in March 2025, and sources disagree on some of the new notice rules, so check the official text with someone who knows it.
 
-- **Responsible party:** the team is named on the waitlist notice, but neither page gives a legal responsible party or an address for notices. Don't assume Boys & Girls Clubs of Chicago agrees to this role.
-- **Rights:** both pages now explain ARCO rights and how to use them by email, but only say "within the time limits set by law". Check that this and the wording on how to complain are enough.
-- **Purposes:** "Why we use it" says why most items are collected, but not which uses are optional. Confirm each reason is accurate, including that @tec.mx email only checks student status at sign-in.
+- **Responsible party:** the team is named, but neither page gives a legal responsible party or an address for notices. Don't assume Boys & Girls Clubs of Chicago agrees to this role.
+- **Rights:** both pages explain ARCO rights and how to use them by email, but only say "within the time limits set by law". Check that this and the wording on how to complain are enough.
+- **Purposes:** "Why we use it" doesn't say which uses are optional.
 - **US servers:** the location is disclosed, but not whether this is a transfer needing consent.
-- **Spanish:** the page is English-only until 2.0, while users are in Mexico.
-- **Authority:** enforcement moved from INAI to the Secretaría Anticorrupción y Buen Gobierno. The page doesn't say how to complain.
+- **Authority:** enforcement moved from INAI to the Secretaría Anticorrupción y Buen Gobierno. The pages say "the Mexican authority in charge of personal data protection" without naming it.
 - **Applicability:** ask how the law applies to an unincorporated student team.
-
-**Minimum age.** None is stated, and first-years may be 17. PrepaTec students may also have @tec.mx addresses. Set a rule and match it to the App Store age rating.
 
 **Apple.**
 
-- **5.1.1(i):** expects retention details. The page has no period for active accounts, because none was provided.
-- **5.1.1(v):** expects the whole account record and associated data deleted. Compare this with kept reports and check (a)4.
-- **1.2:** make sure someone really reviews reports within 24 hours, including weekends. Photos and messages are new user content, so check how a bad photo gets found and removed.
-- **App Store Connect:** the App Privacy answers must match this page.
-- **Community guidelines:** the in-app text must match "Community rules and safety".
+- **5.1.1(i):** expects retention details. The page says account data is kept until you delete the account, and gives 30 days for chat messages. It gives no period for reports or backups.
+- **5.1.1(v):** expects the whole account record deleted. Reports are kept without the account link, including the copy of a reported message. Be ready to explain that this is for safety.
+- **1.2:** make sure someone really reviews reports within 24 hours, including weekends.
+- **Own-risk wording** may not limit liability, so don't assume it protects the team.
 
-**Group chat retention and deletion (not on the page yet).** The page doesn't say how long messages are kept, or what happens to them when someone deletes their account. The spec's 30-day deletion is marked as later than 1.0, so don't promise it unless it ships. Decide both, then add them under "Keeping and deleting your data". Apple's 5.1.1(i) and (v) above apply here too.
+## (d) App Store Connect
 
-**Waitlist retention.** "While the waitlist is running" is a promise with no end date. Decide when the waitlist ends and delete the data then.
+**URLs**
 
-**Own-risk wording.** It may not limit liability, so don't assume it protects the team.
+- Privacy Policy URL: `https://masuno-app.github.io/privacy`. It only shows the app page once this branch is merged into `main`. Until then, that address shows the waitlist notice.
+- Support URL: `https://masuno-app.github.io/support`. The page is on the `support-page` branch and isn't merged, so the address is a 404 today.
 
-## (c) Where I guessed or left something out
+**App Privacy answers** (suggested, from what the build stores on our servers). For every type: linked to the user, not used for tracking, purpose App Functionality.
 
-1. **"No personal details" is left out of the report alert.** If "the target" is a person's name, that claim is false. Add it back only if the target is an ID that identifies no one. "What was reported" is my wording.
-2. **"Discord/Slack"** is copied from the brief. Name the one you actually use.
-3. **"Tec student".** The app only checks the @tec.mx domain. If staff, faculty or alumni have those addresses, "Tec students" overstates it.
-4. **Inferred statements:** the team can see what's in the database, "Games you join" is stored data, and the name format applies when you host.
-5. **Blocked people.** The brief gives the name, not where it is or what blocking does. "People you've blocked are listed" is my assumption, and the effects of blocking are left out.
-6. **iPhone Settings wording** comes from how iOS works. Test whether the map works without location, and say so if it does.
-7. **Changes to this page.** The promise to post updates and change the date is mine.
-8. **1.0 data.** Language setting and interests are listed as the brief lists them, though 1.0 is English-only and the only stated use of interests is 2.0 alerts. Confirm 1.0 stores both.
-9. **Not on the page because it wasn't provided:** a campus security number, team members' names, and whether masUNO is independent of Tec. Also check that program partners are fine being named.
+| Data type | Why |
+| --- | --- |
+| Contact Info → Name | First and last name from the school sign-in and the profile |
+| Contact Info → Email Address | School email, kept in Supabase Auth |
+| Identifiers → User ID | The account ID |
+| User Content → Other User Content | Games you post (title, notes, meet-up spot), reports and their notes |
+| User Content → Emails or Text Messages | Group chat messages. Add this when `chat_enabled` goes on in prod |
+| Other Data | Class year and the sports you play |
+
+- **Tracking:** No.
+- **Location:** the phone's position stays on the phone, which Apple doesn't count as collected. The exception is a host who picks "current location" as a game's place: those coordinates are saved as the place. Decide whether to declare Precise Location for that. Declaring it is the safer answer.
+- **Diagnostics:** none. Crash reports come from Apple, not from an SDK.
+- **Device token:** add Identifiers → Device ID when notifications ship.
+
+**Age rating:** answer yes to user-generated content, and to messaging once chat is on. See the minimum age in (e).
+
+## (e) Decisions nobody has made
+
+1. **Minimum age.** The page says "for university students, not for children" and gives no number. First-years may be 17, and PrepaTec students may have @tec.mx addresses. Set a rule, put it on the page and match the age rating.
+2. **Waitlist retention.** "While the waitlist is running" has no end date. Decide when the waitlist ends and delete the data then.
+3. **How long reports are kept.** The page gives no period.
+4. **Naming the program partners.** Check that the City of Chicago, JPMorgan Chase, Apple, Everyone Can Code Chicago and Boys & Girls Clubs of Chicago are fine being named on the page.
+5. **Tec.** The page doesn't say whether masUNO is independent of Tec, and gives no campus security number.

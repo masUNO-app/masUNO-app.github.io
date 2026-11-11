@@ -1,6 +1,6 @@
 # masUNO landing page
 
-The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no build step.
+The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no build step. Run `npm run dev` for a local preview on port 7100 (no dependency installation needed).
 
 - **Live site:** https://masuno-app.github.io/ (GitHub Pages, deployed from `main`)
 - **Waitlist:** connected. Signups go to the **Waitlist** tab of the masUNO waitlist Google Sheet through the Apps Script in `apps-script/Code.gs`.
@@ -9,8 +9,9 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 index.html          page content
 privacy.html        app privacy and terms, linked from the app, App Store Connect and the footer
 waitlist-privacy.html  waitlist privacy notice, linked under each form and in the footer
+i18n.js             Spanish translations, browser-language detection and the language toggle
 styles.css          tokens from the masUNO design system (Verde cancha) and all animations
-script.js           interactions and the waitlist (set WAITLIST_ENDPOINT here)
+script.js           interactions, the launch countdown (LAUNCH_AT) and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
 assets/screens/     app screenshots used on the page (only files index.html references)
 assets/people/      persona photos
@@ -33,12 +34,12 @@ To retake them from the `ios` repo, run a Debug build with `-screen` set to `map
 | `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
 | `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
 
+The persona avatars are lightweight branded initials. Replace `assets/people/emilio.jpg` and `assets/people/ricardo.jpg` with real square photos whenever they are available; no HTML changes are needed.
+
 **Still missing:**
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/people/emilio.jpg` | Emilio (square crop) | Hero ("That's you"), story card, quote and closing section |
-| `assets/people/ricardo.jpg` | Ricardo (square crop) | Hero host card, story card and closing section |
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
 | `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html`, `privacy.html` and `waitlist-privacy.html` with the links it shows |
 
@@ -53,7 +54,7 @@ Only commit the screenshots the page uses. Keep spare or work-in-progress export
 
 The Apps Script is deployed as a web app, and its `/exec` URL is set as `WAITLIST_ENDPOINT` at the top of `script.js`. Opening that URL in a browser should show `{"ok":true,"service":"masUNO waitlist"}`, which is a quick way to check it's still up.
 
-**Changing `Code.gs`:** paste the new code into the Sheet's **Extensions → Apps Script**, save, then use **Deploy → Manage deployments → Edit (pencil) → Version: New version**. Don't create a new deployment: that gives you a different URL, and the live site would keep posting to the old one.
+**Changing `Code.gs`:** paste the new code into the Sheet's **Extensions → Apps Script**, save, then use **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**. Saving alone doesn't change the live site. Don't create a new deployment: that gives you a different URL, and the live site would keep posting to the old one.
 
 **Working with the Sheet:**
 
@@ -76,11 +77,13 @@ If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anythin
 
 </details>
 
-**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a popup showing their place in line ("You're #42 on the list") with three optional questions: player or host, campus, and sports. Answering fills in the same row.
+**How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a founding-player popup showing their place in line with two optional questions: player or host and campus. Saving or skipping opens the invitation step, where they can share a personal `?ref=CODIGO` invite through WhatsApp, the native share sheet or the copy button. The private edit token and email are never included in shared links.
 
-The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role.
+The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role. People who select host or both also see a small email contact for founding-host onboarding.
 
-**What gets saved:** join time, email, role, campus, sports, source, and when details were added. Source comes from `?ref=` or `?utm_source=` in the link, so you can tell signups apart, for example `…/?ref=clubfair` or `…/?ref=instagram`. A hidden Token column stops anyone from editing someone else's row.
+**What gets saved:** join time, email, role, campus, source, when details were added, country, a public referral code and the referring code when the invite belongs to an existing signup. The existing **Sports** column stays in place so historical values and column positions are preserved, but the signup no longer collects or updates sports. Source comes from `?ref=` or `?utm_source=` in the link, so campaign tags still work. **Referred by** is only filled when `?ref=` matches an existing personal code. A hidden Token column stops anyone from editing someone else's row. Country (`Mexico`, `USA` or `Other`) is an estimate from the browser's time zone, so it shows where the device is at signup, not where someone is from; Campus is the better signal when they fill it in. It's blank for signups from before the column was added.
+
+**Referral-code migration:** run `setup()` once after pasting the updated Apps Script. It adds **Referral code** and **Referred by** at the far right without moving Token. New signups receive an eight-character, non-secret unique code. If an existing email joins again, its row receives a code if it did not have one, but its private Token is never returned. Redeploy the existing web app as a new version after this change.
 
 **Built-in protection:** duplicate emails are ignored, a hidden honeypot field filters out simple bots, and values starting with `=` aren't run as formulas in the Sheet.
 
@@ -101,13 +104,21 @@ Whenever you share the waitlist, add `?ref=` and a short label to the end of the
 
 Use lowercase labels with no spaces, and reuse the same label for the same place so the counts add up. Links without a tag show up as the referring website, or as `direct`. `?utm_source=` works too, if a tool adds that instead.
 
-## Before launching in Mexico
+## Privacy pages
 
-The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `waitlist-privacy.html` is a short notice, and every form has a short notice linking to it. Before launch:
+There are two notices, each in English and Spanish (the Spanish text is in `i18n.js`):
 
-- Add a Spanish version (aviso de privacidad). That's the version that counts in Mexico.
-- Have someone who knows Mexican data-protection law review it.
-- When someone asks to see, correct or delete their data, find their row in the Sheet and update or delete it.
+- **`privacy.html`** covers the app. It's the Privacy Policy URL in App Store Connect (`https://masuno-app.github.io/privacy`), and the app opens it from onboarding and Settings. Every claim on it has to match what the build under review does, and the App Privacy answers in App Store Connect have to match the page.
+- **`waitlist-privacy.html`** covers this website's waitlist. Every form links to it, because the page collects emails and Mexican data-protection law (LFPDPPP) requires a notice.
+
+When you change either page:
+
+- Update the "Last updated" date, in the HTML and in `i18n.js`.
+- Add a Spanish entry in `i18n.js` for every sentence you add or change. The translation matches on the exact English text, so a sentence without an entry stays in English.
+- Work through `_drafts/privacy-check-before-publishing.md` before each App Store submission. It lists what to verify, the suggested App Privacy answers and the decisions still open.
+- Have someone who knows Mexican data-protection law review both pages, especially the Spanish.
+
+When someone asks to see, correct or delete their waitlist data, find their row in the Sheet and update or delete it.
 
 ## Writing copy for the page
 
@@ -115,11 +126,14 @@ The page collects emails, so Mexican data-protection law (LFPDPPP) requires a pr
 - **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: when a player drops out of a full game, the app bumps the game back to the top of the map on its own (the "Auto-repost" toggle in the Add game form, on by default). There's no Repost button for hosts to tap, and push notifications to nearby players or bookmarkers aren't in the first release, so don't mention pings or notifications.
 - **Both sides should be visible.** Players are the main audience, but the host's problem (refilling a no-show faster than the group chat) appears in the hero, the story section, the "I need players" tab and the FAQ. Keep it there when you change things.
 
+## Language
+
+The English source copy stays in the HTML and in the runtime messages at the top of `script.js`; Spanish translations live in `i18n.js`. Spanish-language browsers get Spanish automatically and all other browsers get English. The EN/ES header toggle overrides detection and stores the choice in this browser's `localStorage` (`masUNO-language`). When adding visible copy, keep the English source in the HTML and add its Spanish equivalent to `i18n.js`.
+
 ## Still to decide
 
 These come from the open decisions in DESIGN.md and show up on the page:
 
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
-- **Language:** the page is English only for now. A Spanish version is planned for the Mexico launch. All the copy is in `index.html`, plus the runtime messages at the top of `script.js`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
-- **Example numbers:** "4 min after repost" (hero notification) and "4 min after it auto-reposted" (the group chat vs. masUNO block) are placeholders. Swap in a real fill time from testing.
+- **Example number:** "4 min walk" in the demo game cards is illustrative. Swap in real examples from testing when available.

@@ -1,10 +1,12 @@
 /**
  * masUNO waitlist → Google Sheets
  *
- * The page signs people up in two steps:
- *   action=join     email + source → appends a row, returns { position, token }
- *   action=details  email + token + role/campus/sports → fills in that row
+ * The page signs people up in three steps:
+ *   action=join     email + source + tz → appends a row, returns { position, token, referralCode }
+ *   action=details  email + token + role/campus → fills in that row
  * The token stops anyone from editing someone else's row just by knowing their email.
+ * Referral codes are short, public and non-secret; Referred by stores the inviter's code.
+ * Country is estimated from the browser's time zone. Only the country is stored, not the zone.
  *
  * Setup (about 20 minutes, full steps in README.md):
  *   1. Create a Google Sheet, then Extensions → Apps Script. Paste this file in.
@@ -15,15 +17,18 @@
  *   4. Copy the /exec URL into WAITLIST_ENDPOINT in script.js.
  *
  * After editing this file, use Deploy → Manage deployments → Edit → New version,
- * so the /exec URL stays the same.
+ * so the /exec URL stays the same. Running setup() on an existing Sheet only adds
+ * missing headers at the end; it does not move the private Token column.
  */
 
 // PLACEHOLDER: leave blank when this script is bound to the Sheet (Extensions → Apps Script).
 // If you made a standalone script instead, paste the Sheet ID from its URL here.
 const SHEET_ID = "";
 const SHEET_NAME = "Waitlist";
-const HEADERS = ["Joined", "Email", "Role", "Campus", "Sports", "Source", "Details added", "Token"];
-const COL = { email: 2, role: 3, campus: 4, sports: 5, detailsAt: 7, token: 8 };
+// New columns go at the end: moving Token would break the rows already in the Sheet
+const HEADERS = ["Joined", "Email", "Role", "Campus", "Sports", "Source", "Details added", "Token", "Country", "Referral code", "Referred by"];
+const COL = { email: 2, role: 3, campus: 4, sports: 5, detailsAt: 7, token: 8, referralCode: 10, referredBy: 11 };
+const REFERRER_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -46,17 +51,28 @@ function doPost(e) {
       if (!row) return json_({ ok: false, error: "not_found" });
       const token = sheet.getRange(row, COL.token).getValue();
       if (!p.token || p.token !== token) return json_({ ok: false, error: "bad_token" });
-      sheet.getRange(row, COL.role, 1, 3).setValues([[clean_(p.role, 20), clean_(p.campus, 80), clean_(p.sports, 120)]]);
+      if (Object.prototype.hasOwnProperty.call(p, "role")) {
+        sheet.getRange(row, COL.role).setValue(clean_(p.role, 20));
+      }
+      if (Object.prototype.hasOwnProperty.call(p, "campus")) {
+        sheet.getRange(row, COL.campus).setValue(clean_(p.campus, 80));
+      }
       sheet.getRange(row, COL.detailsAt).setValue(new Date());
       return json_({ ok: true });
     }
 
-    // action=join (the default). Already signed up: treat as success so nobody is told off for it
-    if (row) return json_({ ok: true, duplicate: true });
+    // Already signed up: keep the response successful and make sure older rows get a code.
+    // Never return their private edit token to someone who only knows the email.
+    if (row) {
+      return json_({ ok: true, duplicate: true, referralCode: ensureReferralCode_(sheet, row) });
+    }
 
     const token = Utilities.getUuid();
-    sheet.appendRow([new Date(), email, "", "", "", clean_(p.source, 200), "", token]);
-    return json_({ ok: true, position: sheet.getLastRow() - 1, token: token });
+    const referralCode = ensureReferralCode_(sheet, 0);
+    const source = clean_(p.source, 200);
+    const referredBy = findReferralRow_(sheet, source) ? source : "";
+    sheet.appendRow([new Date(), email, "", "", "", source, "", token, country_(p.tz), referralCode, referredBy]);
+    return json_({ ok: true, position: sheet.getLastRow() - 1, token: token, referralCode: referralCode });
   } catch (err) {
     console.error(err);
     return json_({ ok: false, error: "server_error" });
@@ -70,7 +86,7 @@ function doGet() {
   return json_({ ok: true, service: "masUNO waitlist" });
 }
 
-// Run once from the Apps Script editor to create the tab and header row
+// Run once to create the tab or add newly introduced headers to an existing tab.
 function setup() {
   const sheet = getSheet_();
   sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight("bold");
@@ -85,6 +101,11 @@ function getSheet_() {
     sheet = ss.insertSheet(SHEET_NAME);
     sheet.appendRow(HEADERS);
     sheet.setFrozenRows(1);
+  } else {
+    // Compatibility with existing rows: only fill empty new headers at the far right.
+    for (let col = 10; col <= HEADERS.length; col++) {
+      if (!sheet.getRange(1, col).getValue()) sheet.getRange(1, col).setValue(HEADERS[col - 1]).setFontWeight("bold");
+    }
   }
   return sheet;
 }
@@ -93,6 +114,40 @@ function findRow_(sheet, email) {
   const cell = sheet.getRange(1, COL.email, sheet.getMaxRows(), 1)
     .createTextFinder(email).matchEntireCell(true).findNext();
   return cell ? cell.getRow() : 0;
+}
+
+function findReferralRow_(sheet, code) {
+  if (!code) return 0;
+  const cell = sheet.getRange(1, COL.referralCode, sheet.getMaxRows(), 1)
+    .createTextFinder(code).matchEntireCell(true).findNext();
+  return cell ? cell.getRow() : 0;
+}
+
+// Returns the row's existing code, or generates a unique short code. Row 0 means a new row.
+function ensureReferralCode_(sheet, row) {
+  if (row) {
+    const existing = String(sheet.getRange(row, COL.referralCode).getValue() || "").trim();
+    if (existing) return existing;
+  }
+  let code = "";
+  do {
+    code = "";
+    for (let i = 0; i < 8; i++) {
+      code += REFERRER_ALPHABET.charAt(Math.floor(Math.random() * REFERRER_ALPHABET.length));
+    }
+  } while (findReferralRow_(sheet, code));
+  if (row) sheet.getRange(row, COL.referralCode).setValue(code);
+  return code;
+}
+
+// Time zone → country. Blank if the browser didn't send one (for example, an old cached page).
+// It reflects where the device is right now, so someone traveling shows up where they are.
+function country_(tz) {
+  const zone = String(tz || "");
+  if (!zone) return "";
+  if (/^(America\/(Bahia_Banderas|Cancun|Chihuahua|Ciudad_Juarez|Ensenada|Hermosillo|Matamoros|Mazatlan|Merida|Mexico_City|Monterrey|Ojinaga|Santa_Isabel|Tijuana)|Mexico\/\w+)$/.test(zone)) return "Mexico";
+  if (/^(America\/(Adak|Anchorage|Atka|Boise|Chicago|Denver|Detroit|Fort_Wayne|Indiana\/\w+|Indianapolis|Juneau|Kentucky\/\w+|Knox_IN|Los_Angeles|Louisville|Menominee|Metlakatla|New_York|Nome|North_Dakota\/\w+|Phoenix|Shiprock|Sitka|Yakutat)|Pacific\/Honolulu|US\/\w+)$/.test(zone)) return "USA";
+  return "Other";
 }
 
 // Trim, cap length, and stop values like "=IMPORTXML(...)" from running as formulas in the Sheet
