@@ -31,26 +31,49 @@ const COL = { email: 2, role: 3, campus: 4, sports: 5, detailsAt: 7, token: 8, r
 const REFERRER_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 function doPost(e) {
+  const startedAt = Date.now();
+  const p = (e && e.parameter) || {};
+  const timing = { lockMs: 0, sheetMs: 0, lookupMs: 0, writeMs: 0 };
+  let outcome = "success";
+  let stageStartedAt = 0;
   const lock = LockService.getScriptLock();
   try {
+    stageStartedAt = Date.now();
     lock.waitLock(10000);
-    const p = (e && e.parameter) || {};
+    timing.lockMs = Date.now() - stageStartedAt;
 
     // Honeypot field from the form; real people never fill it in
-    if (p.website) return json_({ ok: true });
+    if (p.website) {
+      outcome = "honeypot";
+      return json_({ ok: true });
+    }
 
     const email = String(p.email || "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+      outcome = "invalid_email";
       return json_({ ok: false, error: "invalid_email" });
     }
 
+    stageStartedAt = Date.now();
     const sheet = getSheet_();
+    timing.sheetMs = Date.now() - stageStartedAt;
+    stageStartedAt = Date.now();
     const row = findRow_(sheet, email);
+    timing.lookupMs = Date.now() - stageStartedAt;
 
     if (p.action === "details") {
-      if (!row) return json_({ ok: false, error: "not_found" });
+      if (!row) {
+        outcome = "not_found";
+        return json_({ ok: false, error: "not_found" });
+      }
+      stageStartedAt = Date.now();
       const token = sheet.getRange(row, COL.token).getValue();
-      if (!p.token || p.token !== token) return json_({ ok: false, error: "bad_token" });
+      timing.lookupMs += Date.now() - stageStartedAt;
+      if (!p.token || p.token !== token) {
+        outcome = "bad_token";
+        return json_({ ok: false, error: "bad_token" });
+      }
+      stageStartedAt = Date.now();
       if (Object.prototype.hasOwnProperty.call(p, "role")) {
         sheet.getRange(row, COL.role).setValue(clean_(p.role, 20));
       }
@@ -58,26 +81,48 @@ function doPost(e) {
         sheet.getRange(row, COL.campus).setValue(clean_(p.campus, 80));
       }
       sheet.getRange(row, COL.detailsAt).setValue(new Date());
+      timing.writeMs = Date.now() - stageStartedAt;
       return json_({ ok: true });
     }
 
     // Already signed up: keep the response successful and make sure older rows get a code.
     // Never return their private edit token to someone who only knows the email.
     if (row) {
-      return json_({ ok: true, duplicate: true, referralCode: ensureReferralCode_(sheet, row) });
+      outcome = "duplicate";
+      stageStartedAt = Date.now();
+      const referralCode = ensureReferralCode_(sheet, row);
+      timing.lookupMs += Date.now() - stageStartedAt;
+      return json_({ ok: true, duplicate: true, referralCode: referralCode });
     }
 
     const token = Utilities.getUuid();
+    stageStartedAt = Date.now();
     const referralCode = ensureReferralCode_(sheet, 0);
     const source = clean_(p.source, 200);
     const referredBy = findReferralRow_(sheet, source) ? source : "";
+    timing.lookupMs += Date.now() - stageStartedAt;
+    stageStartedAt = Date.now();
     sheet.appendRow([new Date(), email, "", "", "", source, "", token, country_(p.tz), referralCode, referredBy]);
-    return json_({ ok: true, position: sheet.getLastRow() - 1, token: token, referralCode: referralCode });
+    const position = sheet.getLastRow() - 1;
+    timing.writeMs = Date.now() - stageStartedAt;
+    return json_({ ok: true, position: position, token: token, referralCode: referralCode });
   } catch (err) {
+    outcome = "server_error";
     console.error(err);
     return json_({ ok: false, error: "server_error" });
   } finally {
     lock.releaseLock();
+    // Timing only: never log the email, token, campus or other personal data.
+    console.info(JSON.stringify({
+      event: "waitlist_latency",
+      action: p.action || "join",
+      outcome: outcome,
+      totalMs: Date.now() - startedAt,
+      lockMs: timing.lockMs,
+      sheetMs: timing.sheetMs,
+      lookupMs: timing.lookupMs,
+      writeMs: timing.writeMs,
+    }));
   }
 }
 

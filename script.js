@@ -11,10 +11,13 @@ const MSG = {
   "form.sending": "Adding you…",
   "form.invalid": "That email doesn't look right. Mind checking it?",
   "form.error": "Something went wrong on our end. Try again in a moment.",
+  "form.timeout": "It's taking longer than expected. Check your connection and try again.",
   "done.joined": "You're on the list. We'll be in touch.",
   "done.duplicate": "You're already on the list. See you soon.",
   "done.details": "Thanks! We'll let you know when games go live near you.",
   "dlg.title": "You're in",
+  "dlg.pendingTitle": "Almost there",
+  "dlg.confirming": "Confirming your registration…",
   "dlg.position": "You're in · #{n} on the list",
   "dlg.sharePosition": "#{n} on the list",
   "dlg.save": "Save",
@@ -192,16 +195,21 @@ heroJoin.addEventListener("click", () => {
 
 // ---------- Waitlist ----------
 // Step 1: email only. Step 2: role and campus. Step 3: personal invite.
+const REQUEST_TIMEOUT_MS = 12000;
 const joinForms = [...document.querySelectorAll("form.join")];
 const dialog = document.getElementById("details");
 const detailsForm = document.getElementById("details-form");
 const detailsStep = dialog.querySelector('[data-signup-step="details"]');
 const shareStep = dialog.querySelector('[data-signup-step="share"]');
+const detailsStatus = detailsForm.querySelector(".details-status");
+const detailsSave = detailsForm.querySelector("button[type=submit]");
+const detailsSkip = detailsForm.querySelector("[data-show-share]");
 const shareLink = document.getElementById("share-link");
 const shareWhatsapp = document.getElementById("share-whatsapp");
 const shareNative = document.getElementById("share-native");
 const shareStatus = document.getElementById("share-status");
 let signup = null; // { email, token, referralCode, position } from step 1
+let joinPending = false;
 
 function source() {
   const params = new URLSearchParams(window.location.search);
@@ -214,16 +222,41 @@ function timeZone() {
 }
 
 async function post(payload) {
-  if (WAITLIST_ENDPOINT.startsWith("PASTE_")) {
-    console.warn("[masUNO] WAITLIST_ENDPOINT not set. Would have sent:", payload);
-    await new Promise((r) => setTimeout(r, 450));
-    return { ok: true, position: 128, token: "local-test", referralCode: "LOCAL123" };
+  const startedAt = performance.now();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let outcome = "error";
+  try {
+    let json;
+    if (WAITLIST_ENDPOINT.startsWith("PASTE_")) {
+      console.warn("[masUNO] WAITLIST_ENDPOINT not set; using the local test response.");
+      await new Promise((r) => setTimeout(r, 450));
+      json = { ok: true, position: 128, token: "local-test", referralCode: "LOCAL123" };
+    } else {
+      // A form-encoded body keeps this a "simple" CORS request, so Apps Script doesn't need a preflight.
+      const res = await fetch(WAITLIST_ENDPOINT, {
+        method: "POST",
+        body: new URLSearchParams(payload),
+        signal: controller.signal,
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      json = await res.json();
+      if (!json.ok) throw new Error(json.error || "Request failed");
+    }
+    outcome = json.duplicate ? "duplicate" : "success";
+    return json;
+  } catch (err) {
+    if (err.name === "AbortError") {
+      const timeoutError = new Error("request_timeout");
+      timeoutError.code = "timeout";
+      throw timeoutError;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+    const elapsedMs = Math.round(performance.now() - startedAt);
+    console.debug(`[masUNO] waitlist ${payload.action}: ${outcome}, ${elapsedMs} ms`);
   }
-  // A form-encoded body keeps this a "simple" CORS request, so Apps Script doesn't need a preflight
-  const res = await fetch(WAITLIST_ENDPOINT, { method: "POST", body: new URLSearchParams(payload) });
-  const json = await res.json();
-  if (!json.ok) throw new Error(json.error || "Request failed");
-  return json;
 }
 
 function markJoined(key) {
@@ -262,6 +295,31 @@ function showShare() {
   shareStep.querySelector("h2").focus?.();
 }
 
+function clearMessage(el) {
+  el.textContent = "";
+  delete el.dataset.messageKey;
+  delete el.dataset.messageVars;
+}
+
+function setDetailsPending(pending) {
+  detailsSave.disabled = pending;
+  detailsSkip.disabled = pending;
+  detailsStatus.classList.toggle("is-pending", pending);
+  dialog.setAttribute("aria-busy", String(pending));
+  if (pending) render(detailsStatus, "dlg.confirming");
+  else if (detailsStatus.dataset.messageKey === "dlg.confirming") clearMessage(detailsStatus);
+}
+
+function openDetailsPending() {
+  detailsStep.hidden = false;
+  shareStep.hidden = true;
+  dialog.querySelector("[data-progress-details]").classList.add("is-active");
+  dialog.querySelector("[data-progress-share]").classList.remove("is-active");
+  render(dialog.querySelector("[data-title]"), "dlg.pendingTitle");
+  setDetailsPending(true);
+  if (!dialog.open) dialog.showModal();
+}
+
 updateShareLinks();
 document.addEventListener("masuno:languagechange", updateShareLinks);
 if (navigator.share) shareNative.hidden = false;
@@ -274,11 +332,12 @@ joinForms.forEach((form) => {
   input.addEventListener("input", () => {
     form.classList.remove("is-invalid");
     input.removeAttribute("aria-invalid");
-    status.textContent = "";
+    clearMessage(status);
   });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (joinPending) return;
     const email = input.value.trim();
     if (!EMAIL_RE.test(email)) {
       form.classList.add("is-invalid");
@@ -289,29 +348,32 @@ joinForms.forEach((form) => {
     }
     if (form.elements.website.value) return markJoined("done.joined");
 
-    button.disabled = true;
+    joinPending = true;
+    joinForms.forEach((f) => { f.querySelector("button[type=submit]").disabled = true; });
     render(button, "form.sending");
+    openDetailsPending();
     try {
       const res = await post({ action: "join", email, source: source(), tz: timeZone() });
       if (res.duplicate) {
         markJoined("done.duplicate");
+        setDetailsPending(false);
+        if (dialog.open) dialog.close();
         return;
       }
       signup = { email, token: res.token, referralCode: res.referralCode, position: res.position };
       markJoined("done.joined");
-      detailsStep.hidden = false;
-      shareStep.hidden = true;
-      dialog.querySelector("[data-progress-details]").classList.add("is-active");
-      dialog.querySelector("[data-progress-share]").classList.remove("is-active");
       const title = dialog.querySelector("[data-title]");
       if (res.position) render(title, "dlg.position", { n: res.position });
       else render(title, "dlg.title");
-      dialog.showModal();
+      setDetailsPending(false);
     } catch (err) {
       console.error(err);
-      render(status, "form.error");
+      setDetailsPending(false);
+      if (dialog.open) dialog.close();
+      render(status, err.code === "timeout" ? "form.timeout" : "form.error");
     } finally {
-      button.disabled = false;
+      joinPending = false;
+      joinForms.forEach((f) => { f.querySelector("button[type=submit]").disabled = false; });
       render(button, "form.submit");
     }
   });
@@ -324,7 +386,7 @@ document.querySelectorAll("a[data-role]").forEach((a) => a.addEventListener("cli
 }));
 
 dialog.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => dialog.close()));
-dialog.querySelector("[data-show-share]").addEventListener("click", showShare);
+detailsSkip.addEventListener("click", () => { if (signup) showShare(); });
 dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
 
 shareWhatsapp.addEventListener("click", () => render(shareStatus, "share.opened"));
@@ -350,11 +412,14 @@ document.getElementById("copy-link").addEventListener("click", async () => {
 
 detailsForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const status = detailsForm.querySelector(".details-status");
-  const button = detailsForm.querySelector("button[type=submit]");
-  status.textContent = "";
-  button.disabled = true;
-  render(button, "dlg.saving");
+  if (!signup) {
+    setDetailsPending(true);
+    return;
+  }
+  clearMessage(detailsStatus);
+  detailsStatus.classList.remove("is-pending");
+  detailsSave.disabled = true;
+  render(detailsSave, "dlg.saving");
   try {
     await post({
       action: "details",
@@ -367,9 +432,9 @@ detailsForm.addEventListener("submit", async (e) => {
     showShare();
   } catch (err) {
     console.error(err);
-    render(status, "dlg.error");
+    render(detailsStatus, "dlg.error");
   } finally {
-    button.disabled = false;
-    render(button, "dlg.save");
+    detailsSave.disabled = false;
+    render(detailsSave, "dlg.save");
   }
 });
