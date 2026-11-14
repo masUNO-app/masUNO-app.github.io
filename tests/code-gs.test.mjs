@@ -105,7 +105,7 @@ test("a push with the right secret upserts rows into the Sheet", () => {
     secret: "right-secret",
     rows: [
       { email: "web@tec.mx", status: "approved", requested_at: "2026-11-01T00:00:00Z", source: "website" },
-      { email: "new@tec.mx", status: "waiting", requested_at: "2026-11-14T00:00:00Z", source: "app" },
+      { email: "new@tec.mx", status: "waiting", requested_at: "2026-11-14T00:00:00Z", source: "app", position: 3 },
     ],
   }));
   assert.equal(res.ok, true);
@@ -117,4 +117,5 @@ test("a push with the right secret upserts rows into the Sheet", () => {
   assert.equal(appended[0][5], "app");
   assert.equal(appended[0][7], "");
   assert.equal(appended[0][11], "Waiting");
+  assert.equal(appended[0][12], 3);
 });

@@ -406,7 +406,7 @@ function installSyncTrigger() {
 }
 
 // Updates the matching row by email, or appends an app-only sign-up. places is { email: place } for a
-// full export; null for a push, which keeps a waiting row's place until the next reconcile.
+// full export; null for a push. Both prefer the row's own position; without one a push keeps the stored place.
 // Only rows that changed (or never had a Synced at) are written.
 function upsertRows_(sheet, rows, places) {
   const last = sheet.getLastRow();
@@ -417,7 +417,7 @@ function upsertRows_(sheet, rows, places) {
   rows.forEach((r) => {
     const i = index[r.email];
     if (i === undefined) {
-      const place = places && r.status === "waiting" ? places[r.email] || "" : "";
+      const place = r.status === "waiting" ? r.position || (places && places[r.email]) || "" : "";
       const cells = appCells_(r, place).concat([now]);
       const row = [r.requestedAt || now, r.email, "", "", "", "app", "", "", "", "", ""].concat(cells);
       sheet.appendRow(row);
@@ -426,8 +426,9 @@ function upsertRows_(sheet, rows, places) {
       return;
     }
     const old = data[i];
-    const place = places ? (r.status === "waiting" ? places[r.email] || "" : "")
-      : (r.status === "waiting" ? old[COL.appPlace - 1] : "");
+    // Supabase's own position wins; the computed place or the stored one is only a fallback
+    const place = r.status !== "waiting" ? ""
+      : r.position || (places && places[r.email]) || (places ? "" : old[COL.appPlace - 1]);
     const cells = appCells_(r, place);
     // A website row keeps its own sign-up date and Source; only "Signed up in app" comes from Supabase
     const same = cells.every((c, k) => sameCell_(c, old[COL.appStatus - 1 + k]));
@@ -457,6 +458,7 @@ function normSyncRow_(raw) {
     requestedAt: requested && !isNaN(requested.getTime()) ? requested : null,
     source: raw.source === "app" ? "app" : "website",
     invitedBy: raw.invited_by ? String(raw.invited_by) : "",
+    position: Number(raw.position) > 0 ? Number(raw.position) : 0,
   };
 }
 
