@@ -86,6 +86,17 @@ The **Get early access as a host** button in the "I need players" tab jumps to t
 
 **Referral-code migration:** run `setup()` once after pasting the updated Apps Script. It adds **Referral code** and **Referred by** at the far right without moving Token. New signups receive an eight-character, non-secret unique code. If an existing email joins again, its row receives a code if it did not have one, but its private Token is never returned. Redeploy the existing web app as a new version after this change.
 
+**One waitlist with the app:** the Sheet and the app's sign-up queue (Supabase) are kept in step both ways. When someone joins with a school email from an open campus, the script also calls Supabase's `waitlist_join`, so their place carries into the app, and the answer fills five columns at the far right: **App status** (Waiting, Approved, In the app, Not a school email, Removed), **App place** (a number while waiting), **Signed up in app**, **Invited by** and **Synced at**. If the email is waiting in the app, the page shows the app's place. If it's already approved or in the app, the page says they can get in through the app. Other emails stay launch-news sign-ups and see the same success message plus a school-email hint. People who sign up in the app first are added as new rows with Source `app`, no token and no referral code. Supabase pushes changes to the `/exec` URL as they happen, and an hourly `reconcile()` pulls everything, heals any gaps and retries joins that never reached Supabase (blank **Synced at**). **App place** from the live push can be a little stale until the next hourly reconcile. If Supabase is down or the properties below aren't set, the website join works exactly as before.
+
+**Turning the sync on:**
+
+1. In the Apps Script editor: **Project Settings → Script Properties**, add `WAITLIST_SYNC_SECRET` (the same random 32+ character secret that's in Supabase Vault as `waitlist_sync_secret`), `SUPABASE_URL` and `SUPABASE_ANON_KEY`. Never put the secret in the Sheet or in this repo.
+2. Run `setup()` once to add the five new headers (it only adds missing ones at the far right).
+3. Run `installSyncTrigger()` once to create the hourly `reconcile` trigger. Running it again does nothing.
+4. Redeploy with **Deploy → Manage deployments → Edit → Version: New version → Deploy**. Don't make a new deployment: Supabase's Vault keeps this `/exec` URL as `waitlist_sync_url`, so it has to stay the same.
+
+Don't delete or move the new columns either. To remove someone, delete their row here and ask Supabase's owner to remove their request too, or the next sync adds them back.
+
 **Built-in protection:** duplicate emails are ignored, a hidden honeypot field filters out simple bots, and values starting with `=` aren't run as formulas in the Sheet.
 
 ## 3. Publishing changes
