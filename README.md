@@ -7,7 +7,9 @@ The landing page and waitlist for masUNO. It's plain HTML, CSS and JS with no bu
 
 ```
 index.html          page content
-privacy.html        privacy notice, linked under each form and in the footer
+privacy.html        app privacy and terms, linked from the app, App Store Connect and the footer
+waitlist-privacy.html  waitlist privacy notice, linked under each form and in the footer
+support.html        support page (the App Store Connect Support URL), linked in the footer
 i18n.js             Spanish translations, browser-language detection and the language toggle
 styles.css          tokens from the app's design language (v2.0: sport colors, courts, Liquid Glass) and all animations
 script.js           interactions, the launch countdown (LAUNCH_AT) and the waitlist (set WAITLIST_ENDPOINT here)
@@ -40,6 +42,7 @@ People on the page are colored initials (EG, RT and so on), the same as in the a
 | File | What it shows | Used in |
 |---|---|---|
 | `assets/og-image.png` | 1200×630 link preview | Social sharing |
+| `favicon.png` + `apple-touch-icon.png` | The masUNO app icon (once we have one), 32×32 and 180×180 | Browser tab and iPhone home screen. Replace the favicon `TODO` comment in the `<head>` of `index.html`, `privacy.html` and `waitlist-privacy.html` with the links it shows |
 
 Export screens at full iPhone resolution (1206×2622 from the iPhone 18 Pro simulator, or a Figma iPhone frame at 3x). Export the screen only, without a device frame, because the page draws its own navy phone frame.
 
@@ -83,6 +86,23 @@ The **Get early access as a host** button in the "I need players" tab jumps to t
 
 **Referral-code migration:** run `setup()` once after pasting the updated Apps Script. It adds **Referral code** and **Referred by** at the far right without moving Token. New signups receive an eight-character, non-secret unique code. If an existing email joins again, its row receives a code if it did not have one, but its private Token is never returned. Redeploy the existing web app as a new version after this change.
 
+**One waitlist with the app:** the Sheet and the app's sign-up queue (Supabase) are kept in step both ways. When someone joins with a school email from an open campus, the script also calls Supabase's `waitlist_join`, so their place carries into the app, and the answer fills five columns at the far right: **App status** (Waiting, Approved, In the app, Not a school email), **App place** (a number while waiting), **Signed up in app**, **Invited by** and **Synced at**. If the email is waiting in the app, the page shows the app's place. If it's already approved or in the app, the page says they can get in through the app. When Supabase deletes a request (the person deleted their account, or the request was rejected), the push deletes every Sheet row with that email, website answers included. Other emails stay launch-news sign-ups and see the same success message plus a school-email hint. People who sign up in the app first are added as new rows with Source `app`, no token and no referral code. Supabase pushes changes to the `/exec` URL as they happen, and an hourly `reconcile()` pulls everything, heals any gaps and retries joins that never reached Supabase (blank **Synced at**). **App place** from the live push can be a little stale until the next hourly reconcile. If Supabase is down or the properties below aren't set, the website join works exactly as before. Reconciliation releases the Sheet lock during all Supabase requests, so a slow backend does not block new website signups.
+
+**Turning the sync on:**
+
+1. In the Apps Script editor: **Project Settings → Script Properties**, add `WAITLIST_SYNC_SECRET` (the same random 32+ character secret that's in Supabase Vault as `waitlist_sync_secret`), `SUPABASE_URL` and `SUPABASE_ANON_KEY`. Never put the secret in the Sheet or in this repo.
+2. Run `checkSync()` from the editor. It checks for missing properties, a secret shorter than 32 characters, or a rejected secret without creating a test signup. The report includes only configuration names, the public project URL, and trigger status. Confirm this is the production project for the live website.
+3. Run `setupSync()` once and approve its permissions. It validates the configuration, adds the headers, installs the hourly `reconcile` trigger idempotently, and reconciles existing rows. A failed initial reconciliation can be retried by running `reconcile()`. `setup()` and `installSyncTrigger()` remain available separately.
+4. Redeploy with **Deploy → Manage deployments → Edit → Version: New version → Deploy**. Don't make a new deployment: Supabase's Vault keeps this `/exec` URL as `waitlist_sync_url`, so it has to stay the same.
+
+The database migrations must be applied first. With Supabase CLI v3, explicitly select the hosted project: `supabase migration list --remote=<project-ref>`, then `supabase db push --remote=<project-ref> --dry-run` before applying reviewed migrations. Vault needs `waitlist_sync_secret` (matching the Script Property) and `waitlist_sync_url` (the deployed `/exec` URL). Use separate credentials and a separate Sheet/deployment for dev; do not connect dev and prod to this same live Sheet.
+
+The current script editor is https://script.google.com/home/projects/1_TpYX3ttjGG0xuV2ecy-tYOSByj2D2ArsZl-4vpo1OTzdQ6B-sVYrmUr/edit. When publishing with clasp, pull this existing project first and update the existing deployment ID so the public URL remains unchanged. A Git push alone does not update Apps Script.
+
+Run the local regression suite with `node --test tests/code-gs.test.mjs tests/waitlist.test.mjs`.
+
+Don't delete or move the new columns either. To remove someone, ask Supabase's owner to delete their request: the push then deletes their row here. If you only delete the row here, the next sync adds them back.
+
 **Built-in protection:** duplicate emails are ignored, a hidden honeypot field filters out simple bots, and values starting with `=` aren't run as formulas in the Sheet.
 
 ## 3. Publishing changes
@@ -102,13 +122,21 @@ Whenever you share the waitlist, add `?ref=` and a short label to the end of the
 
 Use lowercase labels with no spaces, and reuse the same label for the same place so the counts add up. Links without a tag show up as the referring website, or as `direct`. `?utm_source=` works too, if a tool adds that instead.
 
-## Before launching in Mexico
+## Privacy pages
 
-The page collects emails, so Mexican data-protection law (LFPDPPP) requires a privacy notice. `privacy.html` is a short notice, and every form has a short notice linking to it. Before launch:
+There are two notices, each in English and Spanish (the Spanish text is in `i18n.js`):
 
-- Add a Spanish version (aviso de privacidad). That's the version that counts in Mexico.
-- Have someone who knows Mexican data-protection law review it.
-- When someone asks to see, correct or delete their data, find their row in the Sheet and update or delete it.
+- **`privacy.html`** covers the app. It's the Privacy Policy URL in App Store Connect (`https://masuno-app.github.io/privacy`), and the app opens it from onboarding and Settings. Every claim on it has to match what the build under review does, and the App Privacy answers in App Store Connect have to match the page.
+- **`waitlist-privacy.html`** covers this website's waitlist. Every form links to it, because the page collects emails and Mexican data-protection law (LFPDPPP) requires a notice.
+
+When you change either page:
+
+- Update the "Last updated" date, in the HTML and in `i18n.js`.
+- Add a Spanish entry in `i18n.js` for every sentence you add or change. The translation matches on the exact English text, so a sentence without an entry stays in English.
+- Work through `_drafts/privacy-check-before-publishing.md` before each App Store submission. It lists what to verify, the suggested App Privacy answers and the decisions still open.
+- Have someone who knows Mexican data-protection law review both pages, especially the Spanish.
+
+When someone asks to see, correct or delete their waitlist data, find their row in the Sheet and update or delete it.
 
 ## Writing copy for the page
 

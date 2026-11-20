@@ -13,10 +13,13 @@
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/og-image.png">
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2312825a'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,sans-serif' font-size='34' font-weight='700' fill='white'%3E%2B1%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="styles.css">
   <script>document.documentElement.classList.add("js")</script>
   <script src="i18n.js" defer></script>
@@ -90,7 +93,7 @@
   <!-- ============ NAV ============ -->
   <header class="nav">
     <div class="nav-inner glass">
-      <a href="#" class="wordmark" aria-label="masUNO"><span class="open open-mark" aria-hidden="true">+1</span>masUNO</a>
+      <a href="#" class="wordmark" aria-label="masUNO"><img class="wordmark-icon" src="assets/icons/icon-96.png" alt="" width="32" height="32">masUNO</a>
       <nav class="nav-links" aria-label="Sections">
         <a href="#story">Why</a>
         <a href="#how">How it works</a>
@@ -185,8 +188,9 @@
                 <p class="join-status" role="status" aria-live="polite"></p>
               </form>
               <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
+              <p class="notice">Use your school email (like you@tec.mx) to keep your place when you get the app.</p>
               <!-- Short privacy notice (aviso de privacidad simplificado) -->
-              <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
+              <p class="notice">We only use your email for the waitlist. <a href="waitlist-privacy.html">Privacy notice</a></p>
             </div>
           </div>
         </div>
@@ -504,7 +508,7 @@
           </details>
           <details>
             <summary>What do you do with my email?<span class="faq-icon"><svg class="i"><use href="#i-plus"/></svg></span></summary>
-            <p>We only use it to tell you when masUNO launches near you. We never sell it, and you can ask us to delete it anytime. <a href="privacy.html">Privacy notice</a></p>
+            <p>We only use it to tell you when masUNO launches near you. We never sell it, and you can ask us to delete it anytime. <a href="waitlist-privacy.html">Privacy notice</a></p>
           </details>
         </div>
       </div>
@@ -534,8 +538,9 @@
               <p class="join-status" role="status" aria-live="polite"></p>
             </form>
             <p class="join-done" hidden><span class="tick"><svg class="i"><use href="#i-check"/></svg></span> <span data-done-text>You're on the list. We'll be in touch.</span></p>
+            <p class="notice">Use your school email (like you@tec.mx) to keep your place when you get the app.</p>
             <!-- Short privacy notice (aviso de privacidad simplificado) -->
-            <p class="notice">We only use your email for the waitlist. <a href="privacy.html">Privacy notice</a></p>
+            <p class="notice">We only use your email for the waitlist. <a href="waitlist-privacy.html">Privacy notice</a></p>
           </div>
         </div>
       </div>
@@ -545,8 +550,8 @@
 
   <footer class="footer">
     <div class="wrap footer-inner">
-      <a href="#" class="wordmark" aria-label="masUNO"><span class="open open-mark" aria-hidden="true">+1</span>masUNO</a>
-      <p><span>Made by Ricardo, Arianna, Emilio and Ethan · 2026 App Accelerator</span> · <a href="privacy.html">Privacy notice</a></p>
+      <a href="#" class="wordmark" aria-label="masUNO"><img class="wordmark-icon" src="assets/icons/icon-96.png" alt="" width="32" height="32">masUNO</a>
+      <p><span>Made by Ricardo, Arianna, Emilio and Ethan · 2026 App Accelerator</span> · <a href="waitlist-privacy.html">Waitlist privacy notice</a> · <a href="privacy.html">App privacy and terms</a> · <a href="support.html">Support</a></p>
     </div>
   </footer>
 
