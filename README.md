@@ -22,18 +22,16 @@ assets/people/      persona photos (not used by this design; people are colored 
 
 The page loads each image from a fixed file path. Until a file exists, its spot shows a placeholder with that path (persona photos show initials). Saving a file at the path replaces the placeholder automatically, and you don't need to edit any HTML.
 
-**Screenshots (all added).** Taken from the iOS app's simulator build (iPhone 18 Pro, iOS 27.2, branch `green-design-system`, mock data), scaled to 888 px wide and reduced to a 256-color palette so the page stays light. To update one, overwrite the file under the same name.
-
-To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar (`xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100 --dataNetwork wifi --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4`). Capture with `xcrun simctl io booted screenshot --mask=black shot.png` so the Dynamic Island is drawn; the page's 47 px screen corners hide the black mask corners.
+**Screenshots.** The 0.9 App Store screenshots (iPhone 18 Pro, from the `ios` repo's `scripts/screenshots.sh`), scaled to 888 px wide as JPEGs. Each step has an English file in `assets/screens/en/` and a Spanish one in `assets/screens/es/`; `i18n.js` swaps to the Spanish file (`data-src-es`) when the page is in Spanish. To update one, overwrite both files under the same name.
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/screens/map.png` | Map (home) with pins around Tec | "I want to play" step 1 |
-| `assets/screens/event-detail.png` | Event detail (After-work hoops) with who's going | "I want to play" step 2 |
-| `assets/screens/your-plans.png` | Me · Going | "I want to play" step 3 |
-| `assets/screens/create-event.png` | Add game form, filled in | "I need players" step 1 |
-| `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
-| `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
+| `assets/screens/{en,es}/popup.jpg` | A game popup on the map (`-screen popup`) | "I want to play" step 1 |
+| `assets/screens/{en,es}/detail-open.jpg` | Game details with the court, who's going and Count me in | "I want to play" step 2 |
+| `assets/screens/{en,es}/detail-in.jpg` | You're in! with Open group chat | "I want to play" step 3 |
+| `assets/screens/{en,es}/add-filled.jpg` | Add game form, filled in | "I need players" step 1 |
+| `assets/screens/{en,es}/chat.jpg` | Group chat with the pinned meet-up card | "I need players" step 2 |
+| `assets/screens/repost.png` | Auto-repost after a player drops out. **Still the 0.5 UI**: replace it with a 1.0 shot (`-screen repost`) | "I need players" step 3 |
 
 People on the page are colored initials (EG, RT and so on), the same as in the app, so `assets/people/` isn't loaded by this design.
 

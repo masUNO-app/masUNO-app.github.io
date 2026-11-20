@@ -71,11 +71,11 @@ const ES = {
   "Tap a step, the screen follows": "Toca un paso para ver la pantalla",
   "Map (home)": "Mapa (inicio)",
   "App screenshot goes here": "Aquí va la captura de la app",
-  "Map of pickup games near Tec": "Mapa de retas cerca del Tec",
+  "A game popup on the map: Pickup after class, room for 4 more, with Details and Count me in": "Una ventana de partido en el mapa, con lugar para 4 más, Detalles y Me apunto",
   "Event detail": "Detalle de la reta",
-  "Game details with the host, who's going, spots left and a Join game button": "Detalles de la reta con el organizador, quiénes van, lugares disponibles y botón para unirse",
+  "Game details on a basketball court: who's going, the open spots, the host's note and Count me in": "Detalles del partido sobre una cancha de básquetbol: quiénes van, los lugares libres, la nota de quien organiza y Me apunto",
   "Me · Going": "Yo · Voy",
-  "Me screen with upcoming games you're going to and their group chats": "Pantalla con tus próximas retas y los chats de cada grupo",
+  "You're in! on a volleyball game, with Open group chat and Invite a friend": "¡Ya estás dentro! en un partido de voleibol, con Abrir chat del grupo e Invita a un amigo",
   "Post in under a minute": "Arma tu reta en menos de un minuto",
   "What, when, where and how many spots.": "Elige qué, cuándo, dónde y cuántos lugares.",
   "Manage it in one place": "Organiza todo desde un solo lugar",
@@ -86,15 +86,15 @@ const ES = {
   "Get early access as a host": "Quiero organizar retas",
   "Add game": "Crear reta",
   "Auto-repost": "Republicar automáticamente",
-  "Add game form with the Auto-repost toggle": "Formulario para crear una reta con la opción de republicarla automáticamente",
+  "Add game form filled in for a pickup game": "Formulario de Crear partido lleno para una reta",
   "Me · Hosting": "Yo · Organizo",
-  "Me screen showing the games you're hosting, with Edit and group chat": "Pantalla con las retas que organizas, opciones de edición y chat del grupo",
+  "A game's group chat with the meet-up spot pinned at the top": "El chat del grupo de un partido con el punto de encuentro fijado arriba",
   "A hosted game automatically reposted after a player dropped out": "Una reta que volvió a publicarse sola cuando alguien se salió",
   "Open spots": "Lugares disponibles",
   "The map only shows games you can join": "En el mapa solo ves retas a las que sí te puedes unir",
   "No walking over to a full court.": "Para que no vayas hasta una cancha que ya está llena.",
   "Game is open": "La reta está abierta",
-  "Join or bookmark it": "Entra o guárdala",
+  "Join or save it": "Entra o guárdala",
   "Game fills up": "Se llena la reta",
   "It quietly leaves the map": "Desaparece del mapa y listo",
   "Someone no-shows": "Alguien no llega",
@@ -115,7 +115,7 @@ const ES = {
   "Do I need to be good?": "¿Tengo que jugar bien?",
   "It's pickup, not tryouts. The game is posted because it needs one more, and that's you.": "Es una reta, no una competencia. Se publica porque falta alguien, y ese puedes ser tú.",
   "Is it safe?": "¿Es seguro?",
-  "Students only, public places, and you see who's going first.": "Solo estudiantes, lugares públicos y sabes quién va antes de llegar.",
+  "Students only, public places, and you see who's going first. If anything feels off, you can report or block anyone, and only the masUNO team sees reports.": "Solo estudiantes, lugares públicos y sabes quién va antes de llegar. Si algo no te late, puedes reportar o bloquear a quien sea, y solo el equipo de masUNO ve los reportes.",
   "What about no-shows?": "¿Qué pasa si alguien no llega?",
   "When someone drops out of a full game, masUNO bumps it back to the top of the map on its own, so the open spot gets seen. Way faster than “anyone??” in the group chat.": "Si alguien se sale de una reta ya llena, masUNO la vuelve a poner hasta arriba del mapa para que se vea el lugar libre. Mucho más rápido que preguntar «¿quién?» en el grupo.",
   "What about Android?": "¿Y para Android?",
@@ -229,19 +229,19 @@ const ES = {
   "🏀 Basketball · 6 going": "🏀 Básquetbol · Van 6",
   "Pinned": "Fijado",
   "Rec center courts": "Canchas del centro deportivo",
-  "Ricardo · Host · 5:12 PM": "Ricardo · Organizador · 5:12 p. m.",
-  "Ricardo · Host · 5:15 PM": "Ricardo · Organizador · 5:15 p. m.",
-  "Emilio took the last spot · game is full": "Emilio tomó el último lugar · reta llena",
-  "5:14 PM · Read": "5:14 p. m. · Leído",
+  "Ricardo T. · Host · 5:12 PM": "Ricardo T. · Organizador · 5:12 p. m.",
+  "Ricardo T. · Host · 5:15 PM": "Ricardo T. · Organizador · 5:15 p. m.",
+  "Emilio took the last spot · game is full": "Emilio tomó el último lugar · el partido está lleno",
+  "5:14 PM": "5:14 p. m.",
   "Let's go. See you at 6": "Va. Nos vemos a las 6",
   "Group chat where Emilio takes the last spot in Ricardo's 3v3": "Chat del grupo donde Emilio toma el último lugar en el 3 contra 3 de Ricardo",
   "See open spots nearby": "Mira los lugares libres cerca de ti",
   "Know who you'll play with before you show up.": "Así sabes con quién vas a jugar antes de llegar.",
-  "🏀 Basketball · Hosted by Ricardo": "🏀 Básquetbol · Organiza Ricardo",
-  "Room for 1 more": "Hay lugar para 1 más",
+  "🏀 Basketball · Hosted by Ricardo T.": "🏀 Básquetbol · Organiza Ricardo T.",
+  "Room for one more": "Hay lugar para una persona más",
   "⚽ Soccer": "⚽ Fútbol",
-  "Reposted now": "Republicada ahora",
-  "Game is full": "La reta está llena",
+  "Spot open": "Lugar disponible",
+  "Full": "Lleno",
   "See who's going before you go.": "Mira quién va antes de llegar.",
   "🏀 Basketball": "🏀 Básquetbol",
   "🎾 Tennis": "🎾 Tenis",
@@ -261,7 +261,7 @@ const ES = {
   "Count me in": "Me apunto",
   "{n} games nearby": "{n} retas cerca",
   "5 games nearby": "5 retas cerca",
-  "A spot just opened · room for 1": "Se liberó un lugar · hay lugar para 1",
+  "A spot just opened · room for 1": "Se acaba de abrir un lugar · hay espacio para 1",
 
   // App privacy and terms (privacy.html) and the waitlist notice (waitlist-privacy.html)
   "Waitlist privacy notice": "Aviso de privacidad de la lista de espera",
@@ -489,6 +489,13 @@ function applyLanguage(language, { persist = false } = {}) {
 
   document.querySelectorAll("[data-language]").forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.language === currentLanguage));
+  });
+
+  // App screenshots: the Spanish set when the page is in Spanish
+  document.querySelectorAll("img[data-src-es]").forEach((img) => {
+    if (!img.dataset.srcEn) img.dataset.srcEn = img.getAttribute("src");
+    const src = currentLanguage === "es" ? img.dataset.srcEs : img.dataset.srcEn;
+    if (img.getAttribute("src") !== src) img.setAttribute("src", src);
   });
 
   if (persist) {
