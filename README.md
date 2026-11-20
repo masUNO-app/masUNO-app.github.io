@@ -33,7 +33,7 @@ The phone around them is Apple's iPhone 18 Pro frame from Apple Design Resources
 | `assets/screens/{en,es}/detail-in.jpg` | You're in! with Open group chat | "I want to play" step 3 |
 | `assets/screens/{en,es}/add-filled.jpg` | Add game form, filled in | "I need players" step 1 |
 | `assets/screens/{en,es}/chat.jpg` | Group chat with the pinned meet-up card | "I need players" step 2 |
-| `assets/screens/repost.png` | Auto-repost after a player drops out. **Still the 0.5 UI**: replace it with a 1.0 shot (`-screen repost`) | "I need players" step 3 |
+| `assets/screens/{en,es}/repost.jpg` | Me › Hosting right after auto-repost (`-screen repost`, taken separately: `screenshots.sh` doesn't include it) | "I need players" step 3 |
 
 People on the page are colored initials (EG, RT and so on), the same as in the app, so `assets/people/` isn't loaded by this design.
 

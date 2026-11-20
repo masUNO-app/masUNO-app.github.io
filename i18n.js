@@ -89,7 +89,7 @@ const ES = {
   "Add game form filled in for a pickup game": "Formulario de Crear partido lleno para una reta",
   "Me · Hosting": "Yo · Organizo",
   "A game's group chat with the meet-up spot pinned at the top": "El chat del grupo de un partido con el punto de encuentro fijado arriba",
-  "A hosted game automatically reposted after a player dropped out": "Una reta que volvió a publicarse sola cuando alguien se salió",
+  "Me › Hosting: Sunday 5v5 reposted just now, with room for one more": "Mi perfil › Organizo: Fut 5 del domingo se acaba de volver a publicar, con lugar para una persona más",
   "Open spots": "Lugares disponibles",
   "The map only shows games you can join": "En el mapa solo ves retas a las que sí te puedes unir",
   "No walking over to a full court.": "Para que no vayas hasta una cancha que ya está llena.",
