@@ -11,7 +11,7 @@
 </head>
 <body class="prose-page">
 
-  <!-- TEAM NOTE: this page covers the app and is the Privacy Policy URL in App Store Connect and in the app's Settings. Every claim was checked against the ios repo on Nov 11, 2026. Re-check it against the ios repo before each submission. Each sentence also needs a Spanish entry in i18n.js. The waitlist is covered by waitlist-privacy.html. -->
+  <!-- TEAM NOTE: this page covers the app and is the Privacy Policy URL in App Store Connect and in the app's Settings. Every claim was re-checked against the ios repo for version 0.9 on Nov 20, 2026. Re-check it against the ios repo before each submission. Each sentence also needs a Spanish entry in i18n.js. The waitlist is covered by waitlist-privacy.html. -->
 
   <header class="nav" id="top">
     <div class="wrap nav-inner">
@@ -28,7 +28,7 @@
     <article class="prose">
       <p class="kicker">masUNO</p>
       <h1>Privacy and terms</h1>
-      <p class="updated">Last updated: November 11, 2026</p>
+      <p class="updated">Last updated: November 20, 2026</p>
 
       <p class="lead">This page explains what the masUNO app collects, who can see it, and the rules for using the app. For the waitlist on this website, see the <a href="waitlist-privacy.html">waitlist privacy notice</a>.</p>
 
@@ -38,14 +38,9 @@
       <p>You can reach us at <a href="mailto:official.masuno.app@gmail.com">official.masuno.app@gmail.com</a>.</p>
 
       <h2>What we collect</h2>
-      <h3>When you sign in</h3>
-      <p>You sign in with the account your school gave you, on your school's own sign-in page. We never see your school password. Your school's sign-in gives us:</p>
-      <ul>
-        <li>Your school email address (at Tec, your @tec.mx address).</li>
-        <li>Your name.</li>
-        <li>An account ID that sign-in needs.</li>
-      </ul>
-      <p>We get nothing else from your school account: no contacts, no files and no calendar.</p>
+      <h3>When you create an account</h3>
+      <p>You create an account with your school email address (at Tec, your @tec.mx address) and a password. We store your email and an account ID. Your password is stored only as a secure hash by our sign-in provider; we can't see it.</p>
+      <p>masUNO is invite-only for now. If you use a member's invite code, we record whose code it was. If you join the waitlist, we keep your place in line until you're let in.</p>
       <h3>Your profile</h3>
       <ul>
         <li>Your first name, last name, class year and the sports you play.</li>
@@ -56,24 +51,29 @@
       <ul>
         <li>Games you host: title, sport, date and time, duration, number of players, place name, the place's address and map coordinates, any meet-up spot or notes you add, and whether auto-repost is on.</li>
         <li>Games you join, and when you joined or left.</li>
-        <li>Messages you send in a game's group chat, where messaging is available, and when you last opened each chat.</li>
+        <li>Messages you send in a game's group chat, the people you @mention, and when you last opened each chat.</li>
       </ul>
       <h3>Safety</h3>
       <ul>
         <li>Reports you make: a reason, an optional note and, if you report a chat message, a copy of that message.</li>
         <li>Blocks you make.</li>
       </ul>
+      <h3>Saved games, notifications and invites</h3>
+      <ul>
+        <li><strong>Saved games and alerts.</strong> The games you save and the spot alerts you turn on, stored with your account.</li>
+        <li><strong>Notifications.</strong> If you allow notifications: your device's notification token, an ID for this install of the app, the app version and language, your notification settings, and which notifications you open.</li>
+        <li><strong>Invites.</strong> Your invite codes and who used them.</li>
+      </ul>
 
       <h2>What stays on your phone</h2>
       <ul>
-        <li><strong>Your location.</strong> The app asks for it to center the map and show how far games are. Your phone's location is never sent to our servers or stored by us. The only places we store are the ones hosts choose for their games. If you host a game and choose your current location as the place, that place is saved with the game like any other.</li>
-        <li><strong>Saved games.</strong> Games you bookmark are saved only on your phone.</li>
+        <li><strong>Your location.</strong> The app uses it on your phone to center the map and show how far games are. It's sent to us only if you host a game and choose “Use my current location” as the place: that spot is then saved with the game like any other place.</li>
         <li><strong>Your calendar.</strong> Add to calendar puts a game in your calendar only when you confirm it. We can't read your calendar.</li>
       </ul>
 
       <h2>What we don't collect</h2>
       <ul>
-        <li><strong>Ad or analytics data.</strong> There are no ads, no analytics tools and no tracking.</li>
+        <li><strong>Ads and tracking.</strong> There are no ads, no third-party analytics tools and no tracking. We do count which notifications get opened, to learn which ones are useful.</li>
       </ul>
       <p>We don't sell your data or share it for marketing.</p>
       <p>Crash reports reach us only through Apple, and only from people who've opted in on their iPhone.</p>
@@ -85,7 +85,8 @@
         <li><strong>Your game details</strong> put games on the map and let people join them.</li>
         <li><strong>Your messages</strong> let people in a game plan it together. We keep track of when you last opened a chat so we can show how many messages are new.</li>
         <li><strong>Reports and blocks</strong> help us keep masUNO safe and enforce the rules below.</li>
-        <li><strong>Your language setting and the sports you play</strong> are saved with your profile. A later version will use them for Spanish and for alerts about new games.</li>
+        <li><strong>Your language setting</strong> picks the language of the app and its notifications. <strong>The sports you play</strong> decide which new games we tell you about.</li>
+        <li><strong>Your notification token and settings</strong> let us send the notifications you've turned on, and nothing else.</li>
       </ul>
 
       <h2>Who sees what</h2>
@@ -101,10 +102,9 @@
       <h2>Where your data is stored and who helps us run masUNO</h2>
       <ul>
         <li><strong>Supabase</strong> runs our database, sign-in and group chat on servers in the United States. Access rules limit what each signed-in student can read.</li>
-        <li><strong>Microsoft</strong> runs the school sign-in at Tec, through your school's own account system.</li>
-        <li><strong>Apple</strong> distributes the app, provides the map and place search, and will deliver notifications in a later version.</li>
+        <li><strong>Apple</strong> distributes the app, provides the map and place search, and delivers notifications.</li>
         <li><strong>Discord:</strong> when a report is made, an alert goes to our team's private channel. It has the reason, what kind of thing was reported and a report number. It doesn't include names or message text.</li>
-        <li><strong>Google (Gmail)</strong> handles the email you send us.</li>
+        <li><strong>Google (Gmail and Google Sheets)</strong> handles the email you send us and our waitlist: if you joined the waitlist, your email and place in line are kept in a Google Sheet only our team can open.</li>
       </ul>
       <p>If you choose Google Maps for directions, the game's place opens in that app.</p>
 
@@ -116,6 +116,8 @@
         <li>Removes the games you host, along with their group chats.</li>
         <li>Removes you from games you joined, and deletes the messages you sent.</li>
         <li>Deletes your blocks.</li>
+        <li>Deletes your saved games, notification settings and notification tokens.</li>
+        <li>Deletes your place on the waitlist.</li>
       </ul>
       <p>Reports are kept for moderation, but they're no longer linked to your account. That covers reports you made and reports about you, including the copy of a reported message.</p>
       <p>If you can't sign in, email us from your school address and we'll delete your account for you.</p>
@@ -130,23 +132,14 @@
         <li>Meet in public places and look out for each other.</li>
       </ul>
       <p>Spam, fake games and inappropriate content aren't allowed either. Hosts can't post a game more than 7 days ahead. A text filter checks names, game titles, notes, meet-up spots and chat messages.</p>
+      <p>You keep ownership of what you post on masUNO: game names, notes, meet-up spots, messages and your profile name. By posting it, you give masUNO permission to store it and show it to other students in the app, for as long as it's on masUNO. That permission ends when you delete the content or your account, except for copies kept with reports for moderation.</p>
       <p>You can report or block anyone from the Who's going list, report a game, and report a message in a group chat. We review reports within 24 hours. We may remove content, cancel games, clear offensive names or suspend accounts.</p>
       <p>You play at your own risk and are responsible for your own safety at games. In an emergency, call 911 (it works in Mexico and the US) or your campus security.</p>
-
-      <h2>Coming in a later version</h2>
-      <p>These features aren't in the app yet. When they arrive, if you allow notifications, we'll store a device token and your notification preferences so we can send you:</p>
-      <ul>
-        <li>Game reminders.</li>
-        <li>Changes or cancellations to games you're in.</li>
-        <li>Alerts when a spot opens in a game you saved.</li>
-        <li>New games that match the sports you play (2 a day at most).</li>
-        <li>Updates on games you host.</li>
-      </ul>
-      <p>Saved games will also be stored with your account, not only on your phone. We'll update this page when that happens.</p>
 
       <h2>Your choices</h2>
       <ul>
         <li><strong>Location:</strong> say no when the app asks, or change it anytime in your iPhone's Settings. Without it, the map centers on your campus.</li>
+        <li><strong>Notifications:</strong> turn each kind on or off in Settings › Notifications, or all of them in your iPhone's Settings.</li>
         <li><strong>Your profile:</strong> change your name, class year and sports in the app.</li>
         <li><strong>Blocking:</strong> block anyone from the Who's going list, and undo it under Settings › Blocked people.</li>
         <li><strong>Deletion:</strong> go to Settings › Delete account.</li>
