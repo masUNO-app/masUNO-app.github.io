@@ -24,6 +24,8 @@ The page loads each image from a fixed file path. Until a file exists, its spot 
 
 **Screenshots.** The 0.9 App Store screenshots (iPhone 18 Pro, from the `ios` repo's `scripts/screenshots.sh`), scaled to 888 px wide as JPEGs. Each step has an English file in `assets/screens/en/` and a Spanish one in `assets/screens/es/`; `i18n.js` swaps to the Spanish file (`data-src-es`) when the page is in Spanish. To update one, overwrite both files under the same name.
 
+The phone around them is Apple's iPhone 18 Pro frame from Apple Design Resources (Product Bezels), at `assets/frames/iphone-18-pro.png`, scaled to 900 px wide. `styles.css` places the screenshot in the frame's 1206 × 2622 screen window, and the frame, Dynamic Island included, lies on top. Use it unaltered, per Apple's license.
+
 | File | What it shows | Used in |
 |---|---|---|
 | `assets/screens/{en,es}/popup.jpg` | A game popup on the map (`-screen popup`) | "I want to play" step 1 |
