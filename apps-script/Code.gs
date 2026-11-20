@@ -19,8 +19,9 @@
  *   1. Create a Google Sheet, then Extensions → Apps Script. Paste this file in.
  *   2. Project Settings → Script Properties: add WAITLIST_SYNC_SECRET, SUPABASE_URL and
  *      SUPABASE_ANON_KEY (leave them out to run Sheet-only).
- *   3. Run setup() once from the editor and approve the permissions.
- *   4. Run installSyncTrigger() once (hourly reconcile; safe to run again).
+ *   3. Run setupSync() once from the editor and approve the permissions.
+ *      It checks credentials without a signup, adds headers, installs the hourly trigger and backfills.
+ *   4. Run checkSync() any time to diagnose configuration without exposing secrets.
  *   5. Deploy → New deployment → Web app
  *        Execute as: Me
  *        Who has access: Anyone
@@ -262,7 +263,7 @@ function syncConfig_() {
   const secret = props.getProperty("WAITLIST_SYNC_SECRET");
   const url = props.getProperty("SUPABASE_URL");
   const key = props.getProperty("SUPABASE_ANON_KEY");
-  if (secret && url && key) return { secret: secret, url: String(url).replace(/\/+$/, ""), key: key };
+  if (secret && secret.length >= 32 && url && key) return { secret: secret, url: String(url).replace(/\/+$/, ""), key: key };
   if (!props.getProperty("SYNC_NOTE_LOGGED")) {
     props.setProperty("SYNC_NOTE_LOGGED", "1");
     console.info("App sync is off: set WAITLIST_SYNC_SECRET, SUPABASE_URL and SUPABASE_ANON_KEY in Script Properties.");
@@ -359,44 +360,91 @@ function handleSync_(body) {
   return { ok: true, rows: rows.length };
 }
 
-// Hourly: retry joins Supabase never got, then pull every request and upsert it.
-// Set it up with installSyncTrigger().
+// Run from the editor before enabling sync. The deliberately invalid source tests the secret
+// without creating a signup: waitlist_join checks the secret before rejecting this source.
+// Only configuration names and public project URL are reported, never credentials or row data.
+function checkSync() {
+  const props = PropertiesService.getScriptProperties();
+  const missing = ["WAITLIST_SYNC_SECRET", "SUPABASE_URL", "SUPABASE_ANON_KEY"]
+    .filter((name) => !props.getProperty(name));
+  let report;
+  if (missing.length) {
+    report = { ok: false, error: "missing_configuration", missing: missing };
+  } else if (props.getProperty("WAITLIST_SYNC_SECRET").length < 32) {
+    report = { ok: false, error: "secret_too_short" };
+  } else {
+    const cfg = syncConfig_();
+    const res = callSupabase_(cfg, "waitlist_join", {
+      p_secret: cfg.secret, p_email: "", p_joined_at: null, p_source: "setup_check",
+    });
+    if (res && res.ok === false && res.error === "invalid_input") {
+      report = { ok: true, supabaseUrl: cfg.url,
+        triggerInstalled: ScriptApp.getProjectTriggers().some((t) => t.getHandlerFunction() === "reconcile") };
+    } else {
+      report = { ok: false, error: res && res.error === "bad_secret" ? "bad_secret" : "supabase_check_failed" };
+    }
+  }
+  console.info(JSON.stringify(report));
+  return report;
+}
+
+// One editor action after setting Script Properties: validate, add headers, install the trigger,
+// and backfill existing rows. Deploy the edited web app separately to update incoming pushes.
+function setupSync() {
+  const report = checkSync();
+  if (!report.ok) throw new Error("Waitlist sync setup failed: " + report.error);
+  setup();
+  installSyncTrigger();
+  const result = reconcile();
+  if (!result || !result.ok) throw new Error("Waitlist sync reconciliation failed; run reconcile again.");
+  return result;
+}
+
+// Hourly: snapshot unsynced website rows briefly, release the lock for all HTTP calls, then
+// re-find rows under a fresh lock when writing. A slow backend must not block website signups.
 function reconcile() {
   const cfg = syncConfig_();
-  if (!cfg) return;
+  if (!cfg) return { ok: false, error: "missing_configuration" };
   const lock = LockService.getScriptLock();
-  if (!lock.tryLock(20000)) return;
+  if (!lock.tryLock(20000)) return { ok: false, error: "busy" };
+  let pending;
   try {
-    const sheet = getSheet_();
-    retryJoins_(sheet);
-    const res = callSupabase_(cfg, "waitlist_export", { p_secret: cfg.secret });
-    if (!Array.isArray(res)) return;
-    const rows = res.map(normSyncRow_).filter(Boolean);
-    upsertRows_(sheet, rows, computePlaces_(rows));
+    pending = retryJoinCandidates_(getSheet_());
+  } finally {
+    lock.releaseLock();
+  }
+  retryJoins_(pending);
+  const res = callSupabase_(cfg, "waitlist_export", { p_secret: cfg.secret });
+  if (!Array.isArray(res)) return { ok: false, error: "export_failed" };
+  const rows = res.map(normSyncRow_).filter(Boolean);
+  if (!lock.tryLock(20000)) return { ok: false, error: "busy" };
+  try {
+    upsertRows_(getSheet_(), rows, computePlaces_(rows));
+    return { ok: true, rows: rows.length, attemptedJoins: pending.length };
   } catch (err) {
     console.error(err);
+    return { ok: false, error: "sheet_write_failed" };
   } finally {
     lock.releaseLock();
   }
 }
 
-// Website rows (they have a token) whose join never reached Supabase
-function retryJoins_(sheet) {
+// Called only while holding the lock. Network work uses this immutable candidate snapshot.
+function retryJoinCandidates_(sheet) {
   const last = sheet.getLastRow();
-  if (last < 2) return;
+  if (last < 2) return [];
   const data = sheet.getRange(2, 1, last - 1, HEADERS.length).getValues();
-  let tries = 0;
-  for (let i = 0; i < data.length && tries < MAX_RETRIES_PER_RUN; i++) {
-    const r = data[i];
-    if (!r[COL.email - 1] || !r[COL.token - 1] || r[COL.syncedAt - 1]) continue;
-    tries++;
-    const result = joinSupabase_(String(r[COL.email - 1]).trim().toLowerCase(), r[COL.joined - 1]);
-    if (!result) continue;
-    const cells = appCells_({ status: result.status, requestedAt: null, source: "website", invitedBy: "" }, result.position || "");
-    cells[2] = r[COL.signedUpInApp - 1];
-    cells[3] = r[COL.invitedBy - 1];
-    sheet.getRange(i + 2, COL.appStatus, 1, 5).setValues([cells.concat([new Date()])]);
-  }
+  return data.filter((r) => r[COL.email - 1] && r[COL.token - 1] && !r[COL.syncedAt - 1])
+    .slice(0, MAX_RETRIES_PER_RUN)
+    .map((r) => ({ email: String(r[COL.email - 1]).trim().toLowerCase(), joinedAt: r[COL.joined - 1] }));
+}
+
+// No Sheet lock across fetch. recordSync_ re-finds each row by email before publishing a result.
+function retryJoins_(pending) {
+  pending.forEach((r) => {
+    const result = joinSupabase_(r.email, r.joinedAt);
+    if (result) recordSync_(r.email, result);
+  });
 }
 
 // Creates the hourly reconcile trigger, once. Safe to run again.

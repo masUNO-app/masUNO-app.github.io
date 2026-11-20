@@ -79,7 +79,7 @@ test("the secret is compared exactly and never accepted when unset", () => {
 
 test("a push with the wrong secret, or with sync off, is refused", () => {
   const body = JSON.stringify({ action: "sync", secret: "wrong", rows: [{ email: "a@b.co", status: "waiting" }] });
-  const on = load({ WAITLIST_SYNC_SECRET: "right-secret", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "k" });
+  const on = load({ WAITLIST_SYNC_SECRET: "right-secret-at-least-32-characters-long", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "k" });
   assert.deepEqual({ ...on.handleSync_(body) }, { ok: false, error: "bad_secret" });
   const off = load();
   assert.deepEqual({ ...off.handleSync_(JSON.stringify({ action: "sync", secret: "", rows: [] })) }, { ok: false, error: "bad_secret" });
@@ -87,7 +87,7 @@ test("a push with the wrong secret, or with sync off, is refused", () => {
 });
 
 test("a push with the right secret upserts rows into the Sheet", () => {
-  const gs = load({ WAITLIST_SYNC_SECRET: "right-secret", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "k" });
+  const gs = load({ WAITLIST_SYNC_SECRET: "right-secret-at-least-32-characters-long", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "k" });
   const appended = [];
   const writes = [];
   const existing = ["2026-11-01", "web@tec.mx", "", "", "", "direct", "", "tok", "Mexico", "CODE", "", "", "", "", "", ""];
@@ -102,7 +102,7 @@ test("a push with the right secret upserts rows into the Sheet", () => {
   gs.getSheet_ = () => sheet;
   const res = gs.handleSync_(JSON.stringify({
     action: "sync",
-    secret: "right-secret",
+    secret: "right-secret-at-least-32-characters-long",
     rows: [
       { email: "web@tec.mx", status: "approved", requested_at: "2026-11-01T00:00:00Z", source: "website" },
       { email: "new@tec.mx", status: "waiting", requested_at: "2026-11-14T00:00:00Z", source: "app", position: 3 },
@@ -118,4 +118,110 @@ test("a push with the right secret upserts rows into the Sheet", () => {
   assert.equal(appended[0][7], "");
   assert.equal(appended[0][11], "Waiting");
   assert.equal(appended[0][12], 3);
+});
+
+test("sync config rejects a secret shorter than the database requires", () => {
+  const gs = load({ WAITLIST_SYNC_SECRET: "short", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "k" });
+  assert.equal(gs.syncConfig_(), null);
+  assert.equal(gs.checkSync().error, "secret_too_short");
+});
+
+test("configuration check names missing properties without exposing values", () => {
+  const gs = load({ SUPABASE_ANON_KEY: "private-key-value" });
+  const report = gs.checkSync();
+  assert.equal(report.ok, false);
+  assert.deepEqual([...report.missing], ["WAITLIST_SYNC_SECRET", "SUPABASE_URL"]);
+  assert.equal(JSON.stringify(report).includes("private-key-value"), false);
+});
+
+test("configuration check validates the secret without creating a signup", () => {
+  const secret = "right-secret-at-least-32-characters-long";
+  const gs = load({ WAITLIST_SYNC_SECRET: secret, SUPABASE_URL: "https://x.supabase.co/", SUPABASE_ANON_KEY: "key" });
+  const calls = [];
+  gs.callSupabase_ = (cfg, fn, body) => {
+    calls.push({ fn, body });
+    assert.equal(cfg.secret, secret);
+    return { ok: false, error: "invalid_input" };
+  };
+  gs.ScriptApp = { getProjectTriggers: () => [{ getHandlerFunction: () => "reconcile" }] };
+  const report = gs.checkSync();
+  assert.equal(report.ok, true);
+  assert.equal(report.triggerInstalled, true);
+  assert.equal(report.supabaseUrl, "https://x.supabase.co");
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].fn, "waitlist_join");
+  assert.equal(calls[0].body.p_source, "setup_check");
+  assert.equal(calls[0].body.p_email, "");
+  assert.equal(JSON.stringify(report).includes(secret), false);
+});
+
+test("configuration check distinguishes a rejected secret from an unavailable backend", () => {
+  const gs = load({ WAITLIST_SYNC_SECRET: "right-secret-at-least-32-characters-long", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "key" });
+  gs.callSupabase_ = () => ({ ok: false, error: "bad_secret" });
+  assert.equal(gs.checkSync().error, "bad_secret");
+  gs.callSupabase_ = () => null;
+  assert.equal(gs.checkSync().error, "supabase_check_failed");
+});
+
+test("reconciliation releases the Sheet lock for retry and export network calls", () => {
+  const gs = load({ WAITLIST_SYNC_SECRET: "right-secret-at-least-32-characters-long", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "key" });
+  let held = false;
+  const lock = {
+    tryLock() { assert.equal(held, false); held = true; return true; },
+    releaseLock() { assert.equal(held, true); held = false; },
+  };
+  gs.LockService = { getScriptLock: () => lock };
+  const old = ["2026-11-01", " WEB@TEC.MX ", "", "", "", "direct", "", "token", "Mexico", "CODE", "", "", "", "", "", ""];
+  gs.getSheet_ = () => ({ getLastRow: () => 2, getRange: () => ({ getValues: () => { assert.equal(held, true); return [old]; } }) });
+  const recorded = [];
+  gs.joinSupabase_ = (email) => { assert.equal(held, false); assert.equal(email, "web@tec.mx"); return { status: "waiting", position: 2 }; };
+  gs.recordSync_ = (email, result) => { assert.equal(held, false); recorded.push({ email, result }); };
+  gs.callSupabase_ = (cfg, fn) => { assert.equal(held, false); assert.equal(fn, "waitlist_export"); return []; };
+  gs.upsertRows_ = () => assert.equal(held, true);
+  const result = gs.reconcile();
+  assert.equal(result.ok, true);
+  assert.equal(result.attemptedJoins, 1);
+  assert.equal(recorded.length, 1);
+  assert.equal(held, false);
+});
+
+test("a row moved during HTTP is published by email rather than its old row number", () => {
+  const gs = load();
+  const writes = [];
+  gs.getSheet_ = () => ({ getRange: (row) => ({ getValue: () => "", setValues: (v) => writes.push({ row, v }) }) });
+  gs.findRow_ = () => 8;
+  gs.recordSync_("web@tec.mx", { status: "waiting", position: 3 });
+  assert.equal(writes[0].row, 8);
+  assert.equal(writes[0].v[0][1], 3);
+});
+
+test("retry candidates are bounded and exclude app-only and already synced rows", () => {
+  const gs = load();
+  const rows = Array.from({ length: 30 }, (_, i) => {
+    const row = Array(16).fill(""); row[0] = "2026-11-01"; row[1] = `a${i}@tec.mx`; row[7] = "token"; return row;
+  });
+  rows[0][7] = "";
+  rows[1][15] = "2026-11-02";
+  const candidates = gs.retryJoinCandidates_({ getLastRow: () => rows.length + 1, getRange: () => ({ getValues: () => rows }) });
+  assert.equal(candidates.length, 25);
+  assert.equal(candidates[0].email, "a2@tec.mx");
+});
+
+test("failed export leaves Sheet data untouched and does not retain the lock", () => {
+  const gs = load({ WAITLIST_SYNC_SECRET: "right-secret-at-least-32-characters-long", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "key" });
+  let held = false;
+  gs.LockService = { getScriptLock: () => ({ tryLock() { held = true; return true; }, releaseLock() { held = false; } }) };
+  gs.getSheet_ = () => ({ getLastRow: () => 1 });
+  gs.callSupabase_ = () => null;
+  gs.upsertRows_ = () => assert.fail("must not write on failed export");
+  assert.equal(gs.reconcile().error, "export_failed");
+  assert.equal(held, false);
+});
+
+test("setup does not install triggers or touch the Sheet with invalid credentials", () => {
+  const gs = load();
+  gs.checkSync = () => ({ ok: false, error: "bad_secret" });
+  gs.setup = () => assert.fail("must not change Sheet");
+  gs.installSyncTrigger = () => assert.fail("must not install trigger");
+  assert.throws(() => gs.setupSync(), /bad_secret/);
 });
