@@ -356,8 +356,8 @@ function handleSync_(body) {
     return { ok: false, error: "bad_secret" };
   }
   const rows = (Array.isArray(data.rows) ? data.rows : []).slice(0, MAX_SYNC_ROWS).map(normSyncRow_).filter(Boolean);
-  upsertRows_(getSheet_(), rows, null);
-  return { ok: true, rows: rows.length };
+  const deleted = upsertRows_(getSheet_(), rows, null);
+  return { ok: true, rows: rows.length, deleted: deleted };
 }
 
 // Run from the editor before enabling sync. The deliberately invalid source tests the secret
@@ -456,13 +456,21 @@ function installSyncTrigger() {
 // Updates the matching row by email, or appends an app-only sign-up. places is { email: place } for a
 // full export; null for a push. Both prefer the row's own position; without one a push keeps the stored place.
 // Only rows that changed (or never had a Synced at) are written.
+// "removed" means Supabase deleted the request (account deleted, or request rejected): every row with that
+// email is deleted, website answers included, and none is appended. Deletes run last, bottom-up, so the
+// row numbers used above stay valid. Returns how many rows were deleted.
 function upsertRows_(sheet, rows, places) {
   const last = sheet.getLastRow();
   const data = last > 1 ? sheet.getRange(2, 1, last - 1, HEADERS.length).getValues() : [];
   const index = {};
   data.forEach((r, i) => { index[String(r[COL.email - 1]).trim().toLowerCase()] = i; });
   const now = new Date();
+  const removed = {};
   rows.forEach((r) => {
+    if (r.status === "removed") {
+      removed[r.email] = true;
+      return;
+    }
     const i = index[r.email];
     if (i === undefined) {
       const place = r.status === "waiting" ? r.position || (places && places[r.email]) || "" : "";
@@ -483,6 +491,14 @@ function upsertRows_(sheet, rows, places) {
     if (same && old[COL.syncedAt - 1]) return;
     sheet.getRange(i + 2, COL.appStatus, 1, 5).setValues([cells.concat([now])]);
   });
+  let deleted = 0;
+  for (let i = data.length - 1; i >= 0; i--) {
+    if (removed[String(data[i][COL.email - 1]).trim().toLowerCase()]) {
+      sheet.deleteRow(i + 2);
+      deleted++;
+    }
+  }
+  return deleted;
 }
 
 // ---------- Pure helpers (no Sheet or network access) ----------

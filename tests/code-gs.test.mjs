@@ -120,6 +120,55 @@ test("a push with the right secret upserts rows into the Sheet", () => {
   assert.equal(appended[0][12], 3);
 });
 
+test("a removed request deletes every row with that email, bottom-up, and appends nothing", () => {
+  const secret = "right-secret-at-least-32-characters-long";
+  const gs = load({ WAITLIST_SYNC_SECRET: secret, SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "k" });
+  const row = (email) => ["2026-11-01", email, "find", "Tec", "", "direct", "", "tok", "Mexico", "CODE", "", "Waiting", 2, "", "", "2026-11-02"];
+  const data = [row("gone@tec.mx"), row("stay@tec.mx"), row(" GONE@tec.mx "), row("other@tec.mx")];
+  const deleted = [];
+  const appended = [];
+  const writes = [];
+  gs.getSheet_ = () => ({
+    getLastRow: () => data.length + 1,
+    getRange: (r, col) => ({ getValues: () => data, setValues: (v) => writes.push({ r, col, v: v[0] }) }),
+    appendRow: (r) => appended.push(r),
+    deleteRow: (r) => deleted.push(r),
+  });
+  const res = gs.handleSync_(JSON.stringify({
+    action: "sync",
+    secret,
+    rows: [
+      { email: "gone@tec.mx", status: "removed", requested_at: "2026-11-01T00:00:00Z", source: "website" },
+      { email: "never-here@tec.mx", status: "removed", requested_at: "2026-11-01T00:00:00Z", source: "app" },
+    ],
+  }));
+  assert.equal(res.ok, true);
+  assert.equal(res.deleted, 2);
+  assert.deepEqual(deleted, [4, 2]);
+  assert.equal(appended.length, 0);
+  assert.equal(writes.length, 0);
+});
+
+test("removals run after updates and appends in the same batch", () => {
+  const gs = load();
+  const row = (email) => ["2026-11-01", email, "", "", "", "direct", "", "tok", "", "CODE", "", "Waiting", 1, "", "", ""];
+  const data = [row("gone@tec.mx"), row("stay@tec.mx")];
+  const events = [];
+  const sheet = {
+    getLastRow: () => data.length + 1,
+    getRange: (r, col) => ({ getValues: () => data, setValues: () => events.push(`write ${r}`) }),
+    appendRow: (r) => events.push(`append ${r[1]}`),
+    deleteRow: (r) => events.push(`delete ${r}`),
+  };
+  const deleted = gs.upsertRows_(sheet, [
+    { email: "gone@tec.mx", status: "removed", requestedAt: null, source: "website", invitedBy: "", position: 0 },
+    { email: "stay@tec.mx", status: "approved", requestedAt: null, source: "website", invitedBy: "", position: 0 },
+    { email: "new@tec.mx", status: "waiting", requestedAt: null, source: "app", invitedBy: "", position: 5 },
+  ], null);
+  assert.equal(deleted, 1);
+  assert.deepEqual(events, ["write 3", "append new@tec.mx", "delete 2"]);
+});
+
 test("sync config rejects a secret shorter than the database requires", () => {
   const gs = load({ WAITLIST_SYNC_SECRET: "short", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "k" });
   assert.equal(gs.syncConfig_(), null);
