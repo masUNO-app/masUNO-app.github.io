@@ -18,6 +18,10 @@
   --soccer: #3DB26F;
   --volleyball: #A99CF6;
   --padel: #56BDE8;
+  /* Esports: each game in its own color, as in the app */
+  --valorant: #F06F7E;
+  --csgo: #E8B33A;
+  --league: #4FC7B8;
   --you: #74C0F5;
 
   --r-card: 22px;
@@ -35,12 +39,17 @@
   interpolate-size: allow-keywords;
 }
 
-/* Each sport has one color. Anything inside a data-sport context picks it up. */
+/* Each activity has one color. Anything inside a data-sport context picks it up. */
 [data-sport="basketball"] { --sport: var(--basketball); }
 [data-sport="tennis"] { --sport: var(--tennis); }
 [data-sport="soccer"] { --sport: var(--soccer); }
 [data-sport="volleyball"] { --sport: var(--volleyball); }
 [data-sport="padel"] { --sport: var(--padel); }
+/* Esports are off until the switch in index.html's <head> adds .esports to <html> */
+html:not(.esports) [data-esports] { display: none !important; }
+[data-sport="valorant"] { --sport: var(--valorant); }
+[data-sport="csgo"] { --sport: var(--csgo); }
+[data-sport="league"] { --sport: var(--league); }
 
 /* Each person keeps one color on every screen. */
 .p-eg { --c: #74C0F5; } .p-ar { --c: #FFD15C; } .p-rt { --c: #B59CF7; } .p-ps { --c: #FF9F80; }
@@ -199,7 +208,8 @@ symbol[id^="court-"] rect, symbol[id^="court-"] path, symbol[id^="court-"] circl
 .hero[data-sport="tennis"] [data-court="tennis"],
 .hero[data-sport="soccer"] [data-court="soccer"],
 .hero[data-sport="volleyball"] [data-court="volleyball"],
-.hero[data-sport="padel"] [data-court="padel"] { opacity: 1; }
+.hero[data-sport="padel"] [data-court="padel"],
+.hero:is([data-sport="valorant"], [data-sport="csgo"], [data-sport="league"]) [data-court="screen"] { opacity: 1; }
 
 /* Sits above the hero body's top padding so the open spot can be tapped; only that spot takes clicks */
 .lineup { z-index: 1; pointer-events: none; position: absolute; top: 84px; left: 50%; translate: -50% 0; width: min(1080px, 100% - 32px); height: calc(var(--art) - var(--overlap) - 84px - 62px); transform: translate3d(calc(var(--px, 0) * 12px), calc(var(--py, 0) * 8px), 0); transition: transform .6s ease-out; }
@@ -217,10 +227,15 @@ symbol[id^="court-"] rect, symbol[id^="court-"] path, symbol[id^="court-"] circl
 .hero[data-sport="soccer"] { --x1: 14%; --y1: 60%; --x2: 30%; --y2: 16%; --x3: 37%; --y3: 80%; --x4: 58%; --y4: 18%; --x5: 64%; --y5: 78%; --x6: 82%; --y6: 36%; }
 .hero[data-sport="volleyball"] { --x1: 16%; --y1: 66%; --x2: 22%; --y2: 18%; --x3: 39%; --y3: 44%; --x4: 62%; --y4: 18%; --x5: 62%; --y5: 80%; --x6: 82%; --y6: 48%; }
 .hero[data-sport="padel"] { --x1: 22%; --y1: 66%; --x2: 34%; --y2: 18%; --x3: 66%; --y3: 22%; --x4: 50%; --y4: 50%; --x5: 50%; --y5: 50%; --x6: 74%; --y6: 70%; }
+/* Esports: a 5-stack around the screen, so one of the six steps out */
+.hero[data-sport="valorant"] { --x1: 12%; --y1: 64%; --x2: 22%; --y2: 16%; --x3: 66%; --y3: 14%; --x4: 66%; --y4: 82%; --x5: 50%; --y5: 50%; --x6: 86%; --y6: 42%; }
+.hero[data-sport="csgo"] { --x1: 12%; --y1: 68%; --x2: 16%; --y2: 20%; --x3: 62%; --y3: 16%; --x4: 70%; --y4: 84%; --x5: 50%; --y5: 50%; --x6: 84%; --y6: 44%; }
+.hero[data-sport="league"] { --x1: 14%; --y1: 70%; --x2: 24%; --y2: 18%; --x3: 68%; --y3: 16%; --x4: 62%; --y4: 84%; --x5: 50%; --y5: 50%; --x6: 86%; --y6: 46%; }
 .t1 { --x: var(--x1); --y: var(--y1); --i: 0; } .t2 { --x: var(--x2); --y: var(--y2); --i: 1; } .t3 { --x: var(--x3); --y: var(--y3); --i: 2; }
 .t4 { --x: var(--x4); --y: var(--y4); --i: 3; } .t5 { --x: var(--x5); --y: var(--y5); --i: 4; } .t6 { --x: var(--x6); --y: var(--y6); --i: 5; z-index: 2; }
 .hero[data-sport="tennis"] .t4, .hero[data-sport="tennis"] .t5,
-.hero[data-sport="padel"] .t4, .hero[data-sport="padel"] .t5 { opacity: 0; scale: .5; }
+.hero[data-sport="padel"] .t4, .hero[data-sport="padel"] .t5,
+.hero:is([data-sport="valorant"], [data-sport="csgo"], [data-sport="league"]) .t5 { opacity: 0; scale: .5; }
 
 .say {
   position: absolute; left: 34px; bottom: 50px; width: max-content; max-width: 240px;
@@ -233,7 +248,10 @@ symbol[id^="court-"] rect, symbol[id^="court-"] path, symbol[id^="court-"] circl
 .hero[data-sport="tennis"] [data-say="tennis"],
 .hero[data-sport="soccer"] [data-say="soccer"],
 .hero[data-sport="volleyball"] [data-say="volleyball"],
-.hero[data-sport="padel"] [data-say="padel"] { opacity: 1; translate: 0; transition-delay: .35s; }
+.hero[data-sport="padel"] [data-say="padel"],
+.hero[data-sport="valorant"] [data-say="valorant"],
+.hero[data-sport="csgo"] [data-say="csgo"],
+.hero[data-sport="league"] [data-say="league"] { opacity: 1; translate: 0; transition-delay: .35s; }
 /* Once the visitor is in, the host stops asking */
 .hero.is-joined .say[data-say] { opacity: 0; translate: 0 6px; transition-delay: 0s; }
 .hero.is-joined .say-joined { opacity: 1; translate: 0; transition-delay: .3s; }
@@ -257,12 +275,24 @@ symbol[id^="court-"] rect, symbol[id^="court-"] path, symbol[id^="court-"] circl
 .hero.is-joined .you-tag { color: var(--primary); background: linear-gradient(180deg, #FFFFFFF2, #FFFFFFD9); border-color: #FFFFFFCC; box-shadow: var(--shadow-glass); }
 
 .hero-body { position: relative; padding-top: calc(var(--art) - var(--overlap) - 62px); }
-.sport-switch { display: flex; justify-content: center; gap: 8px; height: 62px; padding-bottom: 18px; }
-.sport-chip { height: 44px; padding: 0 15px; border-radius: var(--r-pill); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 800; cursor: pointer; transition: transform .2s var(--ease), background .3s; }
-.sport-chip:hover { transform: translateY(-1px); }
-.sport-chip:active { transform: scale(.96); }
-.sport-chip[aria-pressed="true"] { background: var(--surface); box-shadow: 0 0 0 2px var(--ink), var(--shadow-glass); border-color: transparent; }
-.sport-chip[aria-pressed="true"] > span:first-child { animation: pop .45s var(--spring); }
+/* A page control, as in Apple's carousels: every activity is a dot, and the one on the court
+   stretches into a pill with its emoji. Its fill times the autoplay; script.js moves on when it ends. */
+.sport-switch { display: flex; align-items: center; gap: 16px; width: max-content; height: 44px; margin: 0 auto 18px; padding: 0 18px; border-radius: var(--r-pill); }
+.sport-chip { position: relative; flex: none; display: grid; place-items: center; width: 8px; height: 8px; padding: 0; border: 0; border-radius: var(--r-pill); background: #1F263859; cursor: pointer; overflow: hidden; transition: width .5s var(--ease), height .5s var(--ease), background .3s; }
+/* Small dots, bigger targets */
+.sport-chip::after { content: ""; position: absolute; inset: -14px -8px; }
+.sport-chip:hover:not([aria-pressed="true"]) { background: #1F26388C; }
+.sport-chip[aria-pressed="true"] { width: 60px; height: 32px; background: #FFFFFFD9; overflow: hidden; }
+.sport-chip > * { grid-area: 1 / 1; }
+.sport-chip .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.dot-fill { width: 100%; height: 100%; background: color-mix(in srgb, var(--sport) 70%, #fff); transform: scaleX(0); transform-origin: left; }
+.sport-chip[aria-pressed="true"] .dot-fill { animation: dot-fill 4.2s linear both; }
+.sport-switch.is-paused .dot-fill { animation-play-state: paused; }
+/* Picked by hand, or no motion: the pill stays full and nothing advances */
+.sport-switch:is(.is-picked, .is-static) [aria-pressed="true"] .dot-fill { animation: none; transform: none; }
+.dot-emoji { position: relative; font-size: 19px; line-height: 1; scale: 0; opacity: 0; transition: scale .2s ease, opacity .15s; }
+.sport-chip[aria-pressed="true"] .dot-emoji { scale: 1; opacity: 1; transition: scale .5s var(--spring) .12s, opacity .2s .12s; }
+.sport-chip:focus-visible { outline-offset: 4px; }
 
 .hero-card {
   display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: end;
@@ -667,6 +697,7 @@ button.fake-btn:active { transform: scale(.97); }
 @keyframes timing { to { transform: scaleX(1); } }
 @keyframes sheet-rise { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes fade { from { opacity: 0; } }
+@keyframes dot-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes pop { from { scale: .4; opacity: 0; } }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 @keyframes hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-14px); } }
@@ -704,9 +735,7 @@ button.fake-btn:active { transform: scale(.97); }
   .spot .av-you { font-size: 12px; }
   .say { left: 24px; bottom: 40px; max-width: 200px; font-size: 13.5px; padding: 7px 11px; }
   .you-tag { font-size: 12px; padding: 4px 11px; }
-  .sport-switch { gap: 6px; height: 58px; }
-  .sport-chip { width: 44px; padding: 0; justify-content: center; font-size: 20px; }
-  .sport-chip .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .sport-switch { height: 40px; }
   .hero-body { padding-top: calc(var(--art) - var(--overlap) - 58px); }
   .hero-card { padding: 22px 20px; border-radius: 30px; }
   .join-row { flex-direction: column; }
@@ -729,9 +758,7 @@ button.fake-btn:active { transform: scale(.97); }
   .share-copy-row input { flex-basis: 100%; padding: 0 12px; text-align: center; }
   .share-copy-row .btn { width: 100%; }
 }
-@media (max-width: 350px) {
-  .sport-chip { width: 40px; height: 40px; }
-}
+
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

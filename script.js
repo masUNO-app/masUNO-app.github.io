@@ -3,6 +3,8 @@
 const WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbwT7WBTR8Uv3l1uxmtOD4pJfX8fzwdwKQIHxwNxTPEQRjvSBwLaWFypTqkqFGtnsUOp/exec";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Esports show only when index.html's <head> turns them on
+const esportsOn = document.documentElement.classList.contains("esports");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
@@ -18,7 +20,7 @@ const MSG = {
   "done.hint": "You're on the list. We'll be in touch. Use your school email (like you@tec.mx) to keep your place when you get the app.",
   "done.duplicateHint": "You're already on the list. See you soon. Use your school email (like you@tec.mx) to keep your place when you get the app.",
   "done.inApp": "You're already in. Get masUNO on the App Store.",
-  "done.details": "Thanks! We'll let you know when games go live near you.",
+  "done.details": "Thanks! We'll let you know when plans go live near you.",
   "dlg.title": "You're in",
   "dlg.pendingTitle": "Almost there",
   "dlg.confirming": "Confirming your registration…",
@@ -27,18 +29,18 @@ const MSG = {
   "dlg.save": "Save",
   "dlg.saving": "Saving…",
   "dlg.error": "Couldn't save that. Try again, or skip. You're already on the list.",
-  "demo.count": "{n} games nearby",
+  "demo.count": "{n} plans nearby",
   "demo.open.spots": "Room for one more",
   "demo.open.caption": "On the map",
   "demo.full.spots": "Full",
-  "demo.full.caption": "Full games leave the map",
+  "demo.full.caption": "Full plans leave the map",
   "demo.drop.spots": "A spot just opened · room for 1",
   "demo.drop.caption": "Reposted to the top of the map",
   "hero.join": "Be the +1",
   "hero.joined.tag": "You're in!",
   "hero.joined.status": "You're in. Show up expected.",
-  "share.message": "I'm joining masUNO to find pickup games on campus. Join the early-access list with my invite:",
-  "share.note": "One invite can be the start of your next game.",
+  "share.message": "I'm joining masUNO to find plans on campus. Join the early-access list with my invite:",
+  "share.note": "One invite can be the start of your next plan.",
   "share.opened": "WhatsApp opened. Choose your team or group chat.",
   "share.done": "Thanks for bringing your team.",
   "share.copied": "Personal invite link copied. Send it to your team.",
@@ -138,14 +140,12 @@ navLinks.forEach((a) => {
   if (section) sectionWatcher.observe(section);
 });
 
-// ---------- Hero: the court cycles through the sports ----------
+// ---------- Hero: the court cycles through the activities ----------
 const hero = document.querySelector(".hero");
 const heroArt = document.querySelector(".hero-art");
-const sportChips = [...document.querySelectorAll(".sport-chip")];
-const SPORT_MS = 4200;
+const sportSwitch = document.querySelector(".sport-switch");
+const sportChips = [...sportSwitch.querySelectorAll(".sport-chip")].filter((c) => esportsOn || !("esports" in c.dataset));
 let sportIndex = 0;
-let sportTimer = null;
-let sportTouched = false;
 
 function showSport(i) {
   sportIndex = i;
@@ -153,23 +153,21 @@ function showSport(i) {
   sportChips.forEach((c, j) => c.setAttribute("aria-pressed", j === i));
 }
 
-function startSports() {
-  if (reduceMotion || sportTouched || sportTimer) return;
-  sportTimer = setInterval(() => showSport((sportIndex + 1) % sportChips.length), SPORT_MS);
-}
+// The active dot's fill is the timer (4.2s in styles.css): when it finishes, the next activity comes up.
+// Pausing pauses the fill, so it picks up where it left off.
+const startSports = () => sportSwitch.classList.remove("is-paused");
+const stopSports = () => sportSwitch.classList.add("is-paused");
+stopSports();
+if (reduceMotion) sportSwitch.classList.add("is-static");
+sportSwitch.addEventListener("animationend", (e) => {
+  if (e.target.classList.contains("dot-fill")) showSport((sportIndex + 1) % sportChips.length);
+});
 
-function stopSports() {
-  clearInterval(sportTimer);
-  sportTimer = null;
-}
-
-// Stays on the chosen sport once someone picks one; pauses off screen and on hover or focus
+// Stays on the chosen activity once someone picks one; pauses off screen and on hover or focus
 sportChips.forEach((chip, i) => chip.addEventListener("click", () => {
-  sportTouched = true;
-  stopSports();
+  sportSwitch.classList.add("is-picked");
   showSport(i);
 }));
-const sportSwitch = document.querySelector(".sport-switch");
 ["pointerenter", "focusin"].forEach((type) => sportSwitch.addEventListener(type, stopSports));
 ["pointerleave", "focusout"].forEach((type) => sportSwitch.addEventListener(type, startSports));
 new IntersectionObserver(([e]) => {
@@ -315,6 +313,7 @@ document.querySelectorAll(".walkthrough").forEach((panel) => {
 const stage = document.querySelector(".demo-stage");
 const demoSteps = [...document.querySelectorAll(".demo-step")];
 const demoCount = stage.querySelector("[data-count]");
+const pinCount = [...stage.querySelectorAll(".pin")].filter((p) => esportsOn || !("esports" in p.dataset)).length;
 const LEAVE_MS = 1100; // matches the delay before a full game leaves the map in styles.css
 let countTimer = null;
 
@@ -329,8 +328,8 @@ const demo = stepper({
     render(stage.querySelector("[data-caption]"), `demo.${state}.caption`);
     // The count drops when the full game leaves the map, not before
     clearTimeout(countTimer);
-    if (state === "full" && !reduceMotion) countTimer = setTimeout(() => render(demoCount, "demo.count", { n: 4 }), LEAVE_MS);
-    else render(demoCount, "demo.count", { n: state === "full" ? 4 : 5 });
+    if (state === "full" && !reduceMotion) countTimer = setTimeout(() => render(demoCount, "demo.count", { n: pinCount - 1 }), LEAVE_MS);
+    else render(demoCount, "demo.count", { n: state === "full" ? pinCount - 1 : pinCount });
   },
 });
 
@@ -547,7 +546,7 @@ joinForms.forEach((form) => {
   });
 });
 
-// Host CTA: jump to the final signup with "Fill my games" pre-selected for step 2
+// Host CTA: jump to the final signup with "Fill my plans" pre-selected for step 2
 document.querySelectorAll("a[data-role]").forEach((a) => a.addEventListener("click", () => {
   detailsForm.elements.role.value = a.dataset.role;
   document.getElementById("cta-email").focus({ preventScroll: true });
