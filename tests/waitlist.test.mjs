@@ -141,6 +141,9 @@ function setup() {
     "form.timeout": "Request timeout",
     "done.joined": "Joined",
     "done.duplicate": "Duplicate",
+    "done.hint": "Joined, use a school email",
+    "done.duplicateHint": "Duplicate, use a school email",
+    "done.inApp": "Already in the app",
     "done.details": "Details saved",
     "dlg.title": "You're in",
     "dlg.pendingTitle": "Almost there",
@@ -263,4 +266,39 @@ test("a timeout restores the form and explains how to retry", async () => {
   assert.equal(signup.status.textContent, "Request timeout");
   assert.equal(signup.button.disabled, false);
   assert.equal(signup.form.hidden, false);
+});
+
+async function join(answer) {
+  const state = setup();
+  const signup = state.joinForms[0];
+  signup.form.elements.email.value = "person@example.com";
+  const pending = signup.form.dispatch("submit");
+  state.requests[0].resolve(response(answer));
+  await pending;
+  return { state, signup };
+}
+
+test("a waiting status shows the app's place", async () => {
+  const { state, signup } = await join({ ok: true, status: "waiting", position: 7, token: "t", referralCode: "R" });
+  assert.equal(signup.doneText.textContent, "Joined");
+  assert.equal(state.title.textContent, "You're in · #7 on the list");
+});
+
+test("approved and member people are told they can already get in, with no place", async () => {
+  for (const status of ["approved", "member"]) {
+    const { state, signup } = await join({ ok: true, status, position: 9, token: "t", referralCode: "R" });
+    assert.equal(signup.doneText.textContent, "Already in the app");
+    assert.equal(state.title.textContent, "You're in");
+  }
+  const dup = await join({ ok: true, duplicate: true, status: "member", referralCode: "R" });
+  assert.equal(dup.signup.doneText.textContent, "Already in the app");
+  assert.equal(dup.state.dialog.open, false);
+});
+
+test("a non-school email keeps the success copy and adds the school-email hint", async () => {
+  const fresh = await join({ ok: true, status: "not_school", position: 5, token: "t", referralCode: "R" });
+  assert.equal(fresh.signup.doneText.textContent, "Joined, use a school email");
+  assert.equal(fresh.state.title.textContent, "You're in · #5 on the list");
+  const dup = await join({ ok: true, duplicate: true, status: "not_school", referralCode: "R" });
+  assert.equal(dup.signup.doneText.textContent, "Duplicate, use a school email");
 });

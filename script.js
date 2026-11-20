@@ -14,6 +14,9 @@ const MSG = {
   "form.timeout": "It's taking longer than expected. Check your connection and try again.",
   "done.joined": "You're on the list. We'll be in touch.",
   "done.duplicate": "You're already on the list. See you soon.",
+  "done.hint": "You're on the list. We'll be in touch. Use your school email (like you@tec.mx) to keep your place when you get the app.",
+  "done.duplicateHint": "You're already on the list. See you soon. Use your school email (like you@tec.mx) to keep your place when you get the app.",
+  "done.inApp": "You're already in. Get masUNO on the App Store.",
   "done.details": "Thanks! We'll let you know when games go live near you.",
   "dlg.title": "You're in",
   "dlg.pendingTitle": "Almost there",
@@ -259,6 +262,20 @@ async function post(payload) {
   }
 }
 
+// Which success message to show for the Apps Script's answer. It adds status only when the app's
+// waitlist answered: "approved" and "member" can already get in; "not_school" gets the school-email hint.
+function doneKey(res) {
+  if (res.status === "approved" || res.status === "member") return "done.inApp";
+  if (res.status === "not_school") return res.duplicate ? "done.duplicateHint" : "done.hint";
+  return res.duplicate ? "done.duplicate" : "done.joined";
+}
+
+// The place to show: only a real number, and only when they're in the app's queue (or it's the Sheet's place)
+function placeFor(res) {
+  if (res.status === "approved" || res.status === "member") return 0;
+  return Number(res.position) > 0 ? Number(res.position) : 0;
+}
+
 function markJoined(key) {
   joinForms.forEach((f) => {
     f.hidden = true;
@@ -355,15 +372,16 @@ joinForms.forEach((form) => {
     try {
       const res = await post({ action: "join", email, source: source(), tz: timeZone() });
       if (res.duplicate) {
-        markJoined("done.duplicate");
+        markJoined(doneKey(res));
         setDetailsPending(false);
         if (dialog.open) dialog.close();
         return;
       }
-      signup = { email, token: res.token, referralCode: res.referralCode, position: res.position };
-      markJoined("done.joined");
+      const position = placeFor(res);
+      signup = { email, token: res.token, referralCode: res.referralCode, position };
+      markJoined(doneKey(res));
       const title = dialog.querySelector("[data-title]");
-      if (res.position) render(title, "dlg.position", { n: res.position });
+      if (position) render(title, "dlg.position", { n: position });
       else render(title, "dlg.title");
       setDetailsPending(false);
     } catch (err) {

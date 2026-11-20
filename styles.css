@@ -108,6 +108,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .nav-inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
 .wordmark { font-family: var(--font-display); font-weight: 900; font-size: 24px; letter-spacing: -0.02em; color: var(--on-dark); text-decoration: none; margin-right: auto; }
 .wordmark span { color: var(--primary-tint); }
+.nav .wordmark { display: inline-flex; align-items: center; }
+.nav .wordmark img { width: 32px; height: 32px; margin-right: 10px; flex: none; }
 .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
 .nav-links a {
   color: var(--on-dark); text-decoration: none; font-size: 14px; font-weight: 600;

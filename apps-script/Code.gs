@@ -8,13 +8,25 @@
  * Referral codes are short, public and non-secret; Referred by stores the inviter's code.
  * Country is estimated from the browser's time zone. Only the country is stored, not the zone.
  *
+ * One waitlist with the app: the Sheet is kept in step with the app's sign-up queue in Supabase.
+ *   - A new website join also calls Supabase (waitlist_join). A school email from an open campus
+ *     keeps its place in the app; the answer fills the "App ..." columns at the far right.
+ *   - Supabase pushes changes here (action=sync, JSON, with the shared secret), and reconcile()
+ *     pulls everything once an hour and retries joins that never reached Supabase.
+ *   - If Supabase is down or not set up, the website join works exactly as before (Sheet only).
+ *
  * Setup (about 20 minutes, full steps in README.md):
  *   1. Create a Google Sheet, then Extensions → Apps Script. Paste this file in.
- *   2. Run setup() once from the editor and approve the permissions.
- *   3. Deploy → New deployment → Web app
+ *   2. Project Settings → Script Properties: add WAITLIST_SYNC_SECRET, SUPABASE_URL and
+ *      SUPABASE_ANON_KEY (leave them out to run Sheet-only).
+ *   3. Run setupSync() once from the editor and approve the permissions.
+ *      It checks credentials without a signup, adds headers, installs the hourly trigger and backfills.
+ *   4. Run checkSync() any time to diagnose configuration without exposing secrets.
+ *   5. Deploy → New deployment → Web app
  *        Execute as: Me
  *        Who has access: Anyone
- *   4. Copy the /exec URL into WAITLIST_ENDPOINT in script.js.
+ *   6. Copy the /exec URL into WAITLIST_ENDPOINT in script.js, and into Supabase Vault as
+ *      waitlist_sync_url.
  *
  * After editing this file, use Deploy → Manage deployments → Edit → New version,
  * so the /exec URL stays the same. Running setup() on an existing Sheet only adds
@@ -26,14 +38,20 @@
 const SHEET_ID = "";
 const SHEET_NAME = "Waitlist";
 // New columns go at the end: moving Token would break the rows already in the Sheet
-const HEADERS = ["Joined", "Email", "Role", "Campus", "Sports", "Source", "Details added", "Token", "Country", "Referral code", "Referred by"];
-const COL = { email: 2, role: 3, campus: 4, sports: 5, detailsAt: 7, token: 8, referralCode: 10, referredBy: 11 };
+const HEADERS = ["Joined", "Email", "Role", "Campus", "Sports", "Source", "Details added", "Token", "Country", "Referral code", "Referred by",
+  "App status", "App place", "Signed up in app", "Invited by", "Synced at"];
+const COL = { joined: 1, email: 2, role: 3, campus: 4, sports: 5, detailsAt: 7, token: 8, referralCode: 10, referredBy: 11,
+  appStatus: 12, appPlace: 13, signedUpInApp: 14, invitedBy: 15, syncedAt: 16 };
+// What Supabase calls each status → what the Sheet shows
+const APP_STATUS = { waiting: "Waiting", approved: "Approved", member: "In the app", not_school: "Not a school email", removed: "Removed" };
+const MAX_SYNC_ROWS = 2000; // most rows one push may carry
+const MAX_RETRIES_PER_RUN = 25; // joins retried per reconcile, to stay inside Apps Script's time limit
 const REFERRER_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 function doPost(e) {
   const startedAt = Date.now();
   const p = (e && e.parameter) || {};
-  const timing = { lockMs: 0, sheetMs: 0, lookupMs: 0, writeMs: 0 };
+  const timing = { lockMs: 0, sheetMs: 0, lookupMs: 0, writeMs: 0, syncMs: 0 };
   let outcome = "success";
   let stageStartedAt = 0;
   const lock = LockService.getScriptLock();
@@ -41,6 +59,12 @@ function doPost(e) {
     stageStartedAt = Date.now();
     lock.waitLock(10000);
     timing.lockMs = Date.now() - stageStartedAt;
+
+    // Push from Supabase: JSON with the shared secret. Not the public form, so no honeypot or email checks.
+    if (e && e.postData && /^application\/json/i.test(e.postData.type || "")) {
+      outcome = "sync";
+      return json_(handleSync_(e.postData.contents));
+    }
 
     // Honeypot field from the form; real people never fill it in
     if (p.website) {
@@ -91,8 +115,21 @@ function doPost(e) {
       outcome = "duplicate";
       stageStartedAt = Date.now();
       const referralCode = ensureReferralCode_(sheet, row);
+      const stored = sheet.getRange(row, COL.appStatus, 1, 5).getValues()[0];
+      const joinedAt = sheet.getRange(row, COL.joined).getValue();
       timing.lookupMs += Date.now() - stageStartedAt;
-      return json_({ ok: true, duplicate: true, referralCode: referralCode });
+      let result = null;
+      if (!stored[4]) {
+        // Never confirmed by Supabase: try again. Done outside the lock so a slow answer blocks nobody.
+        lock.releaseLock();
+        stageStartedAt = Date.now();
+        result = joinSupabase_(email, joinedAt);
+        if (result) recordSync_(email, result);
+        timing.syncMs = Date.now() - stageStartedAt;
+      } else {
+        result = storedResult_(stored);
+      }
+      return json_(withApp_({ ok: true, duplicate: true, referralCode: referralCode }, result));
     }
 
     const token = Utilities.getUuid();
@@ -102,16 +139,26 @@ function doPost(e) {
     const referredBy = findReferralRow_(sheet, source) ? source : "";
     timing.lookupMs += Date.now() - stageStartedAt;
     stageStartedAt = Date.now();
-    sheet.appendRow([new Date(), email, "", "", "", source, "", token, country_(p.tz), referralCode, referredBy]);
+    const joinedAt = new Date();
+    sheet.appendRow([joinedAt, email, "", "", "", source, "", token, country_(p.tz), referralCode, referredBy]);
     const position = sheet.getLastRow() - 1;
     timing.writeMs = Date.now() - stageStartedAt;
-    return json_({ ok: true, position: position, token: token, referralCode: referralCode });
+    // Tell Supabase outside the lock, so a slow answer blocks nobody. If it fails, the website still
+    // gets its answer from the Sheet and reconcile() retries later (Synced at stays blank).
+    lock.releaseLock();
+    stageStartedAt = Date.now();
+    const result = joinSupabase_(email, joinedAt);
+    if (result) recordSync_(email, result);
+    timing.syncMs = Date.now() - stageStartedAt;
+    const res = withApp_({ ok: true, position: position, token: token, referralCode: referralCode }, result);
+    if (result && (result.status === "approved" || result.status === "member")) delete res.position;
+    return json_(res);
   } catch (err) {
     outcome = "server_error";
     console.error(err);
     return json_({ ok: false, error: "server_error" });
   } finally {
-    lock.releaseLock();
+    try { lock.releaseLock(); } catch (_) { /* already released */ }
     // Timing only: never log the email, token, campus or other personal data.
     console.info(JSON.stringify({
       event: "waitlist_latency",
@@ -122,6 +169,7 @@ function doPost(e) {
       sheetMs: timing.sheetMs,
       lookupMs: timing.lookupMs,
       writeMs: timing.writeMs,
+      syncMs: timing.syncMs,
     }));
   }
 }
@@ -204,4 +252,319 @@ function clean_(value, max) {
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---------- Sync with the app's waitlist (Supabase) ----------
+
+// Script Properties hold the shared secret and Supabase's public URL and key. Without all three
+// the script stays Sheet-only (logged once, so the log isn't flooded).
+function syncConfig_() {
+  const props = PropertiesService.getScriptProperties();
+  const secret = props.getProperty("WAITLIST_SYNC_SECRET");
+  const url = props.getProperty("SUPABASE_URL");
+  const key = props.getProperty("SUPABASE_ANON_KEY");
+  if (secret && secret.length >= 32 && url && key) return { secret: secret, url: String(url).replace(/\/+$/, ""), key: key };
+  if (!props.getProperty("SYNC_NOTE_LOGGED")) {
+    props.setProperty("SYNC_NOTE_LOGGED", "1");
+    console.info("App sync is off: set WAITLIST_SYNC_SECRET, SUPABASE_URL and SUPABASE_ANON_KEY in Script Properties.");
+  }
+  return null;
+}
+
+// Calls a Supabase function. Returns the parsed JSON, or null on any failure. Apps Script can't set a
+// timeout on a fetch, so the call is made outside the lock and a failure only costs the app status.
+function callSupabase_(cfg, fn, body) {
+  try {
+    const res = UrlFetchApp.fetch(cfg.url + "/rest/v1/rpc/" + fn, {
+      method: "post",
+      contentType: "application/json",
+      headers: { apikey: cfg.key, Authorization: "Bearer " + cfg.key },
+      payload: JSON.stringify(body),
+      muteHttpExceptions: true,
+    });
+    if (res.getResponseCode() !== 200) {
+      console.warn("Supabase " + fn + " answered " + res.getResponseCode());
+      return null;
+    }
+    return JSON.parse(res.getContentText());
+  } catch (err) {
+    console.warn("Supabase " + fn + " failed: " + (err && err.message));
+    return null;
+  }
+}
+
+// Website → Supabase. Returns { status, position } or null when sync is off or Supabase didn't answer.
+function joinSupabase_(email, joinedAt) {
+  const cfg = syncConfig_();
+  if (!cfg) return null;
+  const res = callSupabase_(cfg, "waitlist_join", {
+    p_secret: cfg.secret,
+    p_email: email,
+    p_joined_at: isoDate_(joinedAt),
+    p_source: "website",
+  });
+  if (!res || res.ok !== true || !Object.prototype.hasOwnProperty.call(APP_STATUS, res.status)) return null;
+  const position = res.status === "waiting" && Number(res.position) > 0 ? Number(res.position) : null;
+  return { status: res.status, position: position };
+}
+
+// Saves what Supabase said about a website join. Re-finds the row (it may have moved) and skips
+// quietly if the lock is busy; the row keeps a blank Synced at and reconcile() retries it.
+function recordSync_(email, result) {
+  const lock = LockService.getScriptLock();
+  try {
+    if (!lock.tryLock(5000)) return;
+    const sheet = getSheet_();
+    const row = findRow_(sheet, email);
+    if (!row) return;
+    const cells = appCells_({ status: result.status, requestedAt: null, source: "website", invitedBy: "" }, result.position || "");
+    cells[2] = sheet.getRange(row, COL.signedUpInApp).getValue();
+    cells[3] = sheet.getRange(row, COL.invitedBy).getValue();
+    sheet.getRange(row, COL.appStatus, 1, 5).setValues([cells.concat([new Date()])]);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    try { lock.releaseLock(); } catch (_) { /* not held */ }
+  }
+}
+
+// What the Sheet already says about a row, as a join result
+function storedResult_(stored) {
+  const status = appStatusCode_(stored[0]);
+  if (!status) return null;
+  return { status: status, position: status === "waiting" && Number(stored[1]) > 0 ? Number(stored[1]) : null };
+}
+
+// Adds status (and position, only while waiting) to a join response when Supabase answered
+function withApp_(res, result) {
+  if (!result) return res;
+  res.status = result.status;
+  if (result.status === "waiting" && result.position) res.position = result.position;
+  return res;
+}
+
+// Push from Supabase: { action: "sync", secret, rows: [...] }
+function handleSync_(body) {
+  let data;
+  try {
+    data = JSON.parse(body);
+  } catch (_) {
+    return { ok: false, error: "bad_request" };
+  }
+  const cfg = syncConfig_();
+  if (!data || data.action !== "sync" || !cfg || !secretMatches_(data.secret, cfg.secret)) {
+    return { ok: false, error: "bad_secret" };
+  }
+  const rows = (Array.isArray(data.rows) ? data.rows : []).slice(0, MAX_SYNC_ROWS).map(normSyncRow_).filter(Boolean);
+  const deleted = upsertRows_(getSheet_(), rows, null);
+  return { ok: true, rows: rows.length, deleted: deleted };
+}
+
+// Run from the editor before enabling sync. The deliberately invalid source tests the secret
+// without creating a signup: waitlist_join checks the secret before rejecting this source.
+// Only configuration names and public project URL are reported, never credentials or row data.
+function checkSync() {
+  const props = PropertiesService.getScriptProperties();
+  const missing = ["WAITLIST_SYNC_SECRET", "SUPABASE_URL", "SUPABASE_ANON_KEY"]
+    .filter((name) => !props.getProperty(name));
+  let report;
+  if (missing.length) {
+    report = { ok: false, error: "missing_configuration", missing: missing };
+  } else if (props.getProperty("WAITLIST_SYNC_SECRET").length < 32) {
+    report = { ok: false, error: "secret_too_short" };
+  } else {
+    const cfg = syncConfig_();
+    const res = callSupabase_(cfg, "waitlist_join", {
+      p_secret: cfg.secret, p_email: "", p_joined_at: null, p_source: "setup_check",
+    });
+    if (res && res.ok === false && res.error === "invalid_input") {
+      report = { ok: true, supabaseUrl: cfg.url,
+        triggerInstalled: ScriptApp.getProjectTriggers().some((t) => t.getHandlerFunction() === "reconcile") };
+    } else {
+      report = { ok: false, error: res && res.error === "bad_secret" ? "bad_secret" : "supabase_check_failed" };
+    }
+  }
+  console.info(JSON.stringify(report));
+  return report;
+}
+
+// One editor action after setting Script Properties: validate, add headers, install the trigger,
+// and backfill existing rows. Deploy the edited web app separately to update incoming pushes.
+function setupSync() {
+  const report = checkSync();
+  if (!report.ok) throw new Error("Waitlist sync setup failed: " + report.error);
+  setup();
+  installSyncTrigger();
+  const result = reconcile();
+  if (!result || !result.ok) throw new Error("Waitlist sync reconciliation failed; run reconcile again.");
+  return result;
+}
+
+// Hourly: snapshot unsynced website rows briefly, release the lock for all HTTP calls, then
+// re-find rows under a fresh lock when writing. A slow backend must not block website signups.
+function reconcile() {
+  const cfg = syncConfig_();
+  if (!cfg) return { ok: false, error: "missing_configuration" };
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(20000)) return { ok: false, error: "busy" };
+  let pending;
+  try {
+    pending = retryJoinCandidates_(getSheet_());
+  } finally {
+    lock.releaseLock();
+  }
+  retryJoins_(pending);
+  const res = callSupabase_(cfg, "waitlist_export", { p_secret: cfg.secret });
+  if (!Array.isArray(res)) return { ok: false, error: "export_failed" };
+  const rows = res.map(normSyncRow_).filter(Boolean);
+  if (!lock.tryLock(20000)) return { ok: false, error: "busy" };
+  try {
+    upsertRows_(getSheet_(), rows, computePlaces_(rows));
+    return { ok: true, rows: rows.length, attemptedJoins: pending.length };
+  } catch (err) {
+    console.error(err);
+    return { ok: false, error: "sheet_write_failed" };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Called only while holding the lock. Network work uses this immutable candidate snapshot.
+function retryJoinCandidates_(sheet) {
+  const last = sheet.getLastRow();
+  if (last < 2) return [];
+  const data = sheet.getRange(2, 1, last - 1, HEADERS.length).getValues();
+  return data.filter((r) => r[COL.email - 1] && r[COL.token - 1] && !r[COL.syncedAt - 1])
+    .slice(0, MAX_RETRIES_PER_RUN)
+    .map((r) => ({ email: String(r[COL.email - 1]).trim().toLowerCase(), joinedAt: r[COL.joined - 1] }));
+}
+
+// No Sheet lock across fetch. recordSync_ re-finds each row by email before publishing a result.
+function retryJoins_(pending) {
+  pending.forEach((r) => {
+    const result = joinSupabase_(r.email, r.joinedAt);
+    if (result) recordSync_(r.email, result);
+  });
+}
+
+// Creates the hourly reconcile trigger, once. Safe to run again.
+function installSyncTrigger() {
+  const exists = ScriptApp.getProjectTriggers().some((t) => t.getHandlerFunction() === "reconcile");
+  if (!exists) ScriptApp.newTrigger("reconcile").timeBased().everyHours(1).create();
+}
+
+// Updates the matching row by email, or appends an app-only sign-up. places is { email: place } for a
+// full export; null for a push. Both prefer the row's own position; without one a push keeps the stored place.
+// Only rows that changed (or never had a Synced at) are written.
+// "removed" means Supabase deleted the request (account deleted, or request rejected): every row with that
+// email is deleted, website answers included, and none is appended. Deletes run last, bottom-up, so the
+// row numbers used above stay valid. Returns how many rows were deleted.
+function upsertRows_(sheet, rows, places) {
+  const last = sheet.getLastRow();
+  const data = last > 1 ? sheet.getRange(2, 1, last - 1, HEADERS.length).getValues() : [];
+  const index = {};
+  data.forEach((r, i) => { index[String(r[COL.email - 1]).trim().toLowerCase()] = i; });
+  const now = new Date();
+  const removed = {};
+  rows.forEach((r) => {
+    if (r.status === "removed") {
+      removed[r.email] = true;
+      return;
+    }
+    const i = index[r.email];
+    if (i === undefined) {
+      const place = r.status === "waiting" ? r.position || (places && places[r.email]) || "" : "";
+      const cells = appCells_(r, place).concat([now]);
+      const row = [r.requestedAt || now, r.email, "", "", "", "app", "", "", "", "", ""].concat(cells);
+      sheet.appendRow(row);
+      data.push(row);
+      index[r.email] = data.length - 1;
+      return;
+    }
+    const old = data[i];
+    // Supabase's own position wins; the computed place or the stored one is only a fallback
+    const place = r.status !== "waiting" ? ""
+      : r.position || (places && places[r.email]) || (places ? "" : old[COL.appPlace - 1]);
+    const cells = appCells_(r, place);
+    // A website row keeps its own sign-up date and Source; only "Signed up in app" comes from Supabase
+    const same = cells.every((c, k) => sameCell_(c, old[COL.appStatus - 1 + k]));
+    if (same && old[COL.syncedAt - 1]) return;
+    sheet.getRange(i + 2, COL.appStatus, 1, 5).setValues([cells.concat([now])]);
+  });
+  let deleted = 0;
+  for (let i = data.length - 1; i >= 0; i--) {
+    if (removed[String(data[i][COL.email - 1]).trim().toLowerCase()]) {
+      sheet.deleteRow(i + 2);
+      deleted++;
+    }
+  }
+  return deleted;
+}
+
+// ---------- Pure helpers (no Sheet or network access) ----------
+
+function appStatusCode_(label) {
+  const codes = Object.keys(APP_STATUS);
+  for (let i = 0; i < codes.length; i++) if (APP_STATUS[codes[i]] === label) return codes[i];
+  return "";
+}
+
+// One row from Supabase → a checked, normalized row. Null if it isn't usable.
+function normSyncRow_(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const email = String(raw.email || "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || /^[=+\-@]/.test(email)) return null;
+  if (!Object.prototype.hasOwnProperty.call(APP_STATUS, raw.status) || raw.status === "not_school") return null;
+  const requested = raw.requested_at ? new Date(raw.requested_at) : null;
+  return {
+    email: email,
+    status: raw.status,
+    requestedAt: requested && !isNaN(requested.getTime()) ? requested : null,
+    source: raw.source === "app" ? "app" : "website",
+    invitedBy: raw.invited_by ? String(raw.invited_by) : "",
+    position: Number(raw.position) > 0 ? Number(raw.position) : 0,
+  };
+}
+
+// The five cells for App status, App place, Signed up in app, Invited by (Synced at is added by the caller)
+function appCells_(r, place) {
+  const signedUp = (r.source === "app" || r.status === "member") && r.requestedAt ? r.requestedAt : "";
+  return [
+    clean_(APP_STATUS[r.status], 40),
+    r.status === "waiting" && Number(place) > 0 ? Number(place) : "",
+    signedUp,
+    clean_(r.invitedBy, 80),
+  ];
+}
+
+// Place among waiting requests: oldest request first, ties by email. 1 = next.
+function computePlaces_(rows) {
+  const waiting = rows.filter((r) => r.status === "waiting");
+  waiting.sort((a, b) => {
+    const at = a.requestedAt ? a.requestedAt.getTime() : 0;
+    const bt = b.requestedAt ? b.requestedAt.getTime() : 0;
+    return at - bt || (a.email < b.email ? -1 : a.email > b.email ? 1 : 0);
+  });
+  const places = {};
+  waiting.forEach((r, i) => { places[r.email] = i + 1; });
+  return places;
+}
+
+function sameCell_(a, b) {
+  if (a instanceof Date && b instanceof Date) return a.getTime() === b.getTime();
+  return String(a) === String(b);
+}
+
+function secretMatches_(given, expected) {
+  const a = String(given || "");
+  const b = String(expected || "");
+  if (!b || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+function isoDate_(value) {
+  const d = value instanceof Date ? value : new Date(value);
+  return (isNaN(d.getTime()) ? new Date() : d).toISOString().replace(/\.\d+Z$/, "Z");
 }
