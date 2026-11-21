@@ -3,7 +3,10 @@
 const WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbwT7WBTR8Uv3l1uxmtOD4pJfX8fzwdwKQIHxwNxTPEQRjvSBwLaWFypTqkqFGtnsUOp/exec";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Esports show only when index.html's <head> turns them on
+const esportsOn = document.documentElement.classList.contains("esports");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 // Text the page changes at runtime. {n} is filled in by t().
 const MSG = {
@@ -17,7 +20,7 @@ const MSG = {
   "done.hint": "You're on the list. We'll be in touch. Use your school email (like you@tec.mx) to keep your place when you get the app.",
   "done.duplicateHint": "You're already on the list. See you soon. Use your school email (like you@tec.mx) to keep your place when you get the app.",
   "done.inApp": "You're already in. Get masUNO on the App Store.",
-  "done.details": "Thanks! We'll let you know when games go live near you.",
+  "done.details": "Thanks! We'll let you know when plans go live near you.",
   "dlg.title": "You're in",
   "dlg.pendingTitle": "Almost there",
   "dlg.confirming": "Confirming your registration…",
@@ -26,20 +29,18 @@ const MSG = {
   "dlg.save": "Save",
   "dlg.saving": "Saving…",
   "dlg.error": "Couldn't save that. Try again, or skip. You're already on the list.",
-  "demo.open.spots": "1 spot left",
+  "demo.count": "{n} plans nearby",
+  "demo.open.spots": "Room for one more",
   "demo.open.caption": "On the map",
   "demo.full.spots": "Full",
-  "demo.full.caption": "Full games leave the map",
-  "demo.drop.spots": "1 spot left",
+  "demo.full.caption": "Full plans leave the map",
+  "demo.drop.spots": "A spot just opened · room for 1",
   "demo.drop.caption": "Reposted to the top of the map",
-  "hero.joined.button": "You're the +1",
-  "hero.joined.spots": "Game on",
-  "hero.joined.faces": "They know you're coming",
+  "hero.join": "Be the +1",
+  "hero.joined.tag": "You're in!",
   "hero.joined.status": "You're in. Show up expected.",
-  "hero.joined.toast": "That's your spot",
-  "hero.joined.toastCopy": "No asking. No awkward arrival.",
-  "share.message": "I'm joining masUNO to find pickup games on campus. Join the early-access list with my invite:",
-  "share.note": "One invite can be the start of your next game.",
+  "share.message": "I'm joining masUNO to find plans on campus. Join the early-access list with my invite:",
+  "share.note": "One invite can be the start of your next plan.",
   "share.opened": "WhatsApp opened. Choose your team or group chat.",
   "share.done": "Thanks for bringing your team.",
   "share.copied": "Personal invite link copied. Send it to your team.",
@@ -51,6 +52,11 @@ const render = (el, key, vars = {}) => {
   el.dataset.messageVars = JSON.stringify(vars);
   el.textContent = t(key, vars);
 };
+const clear = (el) => {
+  delete el.dataset.messageKey;
+  delete el.dataset.messageVars;
+  el.textContent = "";
+};
 
 // Refresh dynamic messages without resetting the current form, dialog or demo state.
 document.addEventListener("masuno:languagechange", () => {
@@ -59,13 +65,27 @@ document.addEventListener("masuno:languagechange", () => {
   });
 });
 
+// Add a class for one animation, then take it off again so it can replay later.
+function flash(el, name, ms) {
+  el.classList.remove(name);
+  void el.offsetWidth;
+  el.classList.add(name);
+  clearTimeout(el[`_${name}`]);
+  el[`_${name}`] = setTimeout(() => el.classList.remove(name), ms);
+}
+
 // ---------- Launch countdown ----------
 // Noon in Chicago on launch day (CST, UTC-6). The date shown to visitors is in index.html.
 const LAUNCH_AT = Date.parse("2026-12-16T12:00:00-06:00");
 const countdown = document.querySelector("[data-countdown]");
 if (countdown) {
+  // Each number slides in when it changes
   const setUnit = (name, value) => {
-    countdown.querySelector(`[data-unit="${name}"]`).textContent = String(value).padStart(2, "0");
+    const el = countdown.querySelector(`[data-unit="${name}"]`);
+    const text = String(value).padStart(2, "0");
+    if (el.textContent === text) return;
+    el.textContent = text;
+    if (!reduceMotion) flash(el, "is-ticking", 420);
   };
   const tick = () => {
     const left = LAUNCH_AT - Date.now();
@@ -95,6 +115,153 @@ const revealObserver = new IntersectionObserver(
 );
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
+// ---------- Nav: one green action per viewport ----------
+// The nav button is plain glass while a signup form is on screen, and green otherwise.
+const nav = document.querySelector(".nav");
+const visibleForms = new Set();
+const formWatcher = new IntersectionObserver((entries) => {
+  entries.forEach((e) => (e.isIntersecting ? visibleForms.add(e.target) : visibleForms.delete(e.target)));
+  nav.classList.toggle("is-away", visibleForms.size === 0);
+});
+document.querySelectorAll(".join-wrap").forEach((el) => formWatcher.observe(el));
+
+// ---------- Nav: mark the section being read ----------
+const navLinks = [...document.querySelectorAll('.nav-links a[href^="#"]')];
+const sectionsInView = new Set();
+const sectionWatcher = new IntersectionObserver((entries) => {
+  entries.forEach((e) => (e.isIntersecting ? sectionsInView.add(e.target.id) : sectionsInView.delete(e.target.id)));
+  navLinks.forEach((a) => {
+    if (sectionsInView.has(a.hash.slice(1))) a.setAttribute("aria-current", "location");
+    else a.removeAttribute("aria-current");
+  });
+}, { rootMargin: "-45% 0px -50% 0px" }); // a thin band across the middle of the screen
+navLinks.forEach((a) => {
+  const section = document.getElementById(a.hash.slice(1));
+  if (section) sectionWatcher.observe(section);
+});
+
+// ---------- Hero: the court cycles through the activities ----------
+const hero = document.querySelector(".hero");
+const heroArt = document.querySelector(".hero-art");
+const sportSwitch = document.querySelector(".sport-switch");
+const sportChips = [...sportSwitch.querySelectorAll(".sport-chip")].filter((c) => esportsOn || !("esports" in c.dataset));
+let sportIndex = 0;
+
+function showSport(i) {
+  sportIndex = i;
+  hero.dataset.sport = sportChips[i].dataset.pick;
+  sportChips.forEach((c, j) => c.setAttribute("aria-pressed", j === i));
+}
+
+// The active dot's fill is the timer (4.2s in styles.css): when it finishes, the next activity comes up.
+// Pausing pauses the fill, so it picks up where it left off.
+const startSports = () => sportSwitch.classList.remove("is-paused");
+const stopSports = () => sportSwitch.classList.add("is-paused");
+stopSports();
+if (reduceMotion) sportSwitch.classList.add("is-static");
+sportSwitch.addEventListener("animationend", (e) => {
+  if (e.target.classList.contains("dot-fill")) showSport((sportIndex + 1) % sportChips.length);
+});
+
+// Stays on the chosen activity once someone picks one; pauses off screen and on hover or focus
+sportChips.forEach((chip, i) => chip.addEventListener("click", () => {
+  sportSwitch.classList.add("is-picked");
+  showSport(i);
+}));
+["pointerenter", "focusin"].forEach((type) => sportSwitch.addEventListener(type, stopSports));
+["pointerleave", "focusout"].forEach((type) => sportSwitch.addEventListener(type, startSports));
+new IntersectionObserver(([e]) => {
+  if (e.isIntersecting) startSports();
+  else stopSports();
+}).observe(heroArt);
+
+// ---------- Hero: take the open spot ----------
+// Tapping the +1 puts "You" on the court; tapping again gives the spot back.
+const heroJoin = document.getElementById("hero-join");
+const heroTag = heroJoin.querySelector("[data-hero-tag]");
+const heroStatus = document.getElementById("hero-game-status");
+const heroSignup = hero.querySelector(".join-wrap");
+
+heroJoin.addEventListener("click", () => {
+  const joined = hero.classList.toggle("is-joined");
+  render(heroTag, joined ? "hero.joined.tag" : "hero.join");
+  if (!joined) {
+    clear(heroStatus);
+    hero.classList.remove("is-cheering");
+    return;
+  }
+  render(heroStatus, "hero.joined.status");
+  if (reduceMotion) return;
+  flash(hero, "is-cheering", 1100); // the others hop
+  if (!heroSignup.querySelector("form.join").hidden) flash(heroSignup, "is-nudged", 1400); // then the real signup asks for a look
+});
+
+// The court and the players drift a few pixels with the pointer
+if (finePointer && !reduceMotion) {
+  let frame = 0;
+  const clamp = (n) => Math.max(-0.5, Math.min(0.5, n)).toFixed(3);
+  hero.addEventListener("pointermove", (e) => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      const box = heroArt.getBoundingClientRect();
+      hero.style.setProperty("--px", clamp((e.clientX - box.left) / box.width - 0.5));
+      hero.style.setProperty("--py", clamp((e.clientY - box.top) / box.height - 0.5));
+    });
+  });
+  hero.addEventListener("pointerleave", () => {
+    hero.style.setProperty("--px", 0);
+    hero.style.setProperty("--py", 0);
+  });
+}
+
+// ---------- Steps that play on their own ----------
+// Used by the two phone walkthroughs and the open-spots demo. Steps advance while `watch` is on
+// screen, with a progress bar on the current step, and stay manual once someone picks a step.
+function stepper({ steps, watch, ms, show }) {
+  let index = 0;
+  let timer = null;
+  let touched = false;
+
+  function go(i, timed) {
+    index = i;
+    steps.forEach((s, j) => {
+      s.setAttribute("aria-pressed", j === i);
+      s.classList.remove("is-timing");
+    });
+    show(i);
+    if (timed) {
+      void steps[i].offsetWidth; // restart the progress-bar animation
+      steps[i].style.setProperty("--dur", ms + "ms");
+      steps[i].classList.add("is-timing");
+    }
+  }
+
+  function start() {
+    if (reduceMotion || touched || timer) return;
+    go(index, true);
+    timer = setInterval(() => go((index + 1) % steps.length, true), ms);
+  }
+
+  function stop() {
+    clearInterval(timer);
+    timer = null;
+    steps.forEach((s) => s.classList.remove("is-timing"));
+  }
+
+  // Stop auto-play for good, and optionally jump to a step
+  function take(i = index) {
+    touched = true;
+    stop();
+    go(i);
+  }
+
+  steps.forEach((step, i) => step.addEventListener("click", () => take(i)));
+  new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()), { threshold: 0.4 }).observe(watch);
+  go(0);
+  return { take };
+}
+
 // ---------- How it works: side tabs ----------
 const tabs = [...document.querySelectorAll(".tab")];
 
@@ -119,81 +286,59 @@ tabs.forEach((tab, i) => {
 
 // ---------- How it works: step → phone screen ----------
 document.querySelectorAll(".walkthrough").forEach((panel) => {
-  const steps = [...panel.querySelectorAll(".wt-step")];
   const layers = [...panel.querySelectorAll(".layer")];
-  steps.forEach((step, i) => {
-    step.addEventListener("click", () => {
-      steps.forEach((s) => s.setAttribute("aria-pressed", s === step));
-      layers.forEach((l, j) => l.classList.toggle("is-active", j === i));
-    });
+  const phone = panel.querySelector(".phone");
+  stepper({
+    steps: [...panel.querySelectorAll(".wt-step")],
+    watch: phone, // a hidden tab's phone is never on screen, so only the open tab plays
+    ms: 4200,
+    show: (i) => layers.forEach((l, j) => l.classList.toggle("is-active", j === i)),
+  });
+
+  // The phone leans a little toward the pointer
+  if (!finePointer || reduceMotion) return;
+  const col = panel.querySelector(".phone-col");
+  col.addEventListener("pointermove", (e) => {
+    const box = col.getBoundingClientRect();
+    phone.style.setProperty("--ry", (((e.clientX - box.left) / box.width - 0.5) * 9).toFixed(2) + "deg");
+    phone.style.setProperty("--rx", (((e.clientY - box.top) / box.height - 0.5) * -6).toFixed(2) + "deg");
+  });
+  col.addEventListener("pointerleave", () => {
+    phone.style.setProperty("--ry", "0deg");
+    phone.style.setProperty("--rx", "0deg");
   });
 });
 
 // ---------- Open-spots demo ----------
 const stage = document.querySelector(".demo-stage");
 const demoSteps = [...document.querySelectorAll(".demo-step")];
-const DEMO_MS = 3600;
-let demoIndex = 0;
-let demoTimer = null;
-let demoTouched = false;
+const demoCount = stage.querySelector("[data-count]");
+const pinCount = [...stage.querySelectorAll(".pin")].filter((p) => esportsOn || !("esports" in p.dataset)).length;
+const LEAVE_MS = 1100; // matches the delay before a full game leaves the map in styles.css
+let countTimer = null;
 
-function showDemo(i, { timed } = {}) {
-  demoIndex = i;
-  const step = demoSteps[i];
-  const state = step.dataset.state;
-  stage.dataset.state = state;
-  render(stage.querySelector("[data-spots]"), `demo.${state}.spots`);
-  render(stage.querySelector("[data-caption]"), `demo.${state}.caption`);
-  demoSteps.forEach((s) => {
-    s.setAttribute("aria-pressed", s === step);
-    s.classList.remove("is-timing");
-  });
-  if (timed) {
-    void step.offsetWidth; // restart the progress-bar animation
-    step.style.setProperty("--dur", DEMO_MS + "ms");
-    step.classList.add("is-timing");
-  }
-}
+const demo = stepper({
+  steps: demoSteps,
+  watch: stage,
+  ms: 3600,
+  show: (i) => {
+    const state = demoSteps[i].dataset.state;
+    stage.dataset.state = state;
+    render(stage.querySelector("[data-spots]"), `demo.${state}.spots`);
+    render(stage.querySelector("[data-caption]"), `demo.${state}.caption`);
+    // The count drops when the full game leaves the map, not before
+    clearTimeout(countTimer);
+    if (state === "full" && !reduceMotion) countTimer = setTimeout(() => render(demoCount, "demo.count", { n: pinCount - 1 }), LEAVE_MS);
+    else render(demoCount, "demo.count", { n: state === "full" ? pinCount - 1 : pinCount });
+  },
+});
 
-function startDemo() {
-  if (reduceMotion || demoTimer) return;
-  showDemo(demoIndex, { timed: true });
-  demoTimer = setInterval(() => showDemo((demoIndex + 1) % demoSteps.length, { timed: true }), DEMO_MS);
-}
-
-function stopDemo() {
-  clearInterval(demoTimer);
-  demoTimer = null;
-  demoSteps.forEach((s) => s.classList.remove("is-timing"));
-}
-
-// Auto-play only while the demo is on screen; stays manual once someone clicks a step
-demoSteps.forEach((step, i) => step.addEventListener("click", () => {
-  demoTouched = true;
-  stopDemo();
-  showDemo(i);
-}));
-new IntersectionObserver(([e]) => {
-  if (e.isIntersecting && !demoTouched) startDemo();
-  else stopDemo();
-}, { threshold: 0.4 }).observe(stage);
-
-// ---------- Interactive hero: take the open spot ----------
-const heroGame = document.getElementById("hero-game");
-const heroJoin = document.getElementById("hero-join");
-const heroToast = document.getElementById("hero-toast");
-
-heroJoin.addEventListener("click", () => {
-  if (heroGame.classList.contains("is-joined")) return;
-  heroGame.classList.add("is-joined");
-  heroToast.classList.add("is-joined");
-  heroJoin.disabled = true;
-  render(heroJoin, "hero.joined.button");
-  render(heroGame.querySelector("[data-hero-spots]"), "hero.joined.spots");
-  render(heroGame.querySelector("[data-hero-faces]"), "hero.joined.faces");
-  render(document.getElementById("hero-game-status"), "hero.joined.status");
-  render(heroToast.querySelector("[data-hero-toast-title]"), "hero.joined.toast");
-  render(heroToast.querySelector("[data-hero-toast-copy]"), "hero.joined.toastCopy");
+// The card's own buttons work too: "Count me in" fills the game, the bookmark saves it
+stage.querySelector("[data-demo-join]").addEventListener("click", () => demo.take(1));
+const demoSave = stage.querySelector("[data-demo-save]");
+demoSave.addEventListener("click", () => {
+  demoSave.setAttribute("aria-pressed", demoSave.getAttribute("aria-pressed") !== "true");
+  demo.take();
 });
 
 // ---------- Waitlist ----------
@@ -211,6 +356,7 @@ const shareLink = document.getElementById("share-link");
 const shareWhatsapp = document.getElementById("share-whatsapp");
 const shareNative = document.getElementById("share-native");
 const shareStatus = document.getElementById("share-status");
+const copyLink = document.getElementById("copy-link");
 let signup = null; // { email, token, referralCode, position } from step 1
 let joinPending = false;
 
@@ -295,16 +441,19 @@ function waitlistShareUrl() {
 
 function updateShareLinks() {
   const url = waitlistShareUrl();
-  const message = t("share.message");
   shareLink.value = url;
-  shareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(`${message} ${url}`)}`;
+  shareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(`${t("share.message")} ${url}`)}`;
+}
+
+function showStep(step) {
+  detailsStep.hidden = step !== "details";
+  shareStep.hidden = step !== "share";
+  dialog.querySelector("[data-progress-details]").classList.toggle("is-active", step === "details");
+  dialog.querySelector("[data-progress-share]").classList.toggle("is-active", step === "share");
 }
 
 function showShare() {
-  detailsStep.hidden = true;
-  shareStep.hidden = false;
-  dialog.querySelector("[data-progress-details]").classList.remove("is-active");
-  dialog.querySelector("[data-progress-share]").classList.add("is-active");
+  showStep("share");
   dialog.querySelector("#host-invite").hidden = !["host", "both"].includes(detailsForm.elements.role.value);
   if (signup?.position) render(dialog.querySelector("[data-share-position]"), "dlg.sharePosition", { n: signup.position });
   updateShareLinks();
@@ -328,10 +477,7 @@ function setDetailsPending(pending) {
 }
 
 function openDetailsPending() {
-  detailsStep.hidden = false;
-  shareStep.hidden = true;
-  dialog.querySelector("[data-progress-details]").classList.add("is-active");
-  dialog.querySelector("[data-progress-share]").classList.remove("is-active");
+  showStep("details");
   render(dialog.querySelector("[data-title]"), "dlg.pendingTitle");
   setDetailsPending(true);
   if (!dialog.open) dialog.showModal();
@@ -357,12 +503,15 @@ joinForms.forEach((form) => {
     if (joinPending) return;
     const email = input.value.trim();
     if (!EMAIL_RE.test(email)) {
+      form.classList.remove("is-invalid");
+      void form.offsetWidth; // replay the shake on a second wrong try
       form.classList.add("is-invalid");
       input.setAttribute("aria-invalid", "true");
       render(status, "form.invalid");
       input.focus();
       return;
     }
+    // Bots fill the hidden field; pretend it worked and drop it
     if (form.elements.website.value) return markJoined("done.joined");
 
     joinPending = true;
@@ -397,7 +546,7 @@ joinForms.forEach((form) => {
   });
 });
 
-// Host CTA: jump to the final signup with "Fill my games" pre-selected for step 2
+// Host CTA: jump to the final signup with "Fill my plans" pre-selected for step 2
 document.querySelectorAll("a[data-role]").forEach((a) => a.addEventListener("click", () => {
   detailsForm.elements.role.value = a.dataset.role;
   document.getElementById("cta-email").focus({ preventScroll: true });
@@ -417,10 +566,11 @@ shareNative.addEventListener("click", async () => {
   }
 });
 
-document.getElementById("copy-link").addEventListener("click", async () => {
+copyLink.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(waitlistShareUrl());
     render(shareStatus, "share.copied");
+    flash(copyLink, "is-done", 450);
   } catch (_) {
     shareLink.focus();
     shareLink.select();

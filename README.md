@@ -11,31 +11,31 @@ privacy.html        app privacy and terms, linked from the app, App Store Connec
 waitlist-privacy.html  waitlist privacy notice, linked under each form and in the footer
 support.html        support page (the App Store Connect Support URL), linked in the footer
 i18n.js             Spanish translations, browser-language detection and the language toggle
-styles.css          tokens from the masUNO design system (Verde cancha) and all animations
+styles.css          tokens from the app's design language (v2.0: sport and esports colors, courts, Liquid Glass) and all animations
 script.js           interactions, the launch countdown (LAUNCH_AT) and the waitlist (set WAITLIST_ENDPOINT here)
 apps-script/Code.gs Google Apps Script that writes signups to a Sheet
 assets/screens/     app screenshots used on the page (only files index.html references)
-assets/people/      persona photos
+assets/people/      persona photos (not used by this design; people are colored initials, as in the app)
 ```
 
 ## 1. Screenshots and photos
 
 The page loads each image from a fixed file path. Until a file exists, its spot shows a placeholder with that path (persona photos show initials). Saving a file at the path replaces the placeholder automatically, and you don't need to edit any HTML.
 
-**Screenshots (all added).** Taken from the iOS app's simulator build (iPhone 18 Pro, iOS 27.2, branch `green-design-system`, mock data), scaled to 888 px wide and reduced to a 256-color palette so the page stays light. To update one, overwrite the file under the same name.
+**Screenshots.** App screenshots from the 1.0 build with plans copy (iPhone 18 Pro, from the `ios` repo's `scripts/screenshots.sh`), scaled to 888 px wide as JPEGs. Each step has an English file in `assets/screens/en/` and a Spanish one in `assets/screens/es/`; `i18n.js` swaps to the Spanish file (`data-src-es`) when the page is in Spanish. To update one, overwrite both files under the same name.
 
-To retake them from the `ios` repo, run a Debug build with `-screen` set to `map`, `detail-open`, `me`, `add-filled`, `me-hosting` and `repost`, after a clean status bar (`xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100 --dataNetwork wifi --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4`). Capture with `xcrun simctl io booted screenshot --mask=black shot.png` so the Dynamic Island is drawn; the page's 47 px screen corners hide the black mask corners.
+The phone around them is Apple's iPhone 18 Pro frame from Apple Design Resources (Product Bezels), at `assets/frames/iphone-18-pro.png`, scaled to 900 px wide. `styles.css` places the screenshot in the frame's 1206 × 2622 screen window, and the frame, Dynamic Island included, lies on top. Use it unaltered, per Apple's license.
 
 | File | What it shows | Used in |
 |---|---|---|
-| `assets/screens/map.png` | Map (home) with pins around Tec | "I want to play" step 1 |
-| `assets/screens/event-detail.png` | Event detail (After-work hoops) with who's going | "I want to play" step 2 |
-| `assets/screens/your-plans.png` | Me · Going | "I want to play" step 3 |
-| `assets/screens/create-event.png` | Add game form, filled in | "I need players" step 1 |
-| `assets/screens/host.png` | Me · Hosting | "I need players" step 2 |
-| `assets/screens/repost.png` | Auto-repost after a player drops out ("Reposted now") | "I need players" step 3 |
+| `assets/screens/{en,es}/popup.jpg` | A plan popup on the map (`-screen popup`) | "I want to play" step 1 |
+| `assets/screens/{en,es}/detail-open.jpg` | Plan details with the court, who's going and Count me in | "I want to play" step 2 |
+| `assets/screens/{en,es}/detail-in.jpg` | You're in! with Open group chat | "I want to play" step 3 |
+| `assets/screens/{en,es}/add-filled.jpg` | Make a plan form, filled in (`-screen add-filled`) | "I need players" step 1 |
+| `assets/screens/{en,es}/chat.jpg` | Group chat with the pinned meet-up card | "I need players" step 2 |
+| `assets/screens/{en,es}/repost.jpg` | A reposted plan's popup on the map, "A spot just opened" (`-screen popup-bumped`, taken separately: `screenshots.sh` doesn't include it) | "I need players" step 3 |
 
-The persona avatars are lightweight branded initials. Replace `assets/people/emilio.jpg` and `assets/people/ricardo.jpg` with real square photos whenever they are available; no HTML changes are needed.
+People on the page are colored initials (EG, RT and so on), the same as in the app, so `assets/people/` isn't loaded by this design.
 
 **Still missing:**
 
@@ -80,7 +80,7 @@ If `WAITLIST_ENDPOINT` still starts with `PASTE_`, the form doesn't send anythin
 
 **How signup works:** people enter just their email, in the hero or at the bottom of the page. That adds a row right away and opens a founding-player popup showing their place in line with two optional questions: player or host and campus. Saving or skipping opens the invitation step, where they can share a personal `?ref=CODIGO` invite through WhatsApp, the native share sheet or the copy button. The private edit token and email are never included in shared links.
 
-The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my games" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role. People who select host or both also see a small email contact for founding-host onboarding.
+The **Get early access as a host** button in the "I need players" tab jumps to the bottom form and pre-selects "Fill my plans" in that popup. The role is only saved if they answer the popup, so a host who skips it shows up with a blank Role. People who select host or both also see a small email contact for founding-host onboarding.
 
 **What gets saved:** join time, email, role, campus, source, when details were added, country, a public referral code and the referring code when the invite belongs to an existing signup. The existing **Sports** column stays in place so historical values and column positions are preserved, but the signup no longer collects or updates sports. Source comes from `?ref=` or `?utm_source=` in the link, so campaign tags still work. **Referred by** is only filled when `?ref=` matches an existing personal code. A hidden Token column stops anyone from editing someone else's row. Country (`Mexico`, `USA` or `Other`) is an estimate from the browser's time zone, so it shows where the device is at signup, not where someone is from; Campus is the better signal when they fill it in. It's blank for signups from before the column was added.
 
@@ -140,8 +140,9 @@ When someone asks to see, correct or delete their waitlist data, find their row 
 
 ## Writing copy for the page
 
-- **Never frame people as lonely.** Don't lead with loneliness stats or "making friends is hard." The angle is the opposite: the game is looking for *you*, and you're the player they need.
-- **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: when a player drops out of a full game, the app bumps the game back to the top of the map on its own (the "Auto-repost" toggle in the Add game form, on by default). There's no Repost button for hosts to tap, and push notifications to nearby players or bookmarkers aren't in the first release, so don't mention pings or notifications.
+- **Plans, not games.** masUNO is broadening from pickup sports to activities in general (sports today, esports next, then things like hackathons). User-facing copy says "plan" (Spanish "plan"), never "game" or "reta". Sport-specific wording is fine only where the activity is known to be a sport, like Ricardo's 3v3 in the story section. Esports are Valorant, CS:GO and League of Legends, each in its own color (`--valorant`, `--csgo`, `--league`) with the screen art (`#court-screen`). **Esports are off for now:** every esports element carries `data-esports` and stays hidden until you uncomment the `esports` line in the inline script in `index.html`'s `<head>`. That one line turns on the hero slides, the Valorant pin on the demo map and the "What can I find on masUNO?" FAQ, and the hero carousel and map count follow it. Before turning it on, also add esports to `privacy.html`.
+- **Never frame people as lonely.** Don't lead with loneliness stats or "making friends is hard." The angle is the opposite: the plan is looking for *you*, and you're the one they need.
+- **Only describe what the app does.** There's no skill-level setting, so don't mention casual vs. competitive. No-shows work like this: when someone drops out of a full plan, the app bumps the plan back to the top of the map on its own (the "Auto-repost" toggle in the Make a plan form, on by default). There's no Repost button for hosts to tap, and push notifications to nearby players or bookmarkers aren't in the first release, so don't mention pings or notifications.
 - **Both sides should be visible.** Players are the main audience, but the host's problem (refilling a no-show faster than the group chat) appears in the hero, the story section, the "I need players" tab and the FAQ. Keep it there when you change things.
 
 ## Language
@@ -154,4 +155,4 @@ These come from the open decisions in DESIGN.md and show up on the page:
 
 - **Campus list** in the signup popup (Tec de Monterrey, IIT, UIC and Princeton for now). Marked with a `TODO` in `index.html`.
 - **Wordmark:** written as `masUNO` in the nav and footer.
-- **Example number:** "4 min walk" in the demo game cards is illustrative. Swap in real examples from testing when available.
+- **Example number:** "4 min walk" in the demo plan cards is illustrative. Swap in real examples from testing when available.
