@@ -40,6 +40,7 @@
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
     <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
@@ -181,11 +182,16 @@
               <span class="h1-to">&ldquo;We're looking for you.&rdquo;</span>
             </h1>
             <p class="lede">Find plans that need one more. Join and show up expected.</p>
+            <!-- 0.9 is live on the App Store now -->
+            <div class="get-app">
+              <a class="btn glass glass--primary" href="https://apps.apple.com/us/app/m%C3%A1suno/id6828191276" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Get masUNO 0.9</span></a>
+              <p class="get-app-note"><strong>Out now on the App Store.</strong> Free on iPhone.</p>
+            </div>
           </div>
           <div class="hero-side">
-            <!-- Launch countdown. script.js fills in the numbers (LAUNCH_AT) and hides this block once launch passes. -->
+            <!-- Countdown to 1.0. script.js fills in the numbers (LAUNCH_AT) and hides this block once launch passes. -->
             <div class="countdown" data-countdown>
-              <p class="countdown-label"><svg class="i"><use href="#i-clock"/></svg><span>Dec 16 · 12 PM Chicago</span></p>
+              <p class="countdown-label"><svg class="i"><use href="#i-clock"/></svg><span>masUNO 1.0 · Dec 10 · 12 PM Chicago</span></p>
               <div class="countdown-units" role="timer">
                 <span class="countdown-unit"><strong data-unit="days">00</strong> <span>Days</span></span>
                 <span class="countdown-unit"><strong data-unit="hours">00</strong> <span>Hours</span></span>
