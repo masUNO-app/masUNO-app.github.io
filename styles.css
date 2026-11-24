@@ -319,6 +319,13 @@ html:not(.js) .countdown-units { display: none; }
 .countdown-unit strong { display: block; font-size: clamp(26px, 2.6vw, 32px); font-weight: 900; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--ink); }
 .countdown-unit strong.is-ticking { animation: tick .4s var(--ease); }
 
+/* 0.9 download, under the lede */
+.get-app { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 26px; }
+.get-app .btn { gap: 8px; }
+.get-app .btn .i { width: 19px; height: 19px; stroke-width: 2.6; }
+.get-app-note { font-size: 14px; line-height: 1.35; color: var(--ink-2); }
+.get-app-note strong { display: block; font-size: 15px; font-weight: 800; color: var(--ink); }
+
 .launch-note { margin-bottom: 12px; font-size: 15px; line-height: 1.4; color: var(--ink-2); }
 .launch-note strong { display: block; font-size: 16px; font-weight: 800; color: var(--ink); }
 

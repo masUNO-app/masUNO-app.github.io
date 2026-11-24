@@ -75,8 +75,8 @@ function flash(el, name, ms) {
 }
 
 // ---------- Launch countdown ----------
-// Noon in Chicago on launch day (CST, UTC-6). The date shown to visitors is in index.html.
-const LAUNCH_AT = Date.parse("2026-12-16T12:00:00-06:00");
+// Version 1.0: noon in Chicago on Dec 10 (CST, UTC-6). The date shown to visitors is in index.html.
+const LAUNCH_AT = Date.parse("2026-12-10T12:00:00-06:00");
 const countdown = document.querySelector("[data-countdown]");
 if (countdown) {
   // Each number slides in when it changes
